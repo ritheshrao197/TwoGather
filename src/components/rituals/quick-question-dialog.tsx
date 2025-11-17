@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useFirebase } from '@/firebase';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { collection, serverTimestamp } from 'firebase/firestore';
+import { RefreshCw } from 'lucide-react';
 
 interface QuickQuestionDialogProps {
   spaceId: string;
@@ -105,13 +106,18 @@ export function QuickQuestionDialog({
   const { firestore } = useFirebase();
   const { toast } = useToast();
 
+  const pickNewQuestion = useCallback(() => {
+    const randomIndex = Math.floor(Math.random() * questions.length);
+    setQuestion(questions[randomIndex]);
+  }, []);
+
   useEffect(() => {
     // When the dialog opens, pick a new random question.
     if (open) {
-      const randomIndex = Math.floor(Math.random() * questions.length);
-      setQuestion(questions[randomIndex]);
+      pickNewQuestion();
+      setAnswer(''); // Also reset the answer
     }
-  }, [open]);
+  }, [open, pickNewQuestion]);
 
   const handleShareAnswer = async () => {
     if (!answer.trim()) {
@@ -160,9 +166,15 @@ export function QuickQuestionDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>A Quick Question for Today</DialogTitle>
-          <DialogDescription className="pt-2">
-            {question}
-          </DialogDescription>
+          <div className="flex items-start gap-2 pt-2">
+            <DialogDescription className="flex-1">
+              {question}
+            </DialogDescription>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={pickNewQuestion}>
+                <RefreshCw className="w-4 h-4"/>
+                <span className="sr-only">New question</span>
+            </Button>
+          </div>
         </DialogHeader>
         <div className="py-4">
           <Textarea
