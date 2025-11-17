@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -25,13 +25,72 @@ interface QuickQuestionDialogProps {
 }
 
 const questions = [
-  "What's one thing you want today?",
-  "One small win from yesterday?",
-  "What's something you're looking forward to?",
-  "What made you smile recently?",
-  "What's a song you have on repeat?",
-  "What's one thing you're grateful for right now?",
-  "If you could be anywhere, where would you be?",
+  // Routine & Day Check
+  'What’s one thing you want from today?',
+  'What’s one thing you want to avoid today?',
+  'What’s the best moment you’ve had today so far?',
+  'What’s one thing you’re looking forward to?',
+  'What’s one small win you had today?',
+  'Is there something you want to finish today?',
+  'How’s your energy right now?',
+  'What would make this day feel a bit easier?',
+  'What’s something small you enjoyed today?',
+  'What’s one thing you need a reminder for?',
+  // Mood & Check-in
+  'What’s your current mood in one word?',
+  'What’s one thing that lifted your mood today?',
+  'What’s one thing that stressed you a little?',
+  'What’s something calming you could do today?',
+  'What’s one thing you’re grateful for right now?',
+  'What’s one thought that’s on your mind?',
+  'What’s the kindest thing someone did for you recently?',
+  'What do you need more of this week?',
+  'What do you need less of this week?',
+  'What’s one thing you’d like support with?',
+  // Fun & Light
+  'If you could eat one snack right now, what would it be?',
+  'What song fits your mood today?',
+  'If the day was a color, what color would it be?',
+  'What’s the funniest thing that happened recently?',
+  'What’s a random fact stuck in your head today?',
+  'What emoji describes your vibe today?',
+  'If you had one free hour now, how would you spend it?',
+  'What’s one tiny thing that made you smile lately?',
+  'If today had a theme, what would it be?',
+  'What’s a small treat you’d enjoy today?',
+  // Reflection & Growth
+  'What’s something you learned this week?',
+  'What’s something you handled well recently?',
+  'Is there something you want to improve this month?',
+  'What’s a habit you want to build?',
+  'What’s a habit you want to reduce?',
+  'What’s one thing you’re proud of from this week?',
+  'What feels challenging right now?',
+  'What’s one thing you’d like to understand better?',
+  'What’s one mistake that taught you something?',
+  'What’s something you want future-you to remember?',
+  // Connection & Collaboration
+  'What’s something we should plan soon?',
+  'What’s one small thing we can do together this week?',
+  'What’s a task you want to share this week?',
+  'What’s a moment you appreciated recently?',
+  'What’s one thing I can do to make your day lighter?',
+  'What’s something we’re doing well together?',
+  'What’s something we can improve as a team?',
+  'What’s one idea you want us to explore?',
+  'What’s a tiny ritual we should add to our routine?',
+  'What’s something you want us to celebrate soon?',
+  // Random & Creative
+  'If today had background music, what would it be?',
+  'What’s a place you want to visit one day?',
+  'If you had a reset button for one thing today, what would you reset?',
+  'What’s one prediction you have for tomorrow?',
+  'If you could teleport anywhere for 10 minutes, where would you go?',
+  'What’s something you wish you knew earlier in life?',
+  'If your mood was a weather type, what would it be?',
+  'What’s one question you wish someone asked you today?',
+  'What’s something you want to try soon?',
+  'What’s a dream you haven’t talked about yet?',
 ];
 
 export function QuickQuestionDialog({
@@ -41,21 +100,18 @@ export function QuickQuestionDialog({
   onOpenChange,
 }: QuickQuestionDialogProps) {
   const [answer, setAnswer] = useState('');
+  const [question, setQuestion] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { firestore } = useFirebase();
   const { toast } = useToast();
 
-  const dailyQuestion = useMemo(() => {
-    // Get the day of the year (0-365)
-    const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
-    const diff = (now as any) - (start as any);
-    const oneDay = 1000 * 60 * 60 * 24;
-    const dayOfYear = Math.floor(diff / oneDay);
-    
-    // Use modulo to cycle through questions
-    return questions[dayOfYear % questions.length];
-  }, []);
+  useEffect(() => {
+    // When the dialog opens, pick a new random question.
+    if (open) {
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      setQuestion(questions[randomIndex]);
+    }
+  }, [open]);
 
   const handleShareAnswer = async () => {
     if (!answer.trim()) {
@@ -71,7 +127,7 @@ export function QuickQuestionDialog({
       authorMemberId: authorId,
       type: 'quick_question_response',
       payload: {
-        question: dailyQuestion,
+        question: question,
         answer: answer,
       },
       visibility: 'members',
@@ -105,7 +161,7 @@ export function QuickQuestionDialog({
         <DialogHeader>
           <DialogTitle>A Quick Question for Today</DialogTitle>
           <DialogDescription className="pt-2">
-            {dailyQuestion}
+            {question}
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
