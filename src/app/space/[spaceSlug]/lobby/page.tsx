@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -9,16 +8,16 @@ import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
   CardContent,
   CardFooter,
+  CardDescription
 } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, User, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useFirebase, useMemoFirebase, useCollection, useDoc, useUser } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
-import { signInAnonymously, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInAnonymously } from 'firebase/auth';
 
 // Define types for our data
 interface SpaceData {
@@ -45,11 +44,8 @@ export default function SpaceLobbyPage() {
   useEffect(() => {
     if (!isUserLoading) {
       if (user) {
-        // User is already logged in.
         setIsAuthenticated(true);
       } else {
-        // No user, but we need to authenticate to read from Firestore.
-        // We'll sign in anonymously to satisfy security rules for public reads.
         signInAnonymously(auth).then(() => {
           setIsAuthenticated(true);
         }).catch((error) => {
@@ -64,7 +60,7 @@ export default function SpaceLobbyPage() {
     }
   }, [isUserLoading, user, auth, toast]);
 
-  // Memoize Firestore references. Only create them if we are authenticated and have a slug.
+  // Memoize Firestore references.
   const memoizedSpaceRef = useMemoFirebase(
     () => (isAuthenticated && spaceSlug ? doc(firestore, 'spaces', spaceSlug) : null),
     [isAuthenticated, firestore, spaceSlug]
@@ -88,23 +84,22 @@ export default function SpaceLobbyPage() {
   } = useCollection<MemberData>(memoizedMembersRef);
 
   
-  const handleClaim = (memberName: string) => {
+  const handleClaim = (memberId: string) => {
     toast({
       title: 'Claim Your Account',
-      description: `Redirecting ${memberName} to the account claim page...`
+      description: `Redirecting to the account claim page...`
     });
-    router.push(`/claim?space=${spaceSlug}&member=${memberName}`);
+    router.push(`/claim?space=${spaceSlug}&memberId=${memberId}`);
   };
 
   const handleEnterAsMember = (member: MemberData) => {
-    // For now, just navigate. In a real app, you'd handle "logging in" as this member
-    if (user?.uid === member.id || user?.displayName === member.displayName) {
+    if (user?.uid === member.id) {
         router.push(`/space/${spaceSlug}`);
     } else {
         toast({
             variant: 'destructive',
             title: 'Access Denied',
-            description: 'You can only enter as yourself.',
+            description: 'This is not your account. Please sign in or claim your own account.',
         });
     }
   }
@@ -112,7 +107,6 @@ export default function SpaceLobbyPage() {
 
   const isLoading = spaceLoading || membersLoading || isUserLoading || !isAuthenticated;
 
-  // Show a loading state while we check auth and fetch initial data.
   if (isLoading) {
     return (
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
@@ -125,7 +119,6 @@ export default function SpaceLobbyPage() {
     );
   }
 
-  // After loading, if the space doesn't exist.
   if (isAuthenticated && !spaceData && !isLoading) {
     return (
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
@@ -143,7 +136,6 @@ export default function SpaceLobbyPage() {
     );
   }
 
-  // If there's a specific error loading data (e.g., permissions)
   if (spaceError || membersError) {
     console.error('Data loading error:', spaceError || membersError);
     return (
@@ -181,7 +173,7 @@ export default function SpaceLobbyPage() {
         <div className="w-full max-w-md">
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              {(membersData || []).map((member) => (
-               <Card key={member.id} className="text-center hover:shadow-lg hover:border-primary/50 transition-all cursor-pointer" onClick={() => member.claimed && handleEnterAsMember(member)}>
+               <Card key={member.id} className="text-center hover:shadow-lg hover:border-primary/50 transition-all cursor-pointer group" onClick={() => member.claimed && handleEnterAsMember(member)}>
                  <CardHeader>
                    <CardTitle>{member.displayName}</CardTitle>
                  </CardHeader>
@@ -192,14 +184,14 @@ export default function SpaceLobbyPage() {
                    {member.claimed ? (
                      <Button className="w-full" disabled={!user || user.isAnonymous || user.uid !== member.id}>Enter as {member.displayName}</Button>
                    ) : (
-                     <Button variant="secondary" className="w-full" onClick={() => handleClaim(member.displayName)}>Claim Account</Button>
+                     <Button variant="secondary" className="w-full" onClick={(e) => { e.stopPropagation(); handleClaim(member.id); }}>Claim Account</Button>
                    )}
                  </CardFooter>
                </Card>
              ))}
            </div>
 
-           {!isUserLoading && user && !loggedInMemberIsPresent && (
+           {!isUserLoading && user && !user.isAnonymous && !loggedInMemberIsPresent && (
              <Card className="mt-8">
                 <CardHeader>
                     <CardTitle>You're not a member... yet</CardTitle>
@@ -208,14 +200,20 @@ export default function SpaceLobbyPage() {
              </Card>
            )}
 
-            {!isUserLoading && !user && (
+            {!isUserLoading && (!user || user.isAnonymous) && (
                 <Card className="mt-8">
                     <CardHeader>
-                        <CardTitle>Sign In Required</CardTitle>
+                        <CardTitle>Sign In to Enter</CardTitle>
                         <CardDescription>
-                            Please <Link href="/enter" className="underline text-primary">sign in</Link> to enter a space.
+                            If you have already claimed an account for this space, please sign in to enter.
                         </CardDescription>
                     </CardHeader>
+                    {/* Simplified login suggestion, actual login handled via FirebaseUI or separate login page */}
+                    <CardContent>
+                      <Button asChild className="w-full">
+                        <Link href="/enter">Sign In</Link>
+                      </Button>
+                    </CardContent>
                 </Card>
             )}
 

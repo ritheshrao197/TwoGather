@@ -55,9 +55,9 @@ export default function CreateSpacePage() {
       
       const slug = spaceName.toLowerCase().replace(/\s+/g, '-');
       const spaceId = slug;
+      const partnerId = `partner-${Date.now()}`;
 
       // 3. Create the space and the creator's member document in a single batch.
-      // This is allowed by the security rules.
       const batch = writeBatch(firestore);
 
       const spaceRef = doc(firestore, 'spaces', spaceId);
@@ -77,16 +77,15 @@ export default function CreateSpacePage() {
         createdAt: new Date().toISOString(),
       });
       
-      await batch.commit();
-
-      // 4. Now that the creator is a member, create the partner's member document.
-      // This is a separate operation.
-      const partnerMemberRef = doc(firestore, `spaces/${spaceId}/members`, `partner-${Date.now()}`);
-      await setDoc(partnerMemberRef, {
+      // Also add the partner's document in the same batch, but as unclaimed.
+      const partnerMemberRef = doc(firestore, `spaces/${spaceId}/members`, partnerId);
+      batch.set(partnerMemberRef, {
         displayName: partnerName,
         claimed: false,
         createdAt: new Date().toISOString(),
       });
+
+      await batch.commit();
 
       toast({
         title: 'Space Created!',
@@ -150,7 +149,7 @@ export default function CreateSpacePage() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Your Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -161,7 +160,7 @@ export default function CreateSpacePage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Your Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -213,13 +212,10 @@ export default function CreateSpacePage() {
           </CardFooter>
         </Card>
         
-        {/* Info text about authentication */}
         <div className="mt-4 text-center text-sm text-muted-foreground">
-          <p>Creating an account with email allows you to access your spaces from any device.</p>
+          <p>This creates your account, your partner will claim theirs on the next screen.</p>
         </div>
       </div>
     </div>
   );
 }
-
-    
