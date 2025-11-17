@@ -33,8 +33,8 @@ service cloud.firestore {
       match /members/{memberId} {
         // A member can read their own data. Other members of the space can also read it.
         allow get: if isSignedIn() && (request.auth.uid == memberId || isMember(spaceId));
-        // All members of a space can list the other members.
-        allow list: if isMember(spaceId);
+        // Any signed-in user can list the members to see who is in the lobby.
+        allow list: if isSignedIn();
         // A user can create their own member document.
         // Also, an existing member can create a document for another member (e.g. for a partner).
         allow create: if isSignedIn() && (request.auth.uid == memberId || isMember(spaceId));
