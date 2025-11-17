@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { Mountain } from 'lucide-react';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export function Header() {
   return (
@@ -11,9 +12,15 @@ export function Header() {
         <span className="ml-3 text-lg font-headline">Shared Spaces</span>
       </Link>
       <nav className="ml-auto flex gap-4 sm:gap-6">
-        <Button asChild variant="outline" className="border-primary/50 text-foreground hover:bg-primary/10 hover:text-foreground">
-          <Link href="/enter">Enter Space</Link>
-        </Button>
+        <Link
+          href="/enter"
+          className={cn(
+            buttonVariants({ variant: 'outline' }),
+            'border-primary/50 text-foreground hover:bg-primary/10 hover:text-foreground'
+          )}
+        >
+          Enter Space
+        </Link>
       </nav>
     </header>
   );

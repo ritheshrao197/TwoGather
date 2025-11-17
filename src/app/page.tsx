@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,8 @@ import { Header } from '@/components/shared/header';
 import { Footer } from '@/components/shared/footer';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Gift, Images, Archive } from 'lucide-react';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export default function Home() {
   const heroImage = PlaceHolderImages.find((p) => p.id === 'hero-image');
@@ -49,9 +52,15 @@ export default function Home() {
               A shared space for two, built on privacy and connection. Create
               personal pages, build a memory wall, and unlock a shared archive.
             </p>
-            <Button asChild size="lg" className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90">
-              <Link href="/enter">Get Started</Link>
-            </Button>
+            <Link
+              href="/enter"
+              className={cn(
+                buttonVariants({ size: 'lg' }),
+                'mt-8 bg-primary text-primary-foreground hover:bg-primary/90'
+              )}
+            >
+              Get Started
+            </Link>
           </div>
         </section>
 
