@@ -1,15 +1,36 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { useUser } from '@/firebase';
+import { useEffect } from 'react';
 
 export default function PersonalSpacePage() {
   const params = useParams();
+  const router = useRouter();
+  const { user, isUserLoading } = useUser();
   const person = params.person as string;
 
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push('/enter');
+    }
+  }, [user, isUserLoading, router]);
+
+  if (isUserLoading || !user) {
+    return (
+        <div className="flex flex-col min-h-dvh bg-background text-foreground">
+            <Header />
+            <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
+                <p>Loading...</p>
+            </main>
+        </div>
+    )
+  }
+  
   if (!person) {
     return null;
   }
@@ -27,6 +48,7 @@ export default function PersonalSpacePage() {
         <p className="mt-3 max-w-md mx-auto text-muted-foreground font-caption">
           This is a private area curated for you by Person {creatorName}.
         </p>
+        <p className="text-sm mt-2">Signed in as: {user.email}</p>
         
         <div className="mt-12 w-full max-w-3xl border rounded-lg p-8">
             <h2 className="text-2xl font-headline">Content for {personName} appears here.</h2>
