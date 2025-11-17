@@ -258,20 +258,41 @@ export default function SpaceLobbyPage() {
   if (spaceError || membersError) {
     console.error('Error fetching data:', spaceError || membersError);
     
-    // Show more detailed error information for FirestorePermissionError
-    let errorMessage = 'Error loading space data.';
-    let errorDescription = 'The space may not exist or you may not have permission to view it.';
+    // Check if it's a permission error
+    const isPermissionError = (spaceError && spaceError.message && spaceError.message.includes('Missing or insufficient permissions')) || 
+                             (membersError && membersError.message && membersError.message.includes('Missing or insufficient permissions'));
     
-    if (membersError && membersError.message && membersError.message.includes('Missing or insufficient permissions')) {
-      errorMessage = 'Access Denied';
-      errorDescription = `You don't have permission to access this space. Please make sure you're logged in with the correct account. Your user ID is: ${user?.uid || 'unknown'}`;
+    if (isPermissionError) {
+      return (
+        <div className="flex flex-col min-h-dvh bg-background text-foreground">
+          <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
+            <h1 className="text-2xl font-bold">Access Denied</h1>
+            <p className="text-muted-foreground mt-2">
+              You don't have permission to access this space. This could be because:
+            </p>
+            <ul className="text-muted-foreground mt-2 text-left list-disc pl-5 max-w-md">
+              <li>You're not logged in with the correct account</li>
+              <li>You're not a member of this space</li>
+              <li>The space was created with a different authentication method</li>
+            </ul>
+            <div className="mt-4 flex flex-col gap-2">
+              <Button asChild>
+                <Link href="/enter">Return to entrance</Link>
+              </Button>
+              <Button variant="outline" onClick={() => setShowLogin(true)}>
+                Try logging in with a different account
+              </Button>
+            </div>
+          </main>
+        </div>
+      );
     }
     
     return (
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
         <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
-          <h1 className="text-2xl font-bold">{errorMessage}</h1>
-          <p className="text-muted-foreground mt-2">{errorDescription}</p>
+          <h1 className="text-2xl font-bold">Error loading space data.</h1>
+          <p className="text-muted-foreground mt-2">An unexpected error occurred while loading the space.</p>
           <Button asChild variant="link" className="mt-4">
             <Link href="/enter">Return to entrance</Link>
           </Button>

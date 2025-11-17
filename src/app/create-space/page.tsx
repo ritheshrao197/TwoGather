@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Users } from 'lucide-react';
 import { useFirebase } from '@/firebase';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile, onAuthStateChanged } from 'firebase/auth';
 import { doc, writeBatch } from 'firebase/firestore';
 
 export default function CreateSpacePage() {
@@ -53,13 +53,30 @@ export default function CreateSpacePage() {
         displayName: yourName
       });
 
+      // 3. Ensure the user is fully authenticated before proceeding
+      // Wait for the auth state to be confirmed
+      await new Promise<void>((resolve, reject) => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          if (user && user.uid === creatorUid) {
+            unsubscribe();
+            resolve();
+          }
+        });
+        
+        // Timeout after 5 seconds
+        setTimeout(() => {
+          unsubscribe();
+          reject(new Error('Authentication state confirmation timed out'));
+        }, 5000);
+      });
+
       const slug = spaceName.toLowerCase().replace(/\s+/g, '-');
       const spaceId = slug; // Using slug as the document ID for simplicity
 
-      // 3. Prepare batch write to Firestore
+      // 4. Prepare batch write to Firestore
       const batch = writeBatch(firestore);
 
-      // 4. Create the space document
+      // 5. Create the space document
       const spaceRef = doc(firestore, 'spaces', spaceId);
       batch.set(spaceRef, {
         displayName: spaceName,
@@ -69,7 +86,7 @@ export default function CreateSpacePage() {
         createdAt: new Date().toISOString(),
       });
 
-      // 5. Create the member document for the creator
+      // 6. Create the member document for the creator
       const creatorMemberRef = doc(firestore, `spaces/${spaceId}/members`, creatorUid);
       batch.set(creatorMemberRef, {
         displayName: yourName,
@@ -78,7 +95,7 @@ export default function CreateSpacePage() {
         createdAt: new Date().toISOString(),
       });
 
-      // 6. Create the unclaimed member document for the partner
+      // 7. Create the unclaimed member document for the partner
       // We use a generated ID for the partner for now.
       const partnerMemberRef = doc(firestore, `spaces/${spaceId}/members`, `partner-${Date.now()}`);
       batch.set(partnerMemberRef, {
@@ -87,7 +104,7 @@ export default function CreateSpacePage() {
         createdAt: new Date().toISOString(),
       });
 
-      // 7. Commit the batch
+      // 8. Commit the batch
       await batch.commit();
       
       console.log(`Space created successfully with ID: ${spaceId}`);
@@ -110,6 +127,8 @@ export default function CreateSpacePage() {
         errorMessage = 'Please provide a valid email address.';
       } else if (error.code === 'auth/weak-password') {
         errorMessage = 'Password should be at least 6 characters.';
+      } else if (error.message && error.message.includes('Missing or insufficient permissions')) {
+        errorMessage = 'You do not have permission to create a space. Please try again or contact support.';
       }
       
       toast({
