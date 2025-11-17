@@ -7,94 +7,98 @@ import Image from 'next/image';
 import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
-import { Separator } from '@/components/ui/separator';
-import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Textarea } from '@/components/ui/textarea';
 import { useUser } from '@/firebase';
 import { useState, useEffect } from 'react';
 import {
   ArrowLeft,
-  PlusCircle,
-  MessageSquarePlus,
-  CheckCircle2,
-  ListTodo,
-  CalendarPlus,
-  Users,
   Sun,
-  Smile,
-  ImageIcon,
-  StickyNote,
+  Moon,
+  Cloudy,
+  Sunset,
   Sparkles,
+  Heart,
+  MessageCircle,
+  Wind,
+  Droplets,
+  Flower2,
+  CalendarHeart,
+  Smile,
+  Pen,
+  ChevronRight,
+  Plus,
   Palette,
-  Settings,
-  Loader2,
+  Bell,
 } from 'lucide-react';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { AddNoteDialog } from '@/components/content/add-note-dialog';
 import { useNotes, NoteDocument } from '@/hooks/useNotes';
 import { formatDistanceToNow } from 'date-fns';
-
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Separator } from '@/components/ui/separator';
 
 export default function PersonalSpacePage() {
   const params = useParams();
   const router = useRouter();
   const { user, isUserLoading } = useUser();
   const spaceSlug = params.spaceSlug as string;
+  const { data: notes, isLoading: notesLoading } = useNotes(user ? spaceSlug : '');
 
   const [isAddNoteDialogOpen, setIsAddNoteDialogOpen] = useState(false);
+  const [welcomeMessage, setWelcomeMessage] = useState('Welcome back.');
+  const [welcomeIcon, setWelcomeIcon] = useState(<Sun className="w-5 h-5" />);
 
-  // We only fetch notes if the user is loaded and present.
-  const {
-    data: notes,
-    isLoading: notesLoading,
-    error: notesError,
-  } = useNotes(user ? spaceSlug : '');
-
-  const latestMemoryImages = [
-    PlaceHolderImages.find((p) => p.id === 'memory-wall-feature'),
-    PlaceHolderImages.find((p) => p.id === 'personal-page-feature'),
-    PlaceHolderImages.find((p) => p.id === 'shared-archive-feature'),
-    PlaceHolderImages.find((p) => p.id === 'hero-image'),
-  ].filter(Boolean);
+  const memoryOfTheDayImage = PlaceHolderImages.find((p) => p.id === 'memory-wall-feature');
 
   useEffect(() => {
-    // If auth is done loading and there's no user, redirect to login.
     if (!isUserLoading && !user) {
       router.push(`/space/${spaceSlug}/lobby`);
     }
   }, [user, isUserLoading, router, spaceSlug]);
 
-  // Show a loading screen while we verify the user's authentication state.
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      setWelcomeMessage('Good morning. Hope today feels calm and bright.');
+      setWelcomeIcon(<Sun className="w-5 h-5 text-yellow-400" />);
+    } else if (hour < 18) {
+      setWelcomeMessage('Hope your day is going smoothly.');
+      setWelcomeIcon(<Cloudy className="w-5 h-5 text-sky-400" />);
+    } else if (hour < 21) {
+      setWelcomeMessage('Slow down. You made it through the day.');
+      setWelcomeIcon(<Sunset className="w-5 h-5 text-orange-400" />);
+    } else {
+      setWelcomeMessage('Rest well. This space is here whenever you need it.');
+      setWelcomeIcon(<Moon className="w-5 h-5 text-indigo-400" />);
+    }
+  }, []);
+
   if (isUserLoading || !user) {
     return (
-      <div className="flex flex-col min-h-dvh bg-background text-foreground">
+      <div className="flex flex-col min-h-dvh bg-background">
         <Header />
-        <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
-          <Loader2 className="animate-spin text-primary" size={48} />
-          <p className="mt-4 font-caption text-muted-foreground">Loading your space...</p>
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <Sparkles className="mx-auto h-12 w-12 animate-spin text-primary" />
+            <p className="mt-4 font-caption text-muted-foreground">Waking up your space...</p>
+          </div>
         </main>
       </div>
     );
   }
-  
+
   const renderNote = (note: NoteDocument) => {
     const randomColorClasses = [
-      "bg-yellow-200/20",
-      "bg-blue-200/20",
-      "bg-green-200/20",
-      "bg-purple-200/20",
-      "bg-pink-200/20",
+      "bg-yellow-200/20 hover:bg-yellow-200/30",
+      "bg-blue-200/20 hover:bg-blue-200/30",
+      "bg-green-200/20 hover:bg-green-200/30",
+      "bg-purple-200/20 hover:bg-purple-200/30",
+      "bg-pink-200/20 hover:bg-pink-200/30",
     ];
     const randomClass = randomColorClasses[note.id.charCodeAt(0) % randomColorClasses.length];
 
     return (
-        <div key={note.id} className={`${randomClass} p-4 rounded-lg text-sm font-caption flex flex-col justify-between`}>
+        <div key={note.id} className={`${randomClass} p-4 rounded-lg text-sm font-caption flex flex-col justify-between transition-all duration-300 transform hover:scale-105 hover:shadow-lg`}>
             <p className="flex-grow">{note.payload.text}</p>
             <p className="text-xs text-muted-foreground mt-2 text-right">
                 {note.createdAt?.toDate ? formatDistanceToNow(note.createdAt.toDate(), { addSuffix: true }) : 'just now'}
@@ -106,174 +110,213 @@ export default function PersonalSpacePage() {
 
   return (
     <>
-      <AddNoteDialog
-        spaceId={spaceSlug}
-        open={isAddNoteDialogOpen}
-        onOpenChange={setIsAddNoteDialogOpen}
-      />
+      <AddNoteDialog spaceId={spaceSlug} open={isAddNoteDialogOpen} onOpenChange={setIsAddNoteDialogOpen} />
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
         <Header />
         <main className="flex-1 container mx-auto px-4 py-8 pt-24">
-          {/* 1. Space Header */}
-          <section className="mb-8">
-            <h1 className="text-4xl font-headline font-bold text-foreground capitalize">
-              {spaceSlug.replace(/-/g, ' ')}
+          
+          {/* 1. Soft Welcome Moment */}
+          <section className="mb-10 text-center">
+            <h1 className="text-3xl md:text-4xl font-headline font-bold text-foreground animate-in fade-in duration-1000">
+              Welcome back, {user.displayName || 'friend'}.
             </h1>
-            <p className="text-muted-foreground font-caption">
-              This is your shared space.
+            <p className="text-muted-foreground font-caption mt-2 animate-in fade-in duration-1000 delay-500">
+              This is your shared space. Take a breath, settle in.
             </p>
-            <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-              <span>Signed in as: {user.displayName || user.email}</span>
-              <div className="flex items-center gap-2 text-green-400">
-                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                You&apos;re online
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-gray-500"></div>
-                Partner last seen 2 hours ago
-              </div>
-            </div>
           </section>
 
-          {/* 2. Quick Action Bar */}
-          <section className="mb-8">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-              <Button variant="outline"><PlusCircle /> Add Memory</Button>
-              <Button variant="outline" onClick={() => setIsAddNoteDialogOpen(true)}><MessageSquarePlus /> Leave a Note</Button>
-              <Button variant="outline"><CheckCircle2 /> Check-in Today</Button>
-              <Button variant="outline"><ListTodo /> Add Shared Task</Button>
-              <Button variant="outline"><CalendarPlus /> Add Shared Event</Button>
-            </div>
-          </section>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            {/* Left Column */}
+            <div className="lg:col-span-2 space-y-6">
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-8">
-              {/* 3. Activity Highlights */}
-              <Card>
-                <CardHeader><CardTitle>Activity Highlights</CardTitle></CardHeader>
-                <CardContent>
-                  <ul className="space-y-3 text-sm font-caption text-muted-foreground">
-                    <li>- You added a memory yesterday.</li>
-                    <li>- Partner updated the agreements board.</li>
-                    <li>- 3 new notes added this week.</li>
-                  </ul>
-                </CardContent>
-              </Card>
+                {/* 2. Live Duo Presence Panel & 3. Personalized Welcome Tile */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="flex flex-col justify-between group">
+                        <CardHeader>
+                            <CardTitle className="flex items-center justify-between">
+                                <span>Presence</span>
+                                <div className="flex items-center gap-2">
+                                    <div className="relative">
+                                        <Avatar className="w-8 h-8 border-2 border-green-400">
+                                            <AvatarImage src={`https://i.pravatar.cc/150?u=${user.uid}`} />
+                                            <AvatarFallback>{user.displayName?.[0]}</AvatarFallback>
+                                        </Avatar>
+                                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-background" />
+                                    </div>
+                                    <div className="h-px w-6 bg-muted-foreground/30"></div>
+                                     <div className="relative">
+                                        <Avatar className="w-8 h-8 border-2 border-transparent opacity-50">
+                                            <AvatarImage src="https://i.pravatar.cc/150?u=partner" />
+                                            <AvatarFallback>P</AvatarFallback>
+                                        </Avatar>
+                                    </div>
+                                </div>
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-muted-foreground font-caption">You're online. Partner was last seen 2 hours ago.</p>
+                        </CardContent>
+                        <CardContent>
+                          <Button variant="secondary" className="w-full invisible group-hover:visible transition-all">Tap to sync</Button>
+                        </CardContent>
+                    </Card>
 
-              {/* 5. Latest Memories */}
-              <Card>
-                <CardHeader><CardTitle>Latest Memories</CardTitle></CardHeader>
-                <CardContent>
-                  <Carousel className="w-full">
-                    <CarouselContent>
-                      {latestMemoryImages.map((img, index) => (
-                        <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                          <div className="p-1">
-                            {img && <Image
-                                src={img.imageUrl}
-                                alt={img.description}
-                                width={400}
-                                height={300}
-                                className="rounded-lg object-cover w-full aspect-square"
-                                data-ai-hint={img.imageHint}
-                              />}
-                          </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <CarouselPrevious className="ml-12"/>
-                    <CarouselNext className="mr-12" />
-                  </Carousel>
-                </CardContent>
-              </Card>
+                    <Card className="flex flex-col justify-center">
+                        <CardContent className="flex items-center gap-4 text-center">
+                            {welcomeIcon}
+                            <p className="text-sm font-caption text-muted-foreground">{welcomeMessage}</p>
+                        </CardContent>
+                    </Card>
+                </div>
+              
+                {/* 4. What's on your mind? */}
+                <Card>
+                    <CardContent className="flex items-center gap-4 pt-6">
+                        <Pen className="text-primary"/>
+                        <Textarea placeholder="Write one thought or feeling..." rows={1} className="flex-1 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0" />
+                        <Button size="sm">Share</Button>
+                    </CardContent>
+                </Card>
 
-              {/* 6. Notes / Appreciation */}
-              <Card>
-                <CardHeader className="flex-row items-center justify-between">
-                  <CardTitle>Notes & Appreciation</CardTitle>
-                  <Button variant="secondary" size="sm" onClick={() => setIsAddNoteDialogOpen(true)}>
-                    <StickyNote /> Write a Quick Note
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                    {notesLoading && (
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        <div className="bg-muted p-4 rounded-lg h-24 animate-pulse"></div>
-                        <div className="bg-muted p-4 rounded-lg h-24 animate-pulse"></div>
-                        <div className="bg-muted p-4 rounded-lg h-24 animate-pulse"></div>
-                      </div>
-                    )}
-                    {notesError && <p className="text-destructive font-caption text-sm">Could not load notes. You may not have permission to view them.</p>}
-                    {!notesLoading && !notesError && notes && notes.length > 0 && (
+                {/* 5. Memory of the Day */}
+                {memoryOfTheDayImage && (
+                  <Card className="overflow-hidden">
+                    <div className="relative aspect-[16/9]">
+                        <Image src={memoryOfTheDayImage.imageUrl} alt="Memory of the day" fill className="object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                        <div className="absolute bottom-0 left-0 p-6">
+                            <p className="text-primary-foreground font-caption text-sm mb-1">A small moment worth revisiting.</p>
+                            <h3 className="text-primary-foreground font-headline text-2xl">You added this 3 months ago.</h3>
+                        </div>
+                        <div className="absolute top-4 right-4 flex gap-2">
+                          <Button size="icon" variant="ghost" className="text-white hover:text-red-500 hover:bg-white/10"><Heart /></Button>
+                        </div>
+                    </div>
+                  </Card>
+                )}
+
+                {/* 7. Living Notes Board */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      <span>Living Notes</span>
+                      <Button variant="secondary" size="sm" onClick={() => setIsAddNoteDialogOpen(true)}>
+                        <Plus className="mr-2 h-4 w-4" /> New Note
+                      </Button>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {notesLoading && <div className="text-center text-muted-foreground font-caption">Loading notes...</div>}
+                    {!notesLoading && notes && notes.length > 0 ? (
                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                          {notes.map(renderNote)}
                        </div>
-                    )}
-                    {!notesLoading && !notesError && (!notes || notes.length === 0) && (
+                    ) : (
                        <p className="text-muted-foreground font-caption text-sm text-center py-4">No notes yet. Why not leave the first one?</p>
                     )}
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+
             </div>
 
-            <div className="space-y-8">
-              {/* 4. Daily Check-in */}
-              <Card>
-                <CardHeader><CardTitle>Daily Check-in</CardTitle></CardHeader>
-                <CardContent>
-                  <p className="font-caption text-sm mb-2">How are you feeling today?</p>
-                  <div className="flex gap-2">
-                    <Input placeholder="1 emoji + 1-line note" />
-                    <Button>Save</Button>
-                  </div>
-                  <Separator className="my-4"/>
-                  <p className="font-caption text-sm text-muted-foreground">Partner's last check-in:</p>
-                  <p className="font-caption text-sm">😊 Feeling great today!</p>
-                </CardContent>
-              </Card>
+            {/* Right Column */}
+            <div className="space-y-6">
 
-              {/* 11. Quick Navigation Tiles */}
+              {/* 6. Daily Mini-Interaction */}
               <Card>
-                  <CardHeader><CardTitle>Explore Your Space</CardTitle></CardHeader>
-                  <CardContent className="grid grid-cols-2 gap-4 text-center">
-                      <Link href="#" className="p-4 rounded-lg bg-muted hover:bg-primary/10 transition-colors">
-                          <ImageIcon className="mx-auto mb-2" />
-                          <span className="text-sm font-caption">Memory Wall</span>
-                      </Link>
-                      <Link href="#" className="p-4 rounded-lg bg-muted hover:bg-primary/10 transition-colors">
-                          <StickyNote className="mx-auto mb-2" />
-                          <span className="text-sm font-caption">Notes Board</span>
-                      </Link>
-                      <Link href="#" className="p-4 rounded-lg bg-muted hover:bg-primary/10 transition-colors">
-                          <Sparkles className="mx-auto mb-2" />
-                          <span className="text-sm font-caption">Agreements</span>
-                      </Link>
-                      <Link href="#" className="p-4 rounded-lg bg-muted hover:bg-primary/10 transition-colors">
-                          <Users className="mx-auto mb-2" />
-                          <span className="text-sm font-caption">Public Page</span>
-                      </Link>
+                  <CardHeader><CardTitle>Tiny Rituals</CardTitle></CardHeader>
+                  <CardContent className="space-y-3">
+                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                          <div className="flex items-center gap-3">
+                              <Smile className="text-primary"/>
+                              <span className="font-caption text-sm">Daily Check-in</span>
+                          </div>
+                          <ChevronRight/>
+                      </div>
+                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                          <div className="flex items-center gap-3">
+                              <Heart className="text-red-400"/>
+                              <span className="font-caption text-sm">Send Gratitude Blink</span>
+                          </div>
+                          <ChevronRight/>
+                      </div>
+                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                          <div className="flex items-center gap-3">
+                              <MessageCircle className="text-blue-400"/>
+                              <span className="font-caption text-sm">Quick Question</span>
+                          </div>
+                          <ChevronRight/>
+                      </div>
                   </CardContent>
               </Card>
 
-              {/* 10. Space Customization */}
+              {/* 8. Shared Goal Bubble */}
               <Card>
-                <CardHeader><CardTitle>Space Customization</CardTitle></CardHeader>
-                <CardContent>
-                  <Button variant="outline" className="w-full"><Palette className="mr-2"/> Edit Theme & Style</Button>
-                </CardContent>
+                  <CardHeader>
+                    <CardTitle>This Week's Goal</CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                        <CalendarHeart className="w-8 h-8 text-primary"/>
+                    </div>
+                    <div className="flex-1">
+                        <p className="font-headline">Plan weekend activity</p>
+                        <p className="text-sm font-caption text-muted-foreground">Tap to open Shared Plans board.</p>
+                    </div>
+                  </CardContent>
+              </Card>
+
+              {/* 9. Ambient Widgets */}
+              <Card>
+                  <CardHeader><CardTitle>Ambient Mood</CardTitle></CardHeader>
+                  <CardContent className="grid grid-cols-2 gap-2 text-center">
+                    <Button variant="outline" size="sm" className="flex-col h-auto py-2"><Droplets/><span className="mt-1 text-xs">Gentle Rain</span></Button>
+                    <Button variant="outline" size="sm" className="flex-col h-auto py-2"><Wind/><span className="mt-1 text-xs">Breathing</span></Button>
+                    <Button variant="outline" size="sm" className="flex-col h-auto py-2"><Flower2/><span className="mt-1 text-xs">Growing Plant</span></Button>
+                    <Button variant="outline" size="sm" className="flex-col h-auto py-2"><Sparkles/><span className="mt-1 text-xs">Soft Gradient</span></Button>
+                  </CardContent>
               </Card>
               
+              {/* 11 & 12. Quick Navigation with Notification Dots */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Explore Your Space</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                    <Link href="#" className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                        <span className="font-caption text-sm">Memory Wall</span>
+                        <div className="relative"><Bell className="w-4 h-4 text-transparent"/><div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-primary animate-pulse"></div></div>
+                    </Link>
+                    <Link href="#" className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                        <span className="font-caption text-sm">Agreements Board</span>
+                        <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                    </Link>
+                </CardContent>
+              </Card>
+
+               {/* 13. Highlights from this week */}
+                <Card>
+                    <CardHeader><CardTitle>This Week's Highlights</CardTitle></CardHeader>
+                    <CardContent className="text-sm font-caption text-muted-foreground space-y-2">
+                        <p>+ 3 new notes added</p>
+                        <p>+ 5 memories viewed</p>
+                        <p>+ 2 check-ins done</p>
+                    </CardContent>
+                </Card>
             </div>
           </div>
-
-          <div className="mt-8 text-center">
-              <Button asChild variant="outline">
+          
+          {/* 14. Friendly Footer */}
+          <footer className="mt-16 text-center">
+              <p className="text-sm font-caption text-muted-foreground">Your shared space grows with every small moment.</p>
+              <p className="text-sm font-caption text-muted-foreground">Take your time here.</p>
+              <Button asChild variant="link" className="mt-4">
                   <Link href={`/space/${spaceSlug}/lobby`}>
-                      <ArrowLeft className="mr-2 h-4 w-4" />
                       Back to Lobby
                   </Link>
               </Button>
-          </div>
+          </footer>
         </main>
       </div>
     </>
