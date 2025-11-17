@@ -379,7 +379,10 @@ export default function PersonalSpacePage() {
                     <Link href={`/space/${spaceSlug}/profile`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
                         <span className="font-caption text-sm">Your Profile</span>
                          <div className="flex items-center gap-2">
-                           <User className="w-4 h-4 text-muted-foreground"/>
+                           <Avatar className="w-6 h-6">
+                              <AvatarImage src={currentMember?.profile.avatarUrl} />
+                              <AvatarFallback><User className="w-4 h-4 text-muted-foreground"/></AvatarFallback>
+                           </Avatar>
                            <ChevronRight className="w-4 h-4 text-muted-foreground"/>
                         </div>
                     </Link>
