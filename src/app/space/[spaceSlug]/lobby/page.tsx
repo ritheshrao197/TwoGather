@@ -13,10 +13,8 @@ import {
   CardContent,
   CardFooter,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, User, KeyRound, Loader2 } from 'lucide-react';
+import { ArrowLeft, User, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useFirebase, useMemoFirebase, useCollection, useDoc, useUser } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
@@ -41,11 +39,6 @@ export default function SpaceLobbyPage() {
   const { user, isUserLoading } = useUser();
   const spaceSlug = params.spaceSlug as string;
 
-  const [selectedMember, setSelectedMember] = useState<string | null>(null);
-  const [memberPassword, setMemberPassword] = useState('');
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [showLogin, setShowLogin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // This effect handles the initial authentication check.
@@ -94,22 +87,7 @@ export default function SpaceLobbyPage() {
     error: membersError,
   } = useCollection<MemberData>(memoizedMembersRef);
 
-  const handleMemberLogin = () => {
-    if (!selectedMember || !memberPassword) {
-      toast({
-        variant: 'destructive',
-        title: 'Login Failed',
-        description: 'Please select a member and enter a password.'
-      });
-      return;
-    }
-    toast({
-      title: 'Login Successful!',
-      description: `Welcome, ${selectedMember}!`
-    });
-    router.push(`/space/${spaceSlug}`);
-  };
-
+  
   const handleClaim = (memberName: string) => {
     toast({
       title: 'Claim Your Account',
@@ -118,37 +96,21 @@ export default function SpaceLobbyPage() {
     router.push(`/claim?space=${spaceSlug}&member=${memberName}`);
   };
 
-  const handleEmailLogin = async () => {
-    if (!loginEmail || !loginPassword) {
-      toast({
-        variant: 'destructive',
-        title: 'Login Failed',
-        description: 'Please enter your email and password.'
-      });
-      return;
+  const handleEnterAsMember = (member: MemberData) => {
+    // For now, just navigate. In a real app, you'd handle "logging in" as this member
+    if (user?.uid === member.id || user?.displayName === member.displayName) {
+        router.push(`/space/${spaceSlug}`);
+    } else {
+        toast({
+            variant: 'destructive',
+            title: 'Access Denied',
+            description: 'You can only enter as yourself.',
+        });
     }
-    try {
-      await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
-      toast({
-        title: 'Login Successful!',
-        description: 'You are now signed in.',
-      });
-      setShowLogin(false);
-    } catch (error: any) {
-      console.error('Email login error:', error);
-      let errorMessage = 'Failed to log in. Please check your credentials.';
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-        errorMessage = 'No account found with this email or password.';
-      }
-      toast({
-        variant: 'destructive',
-        title: 'Login Failed',
-        description: errorMessage
-      });
-    }
-  };
+  }
 
-  const isLoading = spaceLoading || membersLoading || !isAuthenticated;
+
+  const isLoading = spaceLoading || membersLoading || isUserLoading || !isAuthenticated;
 
   // Show a loading state while we check auth and fetch initial data.
   if (isLoading) {
@@ -163,8 +125,8 @@ export default function SpaceLobbyPage() {
     );
   }
 
-  // After loading, if the user is authenticated but the space doesn't exist.
-  if (isAuthenticated && !spaceData) {
+  // After loading, if the space doesn't exist.
+  if (isAuthenticated && !spaceData && !isLoading) {
     return (
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
         <Header />
@@ -190,7 +152,6 @@ export default function SpaceLobbyPage() {
         <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
           <h1 className="text-3xl font-headline">Access Denied</h1>
           <p className="mt-2 font-caption text-muted-foreground">You may not have permission to view this space.</p>
-          <p className="mt-1 font-caption text-sm text-muted-foreground/80">Please ensure you've entered the correct space password.</p>
           <Button asChild variant="outline" className="mt-6">
             <Link href="/enter">
               <ArrowLeft className="mr-2 h-4 w-4" /> Try Again
@@ -200,6 +161,9 @@ export default function SpaceLobbyPage() {
       </div>
     );
   }
+
+  const loggedInMemberIsPresent = membersData?.some(member => member.id === user?.uid);
+
 
   return (
     <div className="flex flex-col min-h-dvh bg-background text-foreground">
@@ -215,10 +179,9 @@ export default function SpaceLobbyPage() {
         </div>
 
         <div className="w-full max-w-md">
-          {user && !user.isAnonymous ? (
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              {(membersData || []).map((member) => (
-               <Card key={member.id} className="text-center">
+               <Card key={member.id} className="text-center hover:shadow-lg hover:border-primary/50 transition-all cursor-pointer" onClick={() => member.claimed && handleEnterAsMember(member)}>
                  <CardHeader>
                    <CardTitle>{member.displayName}</CardTitle>
                  </CardHeader>
@@ -227,7 +190,7 @@ export default function SpaceLobbyPage() {
                  </CardContent>
                  <CardFooter>
                    {member.claimed ? (
-                     <Button className="w-full" onClick={() => router.push(`/space/${spaceSlug}`)}>Enter as {member.displayName}</Button>
+                     <Button className="w-full" disabled={!user || user.isAnonymous || user.uid !== member.id}>Enter as {member.displayName}</Button>
                    ) : (
                      <Button variant="secondary" className="w-full" onClick={() => handleClaim(member.displayName)}>Claim Account</Button>
                    )}
@@ -235,29 +198,27 @@ export default function SpaceLobbyPage() {
                </Card>
              ))}
            </div>
-          ) : (
-            <Card>
-              <CardHeader>
-                <CardTitle>Sign In Required</CardTitle>
-                <CardDescription>
-                  Please sign in with your email to access this space.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
-                  <Input id="login-email" type="email" placeholder="you@example.com" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="login-password">Password</Label>
-                  <Input id="login-password" type="password" placeholder="••••••••" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" onClick={handleEmailLogin}>Sign In</Button>
-              </CardFooter>
-            </Card>
-          )}
+
+           {!isUserLoading && user && !loggedInMemberIsPresent && (
+             <Card className="mt-8">
+                <CardHeader>
+                    <CardTitle>You're not a member... yet</CardTitle>
+                    <CardDescription>You are signed in as {user.email}, but you aren't a member of this space. You can claim an unclaimed account or ask a member to invite you.</CardDescription>
+                </CardHeader>
+             </Card>
+           )}
+
+            {!isUserLoading && !user && (
+                <Card className="mt-8">
+                    <CardHeader>
+                        <CardTitle>Sign In Required</CardTitle>
+                        <CardDescription>
+                            Please <Link href="/enter" className="underline text-primary">sign in</Link> to enter a space.
+                        </CardDescription>
+                    </CardHeader>
+                </Card>
+            )}
+
         </div>
         
         <Button asChild variant="outline" className="mt-12">

@@ -49,11 +49,12 @@ export default function PersonalSpacePage() {
 
   const [isAddNoteDialogOpen, setIsAddNoteDialogOpen] = useState(false);
 
+  // We only fetch notes if the user is loaded and present.
   const {
     data: notes,
     isLoading: notesLoading,
     error: notesError,
-  } = useNotes(spaceSlug);
+  } = useNotes(user ? spaceSlug : '');
 
   const latestMemoryImages = [
     PlaceHolderImages.find((p) => p.id === 'memory-wall-feature'),
@@ -63,11 +64,13 @@ export default function PersonalSpacePage() {
   ].filter(Boolean);
 
   useEffect(() => {
+    // If auth is done loading and there's no user, redirect to login.
     if (!isUserLoading && !user) {
-      router.push('/enter');
+      router.push(`/space/${spaceSlug}/lobby`);
     }
-  }, [user, isUserLoading, router]);
+  }, [user, isUserLoading, router, spaceSlug]);
 
+  // Show a loading screen while we verify the user's authentication state.
   if (isUserLoading || !user) {
     return (
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
@@ -78,10 +81,6 @@ export default function PersonalSpacePage() {
         </main>
       </div>
     );
-  }
-
-  if (!spaceSlug) {
-    return null;
   }
   
   const renderNote = (note: NoteDocument) => {
@@ -204,7 +203,7 @@ export default function PersonalSpacePage() {
                         <div className="bg-muted p-4 rounded-lg h-24 animate-pulse"></div>
                       </div>
                     )}
-                    {notesError && <p className="text-destructive font-caption text-sm">Could not load notes.</p>}
+                    {notesError && <p className="text-destructive font-caption text-sm">Could not load notes. You may not have permission to view them.</p>}
                     {!notesLoading && !notesError && notes && notes.length > 0 && (
                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                          {notes.map(renderNote)}
