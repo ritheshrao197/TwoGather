@@ -1,3 +1,4 @@
+
 'use client';
 
 import { ReactNode } from 'react';
@@ -5,12 +6,14 @@ import { ChatPanel } from '@/components/chat/chat-panel';
 import { Button } from '@/components/ui/button';
 import { MessageSquare } from 'lucide-react';
 import { useChatStore } from '@/hooks/useChatStore';
+import { InitChatStore } from '@/hooks/use-init-chat-store';
 
 export default function SpaceLayout({ children }: { children: ReactNode }) {
   const { toggleChat } = useChatStore();
 
   return (
     <>
+      <InitChatStore />
       {children}
       <ChatPanel />
       <div className="fixed bottom-6 right-6 z-40">

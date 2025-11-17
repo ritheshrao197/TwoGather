@@ -10,7 +10,6 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -19,31 +18,11 @@ import { useChatStore } from '@/hooks/useChatStore';
 import { Send, X, Wifi, WifiOff, MessageCircle } from 'lucide-react';
 import { usePresence } from '@/hooks/usePresence';
 import { useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
 
 export function ChatPanel() {
-  const { isChatOpen, toggleChat } = useChatStore();
+  const { isChatOpen, toggleChat, currentMemberId, partnerMemberId } = useChatStore();
   const params = useParams();
   const spaceSlug = params.spaceSlug as string;
-
-  const [currentMemberId, setCurrentMemberId] = useState<string | null>(null);
-  const [partnerMemberId, setPartnerMemberId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const memberId = localStorage.getItem(`memberId-for-${spaceSlug}`);
-      const allMembersRaw = localStorage.getItem(`allMembers-for-${spaceSlug}`);
-      if (memberId && allMembersRaw) {
-        const allMembers = JSON.parse(allMembersRaw);
-        const partner = allMembers.find((m: { id: string }) => m.id !== memberId);
-        
-        setCurrentMemberId(memberId);
-        if (partner) {
-          setPartnerMemberId(partner.id);
-        }
-      }
-    }
-  }, [spaceSlug]);
   
   const presence = usePresence(spaceSlug, currentMemberId);
   const partnerPresence = partnerMemberId ? presence[partnerMemberId] : null;
