@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -36,6 +39,15 @@ const PersonBIcon = () => (
 );
 
 export default function EnterPage() {
+  const [accessKeyA, setAccessKeyA] = useState('');
+  const [accessKeyB, setAccessKeyB] = useState('');
+
+  const handleOpenSpace = (person: 'A' | 'B') => {
+    const key = person === 'A' ? accessKeyA : accessKeyB;
+    // In a real app, you'd verify this key.
+    console.log(`Opening space for Person ${person} with key: ${key}`);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-dvh bg-background p-4 sm:p-6 lg:p-8">
       <div className="text-center mb-12">
@@ -59,11 +71,22 @@ export default function EnterPage() {
           <CardContent className="flex-grow">
             <div className="space-y-2">
               <Label htmlFor="password-a">Access Key</Label>
-              <Input id="password-a" type="password" placeholder="••••••••" />
+              <Input
+                id="password-a"
+                type="password"
+                placeholder="••••••••"
+                value={accessKeyA}
+                onChange={(e) => setAccessKeyA(e.target.value)}
+              />
             </div>
           </CardContent>
           <CardFooter>
-            <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">Open A's Space</Button>
+            <Button
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              onClick={() => handleOpenSpace('A')}
+            >
+              Open A's Space
+            </Button>
           </CardFooter>
         </Card>
 
@@ -78,11 +101,22 @@ export default function EnterPage() {
           <CardContent className="flex-grow">
             <div className="space-y-2">
               <Label htmlFor="password-b">Access Key</Label>
-              <Input id="password-b" type="password" placeholder="••••••••" />
+              <Input
+                id="password-b"
+                type="password"
+                placeholder="••••••••"
+                value={accessKeyB}
+                onChange={(e) => setAccessKeyB(e.target.value)}
+              />
             </div>
           </CardContent>
           <CardFooter>
-            <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">Open B's Space</Button>
+            <Button
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              onClick={() => handleOpenSpace('B')}
+            >
+              Open B's Space
+            </Button>
           </CardFooter>
         </Card>
       </div>
