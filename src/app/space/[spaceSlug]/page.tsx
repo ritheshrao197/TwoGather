@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   ArrowLeft,
   Sun,
@@ -47,7 +47,9 @@ import { Separator } from '@/components/ui/separator';
 import { useFirebase } from '@/firebase';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { collection, serverTimestamp } from 'firebase/firestore';
+import { cn } from '@/lib/utils';
 
+type AmbientMood = 'none' | 'rain' | 'breathing' | 'plant' | 'gradient';
 
 export default function PersonalSpacePage() {
   const params = useParams();
@@ -61,6 +63,9 @@ export default function PersonalSpacePage() {
   const [welcomeMessage, setWelcomeMessage] = useState('Welcome back.');
   const [welcomeIcon, setWelcomeIcon] = useState(<Sun className="w-5 h-5" />);
   const [quickNoteText, setQuickNoteText] = useState('');
+  const [activeMood, setActiveMood] = useState<AmbientMood>('none');
+  const rainAudioRef = useRef<HTMLAudioElement>(null);
+
 
   // Dialog states
   const [isAddNoteDialogOpen, setIsAddNoteDialogOpen] = useState(false);
@@ -114,6 +119,18 @@ export default function PersonalSpacePage() {
       setWelcomeIcon(<Moon className="w-5 h-5 text-indigo-400" />);
     }
   }, []);
+
+  useEffect(() => {
+    const rainAudio = rainAudioRef.current;
+    if (rainAudio) {
+      if (activeMood === 'rain') {
+        rainAudio.play().catch(e => console.error("Audio autoplay failed:", e));
+      } else {
+        rainAudio.pause();
+        rainAudio.currentTime = 0;
+      }
+    }
+  }, [activeMood]);
   
   const getPresenceStatus = () => {
     const bothOnline = myPresence?.online && partnerPresence?.online;
@@ -167,6 +184,9 @@ export default function PersonalSpacePage() {
     }
   };
 
+  const toggleMood = (mood: AmbientMood) => {
+    setActiveMood(current => current === mood ? 'none' : mood);
+  };
 
   if (!currentMemberId) {
     return (
@@ -210,7 +230,10 @@ export default function PersonalSpacePage() {
       {partnerMemberId && <SendGratitudeDialog spaceId={spaceSlug} open={isGratitudeDialogOpen} onOpenChange={setIsGratitudeDialogOpen} authorId={currentMemberId} targetId={partnerMemberId} />}
       <QuickQuestionDialog spaceId={spaceSlug} open={isQuestionDialogOpen} onOpenChange={setIsQuestionDialogOpen} authorId={currentMemberId} />
       
-      <div className="flex flex-col min-h-dvh bg-background text-foreground">
+      <div className={cn(
+        "flex flex-col min-h-dvh bg-background text-foreground transition-colors duration-1000",
+        activeMood === 'gradient' && 'soft-gradient-background'
+      )}>
         <Header />
         <main className="flex-1 container mx-auto px-4 py-8 pt-24">
           
@@ -371,10 +394,10 @@ export default function PersonalSpacePage() {
               <Card>
                   <CardHeader><CardTitle>Ambient Mood</CardTitle></CardHeader>
                   <CardContent className="grid grid-cols-2 gap-2 text-center">
-                    <Button variant="outline" size="sm" className="flex-col h-auto py-2"><Droplets/><span className="mt-1 text-xs">Gentle Rain</span></Button>
-                    <Button variant="outline" size="sm" className="flex-col h-auto py-2"><Wind/><span className="mt-1 text-xs">Breathing</span></Button>
-                    <Button variant="outline" size="sm" className="flex-col h-auto py-2"><Flower2/><span className="mt-1 text-xs">Growing Plant</span></Button>
-                    <Button variant="outline" size="sm" className="flex-col h-auto py-2"><Sparkles/><span className="mt-1 text-xs">Soft Gradient</span></Button>
+                    <Button variant={activeMood === 'rain' ? 'secondary' : 'outline'} size="sm" className="flex-col h-auto py-2" onClick={() => toggleMood('rain')}><Droplets/><span className="mt-1 text-xs">Gentle Rain</span></Button>
+                    <Button variant={activeMood === 'breathing' ? 'secondary' : 'outline'} size="sm" className="flex-col h-auto py-2" onClick={() => toggleMood('breathing')}><Wind/><span className="mt-1 text-xs">Breathing</span></Button>
+                    <Button variant={activeMood === 'plant' ? 'secondary' : 'outline'} size="sm" className="flex-col h-auto py-2" onClick={() => toggleMood('plant')}><Flower2/><span className="mt-1 text-xs">Growing Plant</span></Button>
+                    <Button variant={activeMood === 'gradient' ? 'secondary' : 'outline'} size="sm" className="flex-col h-auto py-2" onClick={() => toggleMood('gradient')}><Sparkles/><span className="mt-1 text-xs">Soft Gradient</span></Button>
                   </CardContent>
               </Card>
               
@@ -419,6 +442,7 @@ export default function PersonalSpacePage() {
               </Button>
           </footer>
         </main>
+        <audio ref={rainAudioRef} src="https://www.soundjay.com/nature/rain-01.mp3" loop />
       </div>
     </>
   );

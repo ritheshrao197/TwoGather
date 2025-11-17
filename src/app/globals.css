@@ -67,3 +67,17 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  @keyframes slow-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  .soft-gradient-background {
+    background: linear-gradient(-45deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.1), hsl(var(--background)), hsl(var(--secondary) / 0.2));
+    background-size: 400% 400%;
+    animation: slow-gradient 30s ease infinite;
+  }
+}
