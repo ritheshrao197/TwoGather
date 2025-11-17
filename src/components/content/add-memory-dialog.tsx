@@ -15,8 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebase } from '@/firebase';
-import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Loader2 } from 'lucide-react';
 
@@ -73,7 +72,7 @@ export function AddMemoryDialog({
 
       // 2. Create the memory document in Firestore
       const contentRef = collection(firestore, `spaces/${spaceId}/content`);
-      const newMemory = {
+      await addDoc(contentRef, {
         spaceId,
         authorMemberId: authorId,
         type: 'memory',
@@ -84,9 +83,7 @@ export function AddMemoryDialog({
         visibility: 'members',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
-      };
-      
-      addDocumentNonBlocking(contentRef, newMemory);
+      });
 
       toast({
         title: 'Memory Added!',
@@ -97,12 +94,12 @@ export function AddMemoryDialog({
       setImageFile(null);
       setCaption('');
       onOpenChange(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding memory:', error);
       toast({
         variant: 'destructive',
         title: 'Uh oh!',
-        description: 'Could not add your memory. Please try again.',
+        description: error.message || 'Could not add your memory. Please check permissions and try again.',
       });
     } finally {
       setIsLoading(false);

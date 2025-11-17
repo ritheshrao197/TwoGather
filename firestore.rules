@@ -64,9 +64,10 @@ service cloud.firestore {
 service firebase.storage {
   match /b/{bucket}/o {
     // Allow members of a space to upload memories.
-    // We are trusting the client-side logic to have validated the space password.
+    // In a real app with auth, this would be: `if request.auth != null;`
+    // For the simple flow, we trust the client to have validated the space password.
     match /spaces/{spaceId}/memories/{allPaths=**} {
-      allow read, write: if true;
+      allow read, write: if request.auth != null;
     }
   }
 }
