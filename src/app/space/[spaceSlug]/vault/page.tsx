@@ -64,6 +64,7 @@ export default function VaultPage() {
   const { data: vaultEntries, isLoading: isLoadingEntries } = useCollection<VaultEntryDocument>(vaultEntriesQuery);
 
   useEffect(() => {
+    // If there are no vault entries, stop the decryption process.
     if (!vaultEntries) {
         setIsDecrypting(false);
         return;
@@ -86,7 +87,14 @@ export default function VaultPage() {
         setIsDecrypting(false);
     };
 
-    decryptAll();
+    // Only run decryption if there are entries to decrypt.
+    if (vaultEntries.length > 0) {
+      decryptAll();
+    } else {
+      setDecryptedEntries([]);
+      setIsDecrypting(false);
+    }
+
   }, [vaultEntries]);
 
   const isLoading = isLoadingEntries || isDecrypting;
@@ -159,5 +167,3 @@ export default function VaultPage() {
     </>
   );
 }
-
-    
