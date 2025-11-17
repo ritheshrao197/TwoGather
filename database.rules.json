@@ -1,0 +1,19 @@
+
+{
+  "rules": {
+    "realtime": {
+      "presence": {
+        ".read": true,
+        ".write": true
+      },
+      "sessions": {
+        ".read": true,
+        ".write": true
+      },
+      "sync": {
+        ".read": true,
+        ".write": true
+      }
+    }
+  }
+}

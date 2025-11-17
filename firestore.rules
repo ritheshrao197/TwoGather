@@ -1,78 +1,39 @@
-/**
- * @description This ruleset enforces access control for the 'Shared Spaces' application based on a space-centric model.
- * @dataStructure
- *   - /spaces/{spaceId}: Stores space-level information. Publicly readable if public_enabled, otherwise members only.
- *   - /spaces/{spaceId}/members/{memberId}: Stores participant information. Members of a space can see other members.
- *   - /spaces/{spaceId}/content/{contentId}: Stores content. Visibility is controlled by the 'visibility' field.
- */
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper Functions
     function isSignedIn() {
-      // In the simple flow, we don't have signed-in users in the traditional sense.
-      // We will allow operations and depend on client-side logic to have validated the space password.
-      // For read/write rules within a space, we'll assume access is granted if they've reached this point.
-      // A more secure model would involve custom tokens, but for the simple flow, this is sufficient.
-      return true;
-    }
-
-    // This function is kept for rules that might still check for membership conceptually,
-    // but its check is simplified in the context of the new flow.
-    function isMember(spaceId) {
-      // Since we don't have auth.uid, we can't check for membership in the traditional way.
-      // We will default to true, assuming the client has handled lobby password validation.
+      // In this simplified flow, authentication is handled client-side.
+      // We assume if a user is trying to access a sub-collection, they are authorized.
       return true;
     }
 
     match /spaces/{spaceId} {
-      // Anyone can read a space document to check its password hash.
-      allow get: if true;
-      // Listing all spaces is disallowed for security.
-      allow list: if false;
-      // Anyone can create a new space. This is essential for the sign-up flow.
-      allow create: if true;
-      // For this simple flow, we will trust the client to have authenticated.
-      // A more advanced implementation would use custom tokens.
+      // Anyone can create or read a space's top-level info.
+      allow read, create: if true;
+      // Updates are allowed, trusting client-side logic.
       allow update, delete: if true;
 
       match /members/{memberId} {
-        // Anyone who can access the lobby can see the members.
-        allow get: if true;
-        allow list: if true;
-        // Allow creating members when a space is created.
-        allow create: if true;
-        // Updates and deletes are allowed, trusting client-side logic.
-        allow update, delete: if true;
-      }
-
-      match /claimCodes/{claimCodeId} {
-        // This collection is not used in the simple flow, but we'll secure it anyway.
-        allow read, write: if false;
+        // Members of a space can be read by anyone who has access to the space.
+        allow read, list, create, update, delete: if isSignedIn();
       }
 
       match /content/{contentId} {
-        // Anyone who has entered the space can read/list content.
-        allow get, list: if true;
-        // Anyone who has entered the space can create, update, or delete content.
-        allow create, update, delete: if true;
+        // All content operations are allowed for authorized users.
+        allow read, list, create, update, delete: if isSignedIn();
+      }
+      
+      match /games/{gameId} {
+        // Game state can be read and written by authorized users.
+        allow read, write: if isSignedIn();
       }
 
       match /pendingMessages/{messageId} {
-        // Anyone who has entered the space can manage pending messages.
-        allow read, list, create, delete: if true;
+        // Pending messages can be managed by authorized users.
+        allow read, list, create, delete: if isSignedIn();
       }
-    }
-  }
-}
-service firebase.storage {
-  match /b/{bucket}/o {
-    // Allow members of a space to upload memories.
-    // In a real app with auth, this would be: `if request.auth != null;`
-    // For the simple flow, we trust the client to have validated the space password.
-    match /spaces/{spaceId}/memories/{allPaths=**} {
-      allow read, write: if true;
     }
   }
 }
