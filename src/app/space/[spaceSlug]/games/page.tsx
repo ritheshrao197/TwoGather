@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { ArrowLeft, Gamepad2, BrainCircuit, Puzzle, PencilRuler, Users, Wand2, Rows3, CheckSquare, Loader2, BookOpen, Sparkles } from 'lucide-react';
+import { ArrowLeft, Gamepad2, Users, Rows3, CheckSquare, Loader2, BookOpen, Sparkles } from 'lucide-react';
 import { useFirebase } from '@/firebase';
 import { ref, push, set } from 'firebase/database';
 import { useState } from 'react';
@@ -45,38 +45,6 @@ const games = [
     description: 'Privately write your vision for a future moment, then reveal.',
     players: '2',
     time: '3-5 min'
-  },
-  {
-    id: 'quick-quiz',
-    icon: BrainCircuit,
-    title: 'Quick Quiz',
-    description: 'Short multiple-choice quizzes on fun topics.',
-    players: '2',
-    time: '3-5 min'
-  },
-  {
-    id: 'word-scramble',
-    icon: Wand2,
-    title: 'Word Scramble',
-    description: 'Unscramble the same word list; fastest wins.',
-    players: '2',
-    time: '2-6 min'
-  },
-  {
-    id: 'memory-match',
-    icon: Puzzle,
-    title: 'Memory Match',
-    description: 'Classic flip tiles, take turns revealing pairs.',
-    players: '2',
-    time: '3-7 min'
-  },
-  {
-    id: 'draw-guess',
-    icon: PencilRuler,
-    title: 'Draw & Guess',
-    description: 'One partner draws a word, the other guesses.',
-    players: '2',
-    time: '3-6 min'
   },
 ];
 
