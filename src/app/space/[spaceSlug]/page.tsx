@@ -37,6 +37,7 @@ import { AddNoteDialog } from '@/components/content/add-note-dialog';
 import { DailyCheckInDialog } from '@/components/rituals/daily-check-in-dialog';
 import { SendGratitudeDialog } from '@/components/rituals/send-gratitude-dialog';
 import { QuickQuestionDialog } from '@/components/rituals/quick-question-dialog';
+import { InteractionFeed } from '@/components/rituals/interaction-feed';
 import { useNotes, NoteDocument } from '@/hooks/useNotes';
 import { usePresence, SpacePresence } from '@/hooks/usePresence';
 import { useTapSync } from '@/hooks/useTapSync';
@@ -324,20 +325,25 @@ export default function PersonalSpacePage() {
             </div>
 
             <div className="space-y-6">
-              <Card>
-                  <CardHeader>
-                    <CardTitle>This Week's Goal</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                        <CalendarHeart className="w-8 h-8 text-primary"/>
-                    </div>
-                    <div className="flex-1">
-                        <p className="font-headline">Plan weekend activity</p>
-                        <p className="text-sm font-caption text-muted-foreground">Tap to open Shared Plans board.</p>
-                    </div>
-                  </CardContent>
+               <Card>
+                <CardHeader>
+                  <CardTitle>Tiny Rituals</CardTitle>
+                  <CardDescription>Small ways to connect each day.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-2">
+                  <Button variant="outline" onClick={() => setIsCheckInDialogOpen(true)}>
+                    <Smile className="mr-2" /> Daily Check-in
+                  </Button>
+                  <Button variant="outline" onClick={() => setIsGratitudeDialogOpen(true)}>
+                    <Heart className="mr-2" /> Send Gratitude Blink
+                  </Button>
+                  <Button variant="outline" onClick={() => setIsQuestionDialogOpen(true)}>
+                    <MessageCircle className="mr-2" /> Quick Question
+                  </Button>
+                </CardContent>
               </Card>
+
+              <InteractionFeed spaceId={spaceSlug} currentMemberId={currentMemberId} />
               
               <Card>
                 <CardHeader>
@@ -358,15 +364,6 @@ export default function PersonalSpacePage() {
                     </Link>
                 </CardContent>
               </Card>
-
-                <Card>
-                    <CardHeader><CardTitle>This Week's Highlights</CardTitle></CardHeader>
-                    <CardContent className="text-sm font-caption text-muted-foreground space-y-2">
-                        <p>+ 3 new notes added</p>
-                        <p>+ 5 memories viewed</p>
-                        <p>+ 2 check-ins done</p>
-                    </CardContent>
-                </Card>
             </div>
           </div>
           
