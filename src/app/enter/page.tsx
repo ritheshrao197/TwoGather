@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
 const PersonAIcon = () => (
   <svg
@@ -38,14 +40,25 @@ const PersonBIcon = () => (
   </svg>
 );
 
+const SHARED_ACCESS_KEY = "password123";
+
 export default function EnterPage() {
   const [accessKeyA, setAccessKeyA] = useState('');
   const [accessKeyB, setAccessKeyB] = useState('');
+  const router = useRouter();
+  const { toast } = useToast();
 
   const handleOpenSpace = (person: 'A' | 'B') => {
     const key = person === 'A' ? accessKeyA : accessKeyB;
-    // In a real app, you'd verify this key.
-    console.log(`Opening space for Person ${person} with key: ${key}`);
+    if (key === SHARED_ACCESS_KEY) {
+      router.push(`/space/${person.toLowerCase()}`);
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Invalid Access Key",
+        description: "Please check the key and try again.",
+      });
+    }
   };
 
   return (
@@ -77,6 +90,7 @@ export default function EnterPage() {
                 placeholder="••••••••"
                 value={accessKeyA}
                 onChange={(e) => setAccessKeyA(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleOpenSpace('A')}
               />
             </div>
           </CardContent>
@@ -107,6 +121,7 @@ export default function EnterPage() {
                 placeholder="••••••••"
                 value={accessKeyB}
                 onChange={(e) => setAccessKeyB(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleOpenSpace('B')}
               />
             </div>
           </CardContent>
