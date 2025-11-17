@@ -15,71 +15,60 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, User, KeyRound, Loader2 } from 'lucide-react';
-import { useState, useMemo, useEffect } from 'react';
-import { useCollection, useDoc, useFirebase, useMemoFirebase } from '@/firebase';
-import { doc, collection } from 'firebase/firestore';
+import { ArrowLeft, User, KeyRound } from 'lucide-react';
+import { useState } from 'react';
+import { useFirebase, useMemoFirebase, useCollection, useDoc } from '@/firebase';
+import { collection, doc } from 'firebase/firestore';
 
-type Member = {
-  id: string;
+// Define types for our data
+interface SpaceData {
+  displayName: string;
+  slug: string;
+  spacePasswordHash: string;
+  publicEnabled: boolean;
+  createdAt: string;
+}
+
+interface MemberData {
   displayName: string;
   claimed: boolean;
-};
+  lastSeen?: string;
+  createdAt: string;
+}
 
 export default function SpaceLobbyPage() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
-  const { auth, firestore } = useFirebase();
+  const { firestore } = useFirebase();
   const spaceSlug = params.spaceSlug as string;
 
-  const [hasLobbyAccess, setHasLobbyAccess] = useState(false);
-  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
+  const [selectedMember, setSelectedMember] = useState<string | null>(null);
   const [memberPassword, setMemberPassword] = useState('');
 
-  // Verify lobby access on component mount
-  useEffect(() => {
-    if (typeof window !== 'undefined' && spaceSlug) {
-      const hasAccess = sessionStorage.getItem(`space-auth-${spaceSlug}`) === 'true';
-      if (!hasAccess) {
-        toast({
-            variant: 'destructive',
-            title: 'Access Denied',
-            description: 'You must enter the space password to access the lobby.',
-        });
-        router.push('/enter');
-      } else {
-        // Now that we have access, we can try to sign in anonymously to read data
-        if (!auth.currentUser) {
-            signInAnonymously(auth).catch(err => {
-                console.error("Anonymous sign-in failed", err);
-                toast({
-                    variant: 'destructive',
-                    title: 'Authentication Failed',
-                    description: 'Could not authenticate to fetch space details.'
-                });
-                router.push('/enter');
-            });
-        }
-        setHasLobbyAccess(true);
-      }
-    }
-  }, [spaceSlug, router, toast, auth]);
-
-  const spaceRef = useMemoFirebase(() => spaceSlug ? doc(firestore, 'spaces', spaceSlug) : null, [firestore, spaceSlug]);
-  const { data: spaceData, isLoading: isSpaceLoading } = useDoc(spaceRef);
-
-  // Only attempt to load members if we have access and are not a guest
-  const membersRef = useMemoFirebase(
-    () => (hasLobbyAccess && spaceSlug) ? collection(firestore, `spaces/${spaceSlug}/members`) : null,
-    [hasLobbyAccess, firestore, spaceSlug]
+  // Create memoized references for Firestore queries
+  const memoizedSpaceRef = useMemoFirebase(
+    () => doc(firestore, 'spaces', spaceSlug),
+    [firestore, spaceSlug]
   );
-  const { data: members, isLoading: areMembersLoading } = useCollection<Member>(membersRef);
 
-  const selectedMember = useMemo(() => {
-    return members?.find(m => m.id === selectedMemberId) ?? null;
-  }, [members, selectedMemberId]);
+  const memoizedMembersRef = useMemoFirebase(
+    () => collection(firestore, 'spaces', spaceSlug, 'members'),
+    [firestore, spaceSlug]
+  );
 
+  // Use the Firebase hooks to fetch data
+  const {
+    data: spaceData,
+    isLoading: spaceLoading,
+    error: spaceError
+  } = useDoc<SpaceData>(memoizedSpaceRef);
+
+  const {
+    data: membersData,
+    isLoading: membersLoading,
+    error: membersError
+  } = useCollection<MemberData>(memoizedMembersRef);
 
   const handleMemberLogin = () => {
     if (!selectedMember || !memberPassword) {
@@ -93,7 +82,7 @@ export default function SpaceLobbyPage() {
     // TODO: Authenticate member with Firebase
     toast({
       title: 'Login Successful!',
-      description: `Welcome, ${selectedMember.displayName}!`,
+      description: `Welcome, ${selectedMember}!`,
     });
     router.push(`/space/${spaceSlug}`);
   };
@@ -107,31 +96,44 @@ export default function SpaceLobbyPage() {
     router.push(`/claim?space=${spaceSlug}&member=${memberName}`);
   };
   
-  const isLoading = isSpaceLoading || areMembersLoading || !hasLobbyAccess;
-
-  if (isLoading) {
+  // Handle loading states
+  if (spaceLoading || membersLoading) {
     return (
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
         <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <p className="mt-4 text-muted-foreground">Loading your space...</p>
+          <h1 className="text-2xl font-bold">Loading...</h1>
         </main>
       </div>
-    )
+    );
   }
 
-  if (!spaceData && !isLoading) {
+  // Handle error states
+  if (spaceError || membersError) {
+    console.error('Error fetching data:', spaceError || membersError);
     return (
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
         <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
-          <h1 className="text-2xl font-bold">Space not found.</h1>
-          <p className="text-muted-foreground">The space you are looking for does not exist or you may not have permission to view it.</p>
+          <h1 className="text-2xl font-bold">Error loading space data.</h1>
           <Button asChild variant="link" className="mt-4">
             <Link href="/enter">Return to entrance</Link>
           </Button>
         </main>
       </div>
-    )
+    );
+  }
+
+  // Handle case where space doesn't exist
+  if (!spaceData) {
+    return (
+      <div className="flex flex-col min-h-dvh bg-background text-foreground">
+        <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
+          <h1 className="text-2xl font-bold">Space not found.</h1>
+          <Button asChild variant="link" className="mt-4">
+            <Link href="/enter">Return to entrance</Link>
+          </Button>
+        </main>
+      </div>
+    );
   }
 
   return (
@@ -139,7 +141,7 @@ export default function SpaceLobbyPage() {
       <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-headline font-bold text-foreground">
-            Welcome to {spaceData?.displayName}
+            Welcome to {spaceData.displayName || 'Unnamed Space'}
           </h1>
           <p className="mt-3 max-w-md mx-auto text-muted-foreground font-caption">
             Who is entering?
@@ -147,18 +149,18 @@ export default function SpaceLobbyPage() {
         </div>
 
         <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8">
-          {members && members.map((member) => (
+          {membersData && membersData.map((member) => (
             <Card
               key={member.id}
               className={`transition-all duration-300 ${
-                selectedMemberId === member.id ? 'border-primary shadow-lg' : 'border-primary/20'
+                selectedMember === member.displayName ? 'border-primary shadow-lg' : 'border-primary/20'
               }`}
             >
               <CardHeader className="items-center text-center">
                 <div className="bg-primary/10 p-4 rounded-full mb-4">
                   <User className="w-8 h-8 text-primary" />
                 </div>
-                <CardTitle className="font-headline text-2xl">{member.displayName}</CardTitle>
+                <CardTitle className="font-headline text-2xl">{member.displayName || 'Unnamed Member'}</CardTitle>
                 <CardDescription>
                   {member.claimed ? 'Account Claimed' : 'Claim Your Account'}
                 </CardDescription>
@@ -167,8 +169,8 @@ export default function SpaceLobbyPage() {
                 {member.claimed ? (
                   <Button
                     className="w-full"
-                    variant={selectedMemberId === member.id ? 'default' : 'outline'}
-                    onClick={() => setSelectedMemberId(member.id)}
+                    variant={selectedMember === member.displayName ? 'default' : 'outline'}
+                    onClick={() => setSelectedMember(member.displayName)}
                   >
                     Log in as {member.displayName}
                   </Button>
@@ -189,7 +191,7 @@ export default function SpaceLobbyPage() {
                  <div className="bg-accent/10 p-3 rounded-full">
                     <KeyRound className="w-6 h-6 text-accent" />
                  </div>
-                <CardTitle className="text-xl font-headline">Enter Password for {selectedMember.displayName}</CardTitle>
+                <CardTitle className="text-xl font-headline">Enter Password for {selectedMember}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -208,7 +210,7 @@ export default function SpaceLobbyPage() {
                 <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleMemberLogin}>
                   Login
                 </Button>
-                 <Button variant="link" size="sm" onClick={() => setSelectedMemberId(null)}>
+                 <Button variant="link" size="sm" onClick={() => setSelectedMember(null)}>
                     Cancel
                 </Button>
               </CardFooter>
