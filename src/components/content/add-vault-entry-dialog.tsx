@@ -84,7 +84,7 @@ export function AddVaultEntryDialog({
         <DialogHeader>
           <DialogTitle>New Vault Entry</DialogTitle>
           <DialogDescription>
-            This entry will be client-side encrypted. Only you can read it.
+            This entry will be client-side encrypted. You can use Markdown for formatting. Only you can read it.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -92,7 +92,7 @@ export function AddVaultEntryDialog({
             <Label htmlFor="entry-text">Your Private Thoughts</Label>
             <Textarea
               id="entry-text"
-              placeholder="Write anything you want... it's safe here."
+              placeholder="Write anything you want... it's safe here. Use **bold** or *italic* for formatting."
               value={entryText}
               onChange={(e) => setEntryText(e.target.value)}
               rows={8}
@@ -109,5 +109,3 @@ export function AddVaultEntryDialog({
     </Dialog>
   );
 }
-
-    

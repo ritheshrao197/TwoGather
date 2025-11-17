@@ -13,6 +13,8 @@ import { AddVaultEntryDialog } from '@/components/content/add-vault-entry-dialog
 import { decrypt } from '@/lib/vault-crypto';
 import { ArrowLeft, Plus, Lock } from 'lucide-react';
 import { format } from 'date-fns';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface VaultEntryPayload {
   encryptedText: string;
@@ -148,7 +150,11 @@ export default function VaultPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="whitespace-pre-wrap font-serif">{entry.decryptedText}</p>
+                  <article className="prose dark:prose-invert">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {entry.decryptedText}
+                    </ReactMarkdown>
+                  </article>
                 </CardContent>
               </Card>
             ))}
