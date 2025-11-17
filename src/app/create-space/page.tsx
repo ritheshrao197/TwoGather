@@ -15,14 +15,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Users } from 'lucide-react';
+import { useFirebase } from '@/firebase';
+import { signInAnonymously } from 'firebase/auth';
+import { doc, writeBatch } from 'firebase/firestore';
 
 export default function CreateSpacePage() {
   const [spaceName, setSpaceName] = useState('');
   const [yourName, setYourName] = useState('');
   const [partnerName, setPartnerName] = useState('');
   const [spacePassword, setSpacePassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const { auth, firestore } = useFirebase();
 
   const handleCreateSpace = async () => {
     if (!spaceName || !yourName || !partnerName || !spacePassword) {
@@ -33,13 +38,66 @@ export default function CreateSpacePage() {
       });
       return;
     }
-    // TODO: Implement actual space creation logic with Firebase
-    const slug = spaceName.toLowerCase().replace(/\s+/g, '-');
-    toast({
-      title: 'Space Created!',
-      description: `Your space "${spaceName}" is ready.`,
-    });
-    router.push(`/space/${slug}/lobby`);
+
+    setIsLoading(true);
+
+    try {
+      // 1. Sign in the user anonymously to get permissions to write
+      const userCredential = await signInAnonymously(auth);
+      const creatorUid = userCredential.user.uid;
+
+      const slug = spaceName.toLowerCase().replace(/\s+/g, '-');
+      const spaceId = slug; // Using slug as the document ID for simplicity
+
+      // 2. Prepare batch write to Firestore
+      const batch = writeBatch(firestore);
+
+      // 3. Create the space document
+      const spaceRef = doc(firestore, 'spaces', spaceId);
+      batch.set(spaceRef, {
+        displayName: spaceName,
+        slug: slug,
+        spacePasswordHash: spacePassword, // In a real app, you'd hash this
+        publicEnabled: false,
+        createdAt: new Date().toISOString(),
+      });
+
+      // 4. Create the member document for the creator
+      const creatorMemberRef = doc(firestore, `spaces/${spaceId}/members`, creatorUid);
+      batch.set(creatorMemberRef, {
+        displayName: yourName,
+        claimed: true, // The creator's account is claimed by default
+        lastSeen: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+      });
+
+      // 5. Create the unclaimed member document for the partner
+      // We use a generated ID for the partner for now.
+      const partnerMemberRef = doc(firestore, `spaces/${spaceId}/members`, `partner-${Date.now()}`);
+      batch.set(partnerMemberRef, {
+        displayName: partnerName,
+        claimed: false, // Partner's account is unclaimed
+        createdAt: new Date().toISOString(),
+      });
+
+      // 6. Commit the batch
+      await batch.commit();
+      
+      toast({
+        title: 'Space Created!',
+        description: `Your space "${spaceName}" is ready.`,
+      });
+      router.push(`/space/${slug}/lobby`);
+
+    } catch (error) {
+      console.error('Error creating space:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Creation Failed',
+        description: 'Could not create the space. Please try again.',
+      });
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -69,6 +127,7 @@ export default function CreateSpacePage() {
                 placeholder="e.g., Our Cozy Corner"
                 value={spaceName}
                 onChange={(e) => setSpaceName(e.target.value)}
+                disabled={isLoading}
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -79,6 +138,7 @@ export default function CreateSpacePage() {
                   placeholder="Your name"
                   value={yourName}
                   onChange={(e) => setYourName(e.target.value)}
+                  disabled={isLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -88,6 +148,7 @@ export default function CreateSpacePage() {
                   placeholder="Partner's name"
                   value={partnerName}
                   onChange={(e) => setPartnerName(e.target.value)}
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -99,12 +160,13 @@ export default function CreateSpacePage() {
                 placeholder="A secret password for your space lobby"
                 value={spacePassword}
                 onChange={(e) => setSpacePassword(e.target.value)}
+                disabled={isLoading}
               />
             </div>
           </CardContent>
           <CardFooter>
-            <Button className="w-full" onClick={handleCreateSpace}>
-              Create Space
+            <Button className="w-full" onClick={handleCreateSpace} disabled={isLoading}>
+              {isLoading ? 'Creating...' : 'Create Space'}
             </Button>
           </CardFooter>
         </Card>
