@@ -16,8 +16,8 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Users } from 'lucide-react';
 import { useFirebase } from '@/firebase';
-import { createUserWithEmailAndPassword, updateProfile, onAuthStateChanged } from 'firebase/auth';
-import { doc, writeBatch } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc, writeBatch } from 'firebase/firestore';
 
 export default function CreateSpacePage() {
   const [spaceName, setSpaceName] = useState('');
@@ -44,72 +44,50 @@ export default function CreateSpacePage() {
     setIsLoading(true);
 
     try {
-      // 1. Create user with email and password
+      // 1. Create user with email and password and sign them in.
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const creatorUid = userCredential.user.uid;
       
-      // 2. Update user profile with display name
+      // 2. Update user's auth profile with display name.
       await updateProfile(userCredential.user, {
         displayName: yourName
       });
-
-      // 3. Ensure the user is fully authenticated before proceeding
-      // Wait for the auth state to be confirmed
-      await new Promise<void>((resolve, reject) => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-          if (user && user.uid === creatorUid) {
-            unsubscribe();
-            resolve();
-          }
-        });
-        
-        // Timeout after 5 seconds
-        setTimeout(() => {
-          unsubscribe();
-          reject(new Error('Authentication state confirmation timed out'));
-        }, 5000);
-      });
-
+      
       const slug = spaceName.toLowerCase().replace(/\s+/g, '-');
-      const spaceId = slug; // Using slug as the document ID for simplicity
+      const spaceId = slug;
 
-      // 4. Prepare batch write to Firestore
+      // 3. Create the space and the creator's member document in a single batch.
+      // This is allowed by the security rules.
       const batch = writeBatch(firestore);
 
-      // 5. Create the space document
       const spaceRef = doc(firestore, 'spaces', spaceId);
       batch.set(spaceRef, {
         displayName: spaceName,
         slug: slug,
-        spacePasswordHash: spacePassword, // In a real app, you'd hash this
+        spacePasswordHash: spacePassword, // In a real app, you'd hash this.
         publicEnabled: false,
         createdAt: new Date().toISOString(),
       });
-
-      // 6. Create the member document for the creator
+      
       const creatorMemberRef = doc(firestore, `spaces/${spaceId}/members`, creatorUid);
       batch.set(creatorMemberRef, {
         displayName: yourName,
-        claimed: true, // The creator's account is claimed by default
+        claimed: true,
         lastSeen: new Date().toISOString(),
         createdAt: new Date().toISOString(),
       });
+      
+      await batch.commit();
 
-      // 7. Create the unclaimed member document for the partner
-      // We use a generated ID for the partner for now.
+      // 4. Now that the creator is a member, create the partner's member document.
+      // This is a separate operation.
       const partnerMemberRef = doc(firestore, `spaces/${spaceId}/members`, `partner-${Date.now()}`);
-      batch.set(partnerMemberRef, {
+      await setDoc(partnerMemberRef, {
         displayName: partnerName,
-        claimed: false, // Partner's account is unclaimed
+        claimed: false,
         createdAt: new Date().toISOString(),
       });
 
-      // 8. Commit the batch
-      await batch.commit();
-      
-      console.log(`Space created successfully with ID: ${spaceId}`);
-      console.log(`Creator member document created with ID: ${creatorUid}`);
-      
       toast({
         title: 'Space Created!',
         description: `Your space "${spaceName}" is ready.`,
@@ -120,7 +98,6 @@ export default function CreateSpacePage() {
       console.error('Error creating space:', error);
       let errorMessage = 'Could not create the space. Please try again.';
       
-      // Provide more specific error messages
       if (error.code === 'auth/email-already-in-use') {
         errorMessage = 'This email is already in use. Please use a different email or sign in instead.';
       } else if (error.code === 'auth/invalid-email') {
@@ -128,7 +105,7 @@ export default function CreateSpacePage() {
       } else if (error.code === 'auth/weak-password') {
         errorMessage = 'Password should be at least 6 characters.';
       } else if (error.message && error.message.includes('Missing or insufficient permissions')) {
-        errorMessage = 'You do not have permission to create a space. Please try again or contact support.';
+        errorMessage = 'You do not have permission to create a space. This might be a security rule issue. Please try again or contact support.';
       }
       
       toast({
@@ -136,7 +113,8 @@ export default function CreateSpacePage() {
         title: 'Creation Failed',
         description: errorMessage,
       });
-      setIsLoading(false);
+    } finally {
+        setIsLoading(false);
     }
   };
 
@@ -243,3 +221,5 @@ export default function CreateSpacePage() {
     </div>
   );
 }
+
+    

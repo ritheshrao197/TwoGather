@@ -36,7 +36,8 @@ service cloud.firestore {
         // All members of a space can list the other members.
         allow list: if isMember(spaceId);
         // A user can create their own member document.
-        allow create: if isSignedIn() && request.auth.uid == memberId;
+        // Also, an existing member can create a document for another member (e.g. for a partner).
+        allow create: if isSignedIn() && (request.auth.uid == memberId || isMember(spaceId));
         // A member can update their own document.
         allow update: if isSignedIn() && request.auth.uid == memberId;
         // A member can delete their own document.
@@ -62,3 +63,5 @@ service cloud.firestore {
     }
   }
 }
+
+    
