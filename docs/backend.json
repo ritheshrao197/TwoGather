@@ -49,6 +49,18 @@
       },
       "required": ["id", "spaceId", "code", "expiresAt", "singleUse", "createdAt"]
     },
+    "Note": {
+      "title": "Note",
+      "type": "object",
+      "description": "A short text-based note left by a member.",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "The content of the note."
+        }
+      },
+      "required": ["text"]
+    },
     "Content": {
       "title": "Content",
       "type": "object",
@@ -58,7 +70,11 @@
         "spaceId": { "type": "string", "description": "The ID of the space this content belongs to." },
         "authorMemberId": { "type": "string", "description": "The ID of the member who authored this content." },
         "type": { "type": "string", "enum": ["public_post", "memory", "note", "shared_entry", "vault", "file"] },
-        "payload": { "type": "object", "description": "The content payload." },
+        "payload": {
+          "oneOf": [
+            { "$ref": "#/entities/Note" }
+          ]
+        },
         "visibility": { "type": "string", "enum": ["members", "public"] },
         "createdAt": { "type": "string", "format": "date-time" },
         "updatedAt": { "type": "string", "format": "date-time" },
