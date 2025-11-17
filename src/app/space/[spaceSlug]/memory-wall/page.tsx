@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -56,7 +57,10 @@ export default function MemoryWallPage() {
 
   const sortedMemories = useMemo(() => {
     if (!memoriesData) return [];
-    return [...memoriesData].sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime());
+    // Create a new array to avoid mutating the original, and filter out any invalid items
+    return [...memoriesData]
+      .filter(m => m && m.createdAt && typeof m.createdAt.toDate === 'function')
+      .sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime());
   }, [memoriesData]);
 
   const getMemberName = (id: string) => id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
