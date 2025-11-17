@@ -30,10 +30,10 @@ export default function Home() {
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
           <div className="relative h-full flex flex-col items-center justify-end text-center p-4 md:p-8 pb-16 md:pb-24">
-            <h1 className="text-4xl md:text-6xl font-headline font-bold text-primary-foreground tracking-tight drop-shadow-lg">
+            <h1 className="text-4xl md:text-6xl font-headline font-bold text-foreground tracking-tight drop-shadow-lg">
               Your Private World, Together.
             </h1>
-            <p className="mt-4 max-w-2xl text-lg md:text-xl text-primary-foreground/80 font-caption drop-shadow-md">
+            <p className="mt-4 max-w-2xl text-lg md:text-xl text-foreground/80 font-caption drop-shadow-md">
               A shared space for two, built on privacy and connection. Create personal pages, build a memory wall, and unlock a shared archive.
             </p>
             <Button asChild size="lg" className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90">
