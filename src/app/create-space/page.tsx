@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Users } from 'lucide-react';
 import { useFirebase } from '@/firebase';
-import { signInAnonymously } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, writeBatch } from 'firebase/firestore';
 
 export default function CreateSpacePage() {
@@ -24,13 +24,15 @@ export default function CreateSpacePage() {
   const [yourName, setYourName] = useState('');
   const [partnerName, setPartnerName] = useState('');
   const [spacePassword, setSpacePassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
   const { auth, firestore } = useFirebase();
 
   const handleCreateSpace = async () => {
-    if (!spaceName || !yourName || !partnerName || !spacePassword) {
+    if (!spaceName || !yourName || !partnerName || !spacePassword || !email || !password) {
       toast({
         variant: 'destructive',
         title: 'Missing Information',
@@ -42,17 +44,22 @@ export default function CreateSpacePage() {
     setIsLoading(true);
 
     try {
-      // 1. Sign in the user anonymously to get permissions to write
-      const userCredential = await signInAnonymously(auth);
+      // 1. Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const creatorUid = userCredential.user.uid;
+      
+      // 2. Update user profile with display name
+      await updateProfile(userCredential.user, {
+        displayName: yourName
+      });
 
       const slug = spaceName.toLowerCase().replace(/\s+/g, '-');
       const spaceId = slug; // Using slug as the document ID for simplicity
 
-      // 2. Prepare batch write to Firestore
+      // 3. Prepare batch write to Firestore
       const batch = writeBatch(firestore);
 
-      // 3. Create the space document
+      // 4. Create the space document
       const spaceRef = doc(firestore, 'spaces', spaceId);
       batch.set(spaceRef, {
         displayName: spaceName,
@@ -62,7 +69,7 @@ export default function CreateSpacePage() {
         createdAt: new Date().toISOString(),
       });
 
-      // 4. Create the member document for the creator
+      // 5. Create the member document for the creator
       const creatorMemberRef = doc(firestore, `spaces/${spaceId}/members`, creatorUid);
       batch.set(creatorMemberRef, {
         displayName: yourName,
@@ -71,7 +78,7 @@ export default function CreateSpacePage() {
         createdAt: new Date().toISOString(),
       });
 
-      // 5. Create the unclaimed member document for the partner
+      // 6. Create the unclaimed member document for the partner
       // We use a generated ID for the partner for now.
       const partnerMemberRef = doc(firestore, `spaces/${spaceId}/members`, `partner-${Date.now()}`);
       batch.set(partnerMemberRef, {
@@ -80,8 +87,11 @@ export default function CreateSpacePage() {
         createdAt: new Date().toISOString(),
       });
 
-      // 6. Commit the batch
+      // 7. Commit the batch
       await batch.commit();
+      
+      console.log(`Space created successfully with ID: ${spaceId}`);
+      console.log(`Creator member document created with ID: ${creatorUid}`);
       
       toast({
         title: 'Space Created!',
@@ -89,12 +99,23 @@ export default function CreateSpacePage() {
       });
       router.push(`/space/${slug}/lobby`);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating space:', error);
+      let errorMessage = 'Could not create the space. Please try again.';
+      
+      // Provide more specific error messages
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'This email is already in use. Please use a different email or sign in instead.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Please provide a valid email address.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'Password should be at least 6 characters.';
+      }
+      
       toast({
         variant: 'destructive',
         title: 'Creation Failed',
-        description: 'Could not create the space. Please try again.',
+        description: errorMessage,
       });
       setIsLoading(false);
     }
@@ -130,6 +151,30 @@ export default function CreateSpacePage() {
                 disabled={isLoading}
               />
             </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="your-name">Your Name</Label>
@@ -170,6 +215,11 @@ export default function CreateSpacePage() {
             </Button>
           </CardFooter>
         </Card>
+        
+        {/* Info text about authentication */}
+        <div className="mt-4 text-center text-sm text-muted-foreground">
+          <p>Creating an account with email allows you to access your spaces from any device.</p>
+        </div>
       </div>
     </div>
   );

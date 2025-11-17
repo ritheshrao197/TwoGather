@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -18,7 +19,7 @@ import { ArrowLeft, User, KeyRound, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useFirebase, useMemoFirebase, useCollection, useDoc, useUser } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
-import { signInAnonymously } from 'firebase/auth';
+import { signInAnonymously, signInWithEmailAndPassword } from 'firebase/auth';
 
 // Define types for our data
 interface SpaceData {
@@ -46,25 +47,23 @@ export default function SpaceLobbyPage() {
 
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
   const [memberPassword, setMemberPassword] = useState('');
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
   const [isAuthenticating, setIsAuthenticating] = useState(true);
+  const [showLogin, setShowLogin] = useState(false);
 
-  // When component mounts, if no user is found after loading, sign in anonymously.
+  // When component mounts, if no user is found after loading, we'll wait for explicit login
   useEffect(() => {
-    if (!isUserLoading && !user) {
-      signInAnonymously(auth).catch((error) => {
-        console.error("Anonymous sign-in failed", error);
-        toast({
-          variant: 'destructive',
-          title: 'Authentication Error',
-          description: 'Could not connect to the service.',
-        });
-      });
-    }
-    // Once we're done with the initial user loading/auth check, we can stop the auth spinner.
     if (!isUserLoading) {
-      setIsAuthenticating(false);
+      // If we have a user, we're done with auth
+      if (user) {
+        setIsAuthenticating(false);
+      } else {
+        // If no user, show login form instead of auto-signing in anonymously
+        setIsAuthenticating(false);
+      }
     }
-  }, [isUserLoading, user, auth, toast]);
+  }, [isUserLoading, user]);
 
   // Memoize Firestore references. Only create them if we have a user and a space slug.
   const memoizedSpaceRef = useMemoFirebase(
@@ -115,7 +114,44 @@ export default function SpaceLobbyPage() {
     });
     router.push(`/claim?space=${spaceSlug}&member=${memberName}`);
   };
-  
+
+  const handleEmailLogin = async () => {
+    if (!loginEmail || !loginPassword) {
+      toast({
+        variant: 'destructive',
+        title: 'Login Failed',
+        description: 'Please enter your email and password.',
+      });
+      return;
+    }
+
+    try {
+      await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      toast({
+        title: 'Login Successful!',
+        description: 'You have been logged in successfully.',
+      });
+      setShowLogin(false);
+    } catch (error: any) {
+      console.error('Email login error:', error);
+      let errorMessage = 'Failed to log in. Please try again.';
+      
+      if (error.code === 'auth/user-not-found') {
+        errorMessage = 'No account found with this email.';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Incorrect password.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Please provide a valid email address.';
+      }
+      
+      toast({
+        variant: 'destructive',
+        title: 'Login Failed',
+        description: errorMessage,
+      });
+    }
+  };
+
   // Show a loading state while authenticating or fetching initial data.
   const isLoading = isAuthenticating || spaceLoading || membersLoading;
 
@@ -132,14 +168,110 @@ export default function SpaceLobbyPage() {
     );
   }
 
-  // Handle error states
-  if (spaceError || membersError) {
-    console.error('Error fetching data:', spaceError || membersError);
+  // If no user and not showing login form, show option to login
+  if (!user && !showLogin) {
     return (
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
         <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
-          <h1 className="text-2xl font-bold">Error loading space data.</h1>
-          <p className="text-muted-foreground mt-2">The space may not exist or you may not have permission to view it.</p>
+          <div className="w-full max-w-sm">
+            <Card className="border-primary/20">
+              <CardHeader className="items-center text-center pt-8">
+                <div className="bg-primary/10 p-4 rounded-full">
+                  <User className="w-8 h-8 text-primary" />
+                </div>
+                <CardTitle className="font-headline text-2xl mt-4">Account Required</CardTitle>
+                <CardDescription>
+                  This space was created with an email account. Please log in to access it.
+                </CardDescription>
+              </CardHeader>
+              <CardFooter className="flex flex-col gap-4">
+                <Button className="w-full" onClick={() => setShowLogin(true)}>
+                  Log in with Email
+                </Button>
+                <Button asChild variant="link" className="w-full">
+                  <Link href="/enter">Return to entrance</Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // If no user but showing login form, show login form
+  if (!user && showLogin) {
+    return (
+      <div className="flex flex-col min-h-dvh bg-background text-foreground">
+        <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
+          <div className="w-full max-w-sm">
+            <Card className="border-primary/20">
+              <CardHeader className="items-center text-center pt-8">
+                <div className="bg-primary/10 p-4 rounded-full">
+                  <User className="w-8 h-8 text-primary" />
+                </div>
+                <CardTitle className="font-headline text-2xl mt-4">Log in to Your Account</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="login-email">Email</Label>
+                  <Input
+                    id="login-email"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="login-password">Password</Label>
+                  <Input
+                    id="login-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleEmailLogin();
+                      }
+                    }}
+                  />
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col gap-4">
+                <Button className="w-full" onClick={handleEmailLogin}>
+                  Log In
+                </Button>
+                <Button variant="link" className="w-full" onClick={() => setShowLogin(false)}>
+                  Cancel
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Handle error states
+  if (spaceError || membersError) {
+    console.error('Error fetching data:', spaceError || membersError);
+    
+    // Show more detailed error information for FirestorePermissionError
+    let errorMessage = 'Error loading space data.';
+    let errorDescription = 'The space may not exist or you may not have permission to view it.';
+    
+    if (membersError && membersError.message && membersError.message.includes('Missing or insufficient permissions')) {
+      errorMessage = 'Access Denied';
+      errorDescription = `You don't have permission to access this space. Please make sure you're logged in with the correct account. Your user ID is: ${user?.uid || 'unknown'}`;
+    }
+    
+    return (
+      <div className="flex flex-col min-h-dvh bg-background text-foreground">
+        <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
+          <h1 className="text-2xl font-bold">{errorMessage}</h1>
+          <p className="text-muted-foreground mt-2">{errorDescription}</p>
           <Button asChild variant="link" className="mt-4">
             <Link href="/enter">Return to entrance</Link>
           </Button>
