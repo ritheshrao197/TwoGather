@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { ArrowLeft, Gamepad2, Users, Rows3, CheckSquare, Loader2, BookOpen, Sparkles, MessagesSquare } from 'lucide-react';
+import { ArrowLeft, Gamepad2, Users, Rows3, CheckSquare, Loader2, BookOpen, Sparkles, MessagesSquare, GalleryVerticalEnd } from 'lucide-react';
 import { useFirebase } from '@/firebase';
 import { ref, push, set } from 'firebase/database';
 import { useState } from 'react';
@@ -23,7 +23,7 @@ const games = [
     time: '1-3 min'
   },
   {
-    id: 'would-you-rather',
+    id: 'dilemmas',
     icon: CheckSquare,
     title: 'Dilemmas',
     description: 'Funny choice cards that reveal how well you sync up.',
@@ -54,6 +54,14 @@ const games = [
     players: '2',
     time: '2-4 min'
   },
+  {
+    id: 'word-chain',
+    icon: GalleryVerticalEnd,
+    title: 'Word Chain',
+    description: 'Build a chain of words, one letter at a time. Don\'t break it!',
+    players: '2',
+    time: '3-5 min'
+  }
 ];
 
 export default function GamesHubPage() {
@@ -65,7 +73,7 @@ export default function GamesHubPage() {
   const [isLoading, setIsLoading] = useState<string | null>(null);
 
   const handlePlayNow = async (gameId: string) => {
-   if (gameId === 'tic-tac-toe') {
+   if (gameId === 'tic-tac-toe' || gameId === 'word-chain') {
     setIsLoading(gameId);
 
     try {
@@ -85,36 +93,50 @@ export default function GamesHubPage() {
             setIsLoading(null);
             return;
         }
-
-        const sessionsRef = ref(rtdb, `realtime/sessions`);
+        
+        const sessionsRefPath = gameId === 'tic-tac-toe' ? `realtime/sessions` : `realtime/wordchain`;
+        const sessionsRef = ref(rtdb, sessionsRefPath);
         const newSessionRef = push(sessionsRef);
         
         const player1Id = memberId;
         const player2Id = partner.id;
 
-        await set(newSessionRef, {
+        const initialGameState = gameId === 'tic-tac-toe' ? {
             type: 'tic-tac-toe',
-            spaceId: spaceSlug,
-            players: {
-                [player1Id]: { symbol: 'X' },
-                [player2Id]: { symbol: 'O' }
-            },
             board: Array(9).fill(null),
             currentPlayer: player1Id,
             status: 'playing',
             winner: null,
+        } : {
+            type: 'word-chain',
+            state: 'playing',
+            currentPlayerId: player1Id,
+            chain: [],
+            usedWords: {},
+            timeStartedAt: Date.now(),
+            turnDuration: 10,
+            winner: null,
+        };
+
+        await set(newSessionRef, {
+            ...initialGameState,
+            spaceId: spaceSlug,
+            players: {
+                [player1Id]: { symbol: 'X' }, // Tic-tac-toe specific, but harmless
+                [player2Id]: { symbol: 'O' }
+            },
             createdAt: Date.now(),
             expiresAt: Date.now() + 1000 * 60 * 60, // 1 hour expiry
         });
 
         const sessionId = newSessionRef.key;
-        router.push(`/space/${spaceSlug}/games/tic-tac-toe/${sessionId}`);
+        router.push(`/space/${spaceSlug}/games/${gameId}/${sessionId}`);
     } catch (error) {
         console.error("Failed to start game session:", error);
         toast({ variant: 'destructive', title: 'Error', description: 'Could not start a new game session.' });
         setIsLoading(null);
     }
-   } else if (gameId === 'would-you-rather') {
+   } else if (gameId === 'dilemmas') {
     router.push(`/space/${spaceSlug}/games/would-you-rather`);
    } else if (gameId === 'story-in-10-words') {
     router.push(`/space/${spaceSlug}/games/story-in-10-words`);
