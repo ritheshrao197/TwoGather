@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { ArrowLeft, Gamepad2, Users, Rows3, CheckSquare, Loader2, BookOpen, Sparkles } from 'lucide-react';
+import { ArrowLeft, Gamepad2, Users, Rows3, CheckSquare, Loader2, BookOpen, Sparkles, MessagesSquare } from 'lucide-react';
 import { useFirebase } from '@/firebase';
 import { ref, push, set } from 'firebase/database';
 import { useState } from 'react';
@@ -38,13 +38,21 @@ const games = [
     players: '2',
     time: '2-5 min'
   },
-    {
+  {
     id: 'future-snapshots',
     icon: Sparkles,
     title: 'Future Snapshots',
     description: 'Privately write your vision for a future moment, then reveal.',
     players: '2',
     time: '3-5 min'
+  },
+  {
+    id: 'silent-signals',
+    icon: MessagesSquare,
+    title: 'Silent Signals',
+    description: 'Communicate using only emojis. Can you guess the meaning?',
+    players: '2',
+    time: '2-4 min'
   },
 ];
 
@@ -112,6 +120,8 @@ export default function GamesHubPage() {
     router.push(`/space/${spaceSlug}/games/story-in-10-words`);
    } else if (gameId === 'future-snapshots') {
     router.push(`/space/${spaceSlug}/games/future-snapshots`);
+   } else if (gameId === 'silent-signals') {
+    router.push(`/space/${spaceSlug}/games/silent-signals`);
    } else {
       toast({ variant: 'destructive', title: 'Coming Soon!', description: 'This game is not yet available.' });
       return;
