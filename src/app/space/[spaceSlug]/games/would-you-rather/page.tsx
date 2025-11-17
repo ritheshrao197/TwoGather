@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useFirebase } from '@/firebase';
+import { useFirebase, useMemoFirebase } from '@/firebase';
 import { doc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
 import { ArrowLeft, Loader2, Users, Zap } from 'lucide-react';
 import Link from 'next/link';
@@ -154,11 +154,15 @@ export default function WouldYouRatherPage() {
     }
   }, [spaceSlug, router]);
 
+  // Memoize the document reference
+  const gameDocRef = useMemoFirebase(() => {
+    if (!firestore || !spaceSlug) return null;
+    return doc(firestore, `spaces/${spaceSlug}/games`, 'would-you-rather');
+  }, [firestore, spaceSlug]);
+
   // Listen for game updates
   useEffect(() => {
-    if (!firestore || !spaceSlug || !currentMemberId || !partnerId) return;
-    
-    const gameDocRef = doc(firestore, `spaces/${spaceSlug}/games`, 'would-you-rather');
+    if (!gameDocRef || !currentMemberId || !partnerId) return;
     
     const unsubscribe = onSnapshot(gameDocRef, (doc) => {
       setLoading(false);
@@ -189,15 +193,14 @@ export default function WouldYouRatherPage() {
     });
     
     return () => unsubscribe();
-  }, [firestore, spaceSlug, currentMemberId, partnerId]);
+  }, [gameDocRef, currentMemberId, partnerId]);
 
   const startNewRound = async () => {
-    if (!firestore || !spaceSlug || !currentMemberId || !partnerId) return;
+    if (!gameDocRef || !currentMemberId || !partnerId) return;
     
     try {
       const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
       
-      const gameDocRef = doc(firestore, `spaces/${spaceSlug}/games`, 'would-you-rather');
       await setDoc(gameDocRef, {
         statement: randomPrompt.statement,
         optionA: randomPrompt.optionA,
@@ -220,14 +223,12 @@ export default function WouldYouRatherPage() {
   };
 
   const makeChoice = async (choice: 'A' | 'B') => {
-    if (!firestore || !spaceSlug || !currentMemberId || !partnerId || !currentRound || isSubmitting) return;
+    if (!gameDocRef || !currentMemberId || !partnerId || !currentRound || isSubmitting) return;
     
     setIsSubmitting(true);
     setSelectedChoice(choice);
     
     try {
-      const gameDocRef = doc(firestore, `spaces/${spaceSlug}/games`, 'would-you-rather');
-      
       // Determine which field to update based on member ID
       const isPlayerA = currentMemberId < partnerId; // Consistent way to determine player roles
       const choiceField = isPlayerA ? 'aChoice' : 'bChoice';
