@@ -324,34 +324,6 @@ export default function PersonalSpacePage() {
             </div>
 
             <div className="space-y-6">
-
-              <Card>
-                  <CardHeader><CardTitle>Tiny Rituals</CardTitle></CardHeader>
-                  <CardContent className="space-y-3">
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer" onClick={() => setIsCheckInDialogOpen(true)}>
-                          <div className="flex items-center gap-3">
-                              <Smile className="text-primary"/>
-                              <span className="font-caption text-sm">Daily Check-in</span>
-                          </div>
-                          <ChevronRight/>
-                      </div>
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer" onClick={() => setIsGratitudeDialogOpen(true)}>
-                          <div className="flex items-center gap-3">
-                              <Heart className="text-red-400"/>
-                              <span className="font-caption text-sm">Send Gratitude Blink</span>
-                          </div>
-                          <ChevronRight/>
-                      </div>
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer" onClick={() => setIsQuestionDialogOpen(true)}>
-                          <div className="flex items-center gap-3">
-                              <MessageCircle className="text-blue-400"/>
-                              <span className="font-caption text-sm">Quick Question</span>
-                          </div>
-                          <ChevronRight/>
-                      </div>
-                  </CardContent>
-              </Card>
-
               <Card>
                   <CardHeader>
                     <CardTitle>This Week's Goal</CardTitle>
