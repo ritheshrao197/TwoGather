@@ -34,6 +34,8 @@ import {
   Gift
 } from 'lucide-react';
 import { AddNoteDialog } from '@/components/content/add-note-dialog';
+import { DailyCheckInDialog } from '@/components/rituals/daily-check-in-dialog';
+import { SendGratitudeDialog } from '@/components/rituals/send-gratitude-dialog';
 import { useNotes, NoteDocument } from '@/hooks/useNotes';
 import { usePresence, SpacePresence } from '@/hooks/usePresence';
 import { useTapSync } from '@/hooks/useTapSync';
@@ -58,6 +60,11 @@ export default function PersonalSpacePage() {
   const [welcomeMessage, setWelcomeMessage] = useState('Welcome back.');
   const [welcomeIcon, setWelcomeIcon] = useState(<Sun className="w-5 h-5" />);
   const [quickNoteText, setQuickNoteText] = useState('');
+
+  // Dialog states
+  const [isAddNoteDialogOpen, setIsAddNoteDialogOpen] = useState(false);
+  const [isCheckInDialogOpen, setIsCheckInDialogOpen] = useState(false);
+  const [isGratitudeDialogOpen, setIsGratitudeDialogOpen] = useState(false);
 
   // Simplified flow: retrieve current member from local storage.
   useEffect(() => {
@@ -87,7 +94,6 @@ export default function PersonalSpacePage() {
   });
 
   const { data: notes, isLoading: notesLoading } = useNotes(spaceSlug);
-  const [isAddNoteDialogOpen, setIsAddNoteDialogOpen] = useState(false);
   const memoryOfTheDayImage = PlaceHolderImages.find((p) => p.id === 'memory-wall-feature');
 
   useEffect(() => {
@@ -198,6 +204,9 @@ export default function PersonalSpacePage() {
   return (
     <>
       <AddNoteDialog spaceId={spaceSlug} open={isAddNoteDialogOpen} onOpenChange={setIsAddNoteDialogOpen} authorId={currentMemberId}/>
+      <DailyCheckInDialog spaceId={spaceSlug} open={isCheckInDialogOpen} onOpenChange={setIsCheckInDialogOpen} authorId={currentMemberId} />
+      {partnerMemberId && <SendGratitudeDialog spaceId={spaceSlug} open={isGratitudeDialogOpen} onOpenChange={setIsGratitudeDialogOpen} authorId={currentMemberId} targetId={partnerMemberId} />}
+      
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
         <Header />
         <main className="flex-1 container mx-auto px-4 py-8 pt-24">
@@ -317,14 +326,14 @@ export default function PersonalSpacePage() {
               <Card>
                   <CardHeader><CardTitle>Tiny Rituals</CardTitle></CardHeader>
                   <CardContent className="space-y-3">
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer">
+                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer" onClick={() => setIsCheckInDialogOpen(true)}>
                           <div className="flex items-center gap-3">
                               <Smile className="text-primary"/>
                               <span className="font-caption text-sm">Daily Check-in</span>
                           </div>
                           <ChevronRight/>
                       </div>
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer">
+                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer" onClick={() => setIsGratitudeDialogOpen(true)}>
                           <div className="flex items-center gap-3">
                               <Heart className="text-red-400"/>
                               <span className="font-caption text-sm">Send Gratitude Blink</span>
@@ -411,5 +420,3 @@ export default function PersonalSpacePage() {
     </>
   );
 }
-
-    
