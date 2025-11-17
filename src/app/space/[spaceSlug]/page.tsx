@@ -8,7 +8,7 @@ import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Heart,
   MessageCircle,
@@ -34,9 +34,8 @@ import { InteractionFeed } from '@/components/rituals/interaction-feed';
 import { usePresence } from '@/hooks/usePresence';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, fromUnixTime } from 'date-fns';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { collection, query, where, Timestamp } from 'firebase/firestore';
 import { useChatStore } from '@/hooks/useChatStore';
 import { AddMemoryDialog } from '@/components/content/add-memory-dialog';
 import { AddNoteDialog } from '@/components/content/add-note-dialog';
@@ -53,6 +52,19 @@ interface MemberData {
   id: string;
   displayName: string;
   profile?: MemberProfile;
+}
+
+interface MemoryPayload {
+  imageUrl: string;
+  caption?: string;
+}
+
+interface ContentDocument {
+  id: string;
+  authorMemberId: string;
+  type: 'memory' | 'note' | 'agreement' | 'check-in' | 'gratitude' | 'quick_question_response' | 'vault_entry';
+  payload: MemoryPayload | any;
+  createdAt: Timestamp;
 }
 
 export default function PersonalSpacePage() {
@@ -88,6 +100,12 @@ export default function PersonalSpacePage() {
       }
     }
   }, [spaceSlug, router]);
+  
+  const memoizedContentRef = useMemoFirebase(
+    () => (firestore && spaceSlug ? collection(firestore, 'spaces', spaceSlug, 'content') : null),
+    [firestore, spaceSlug]
+  );
+  const { data: contentData } = useCollection<ContentDocument>(memoizedContentRef);
 
   const memoizedMembersRef = useMemoFirebase(
     () => (firestore && spaceSlug ? collection(firestore, 'spaces', spaceSlug, 'members') : null),
@@ -97,12 +115,19 @@ export default function PersonalSpacePage() {
 
   const currentMember = membersData?.find(m => m.id === currentMemberId);
   const partnerMember = membersData?.find(m => m.id === partnerMemberId);
+  
+  const memoryOfTheDay = useMemo(() => {
+    if (!contentData) return null;
+    const memories = contentData.filter(doc => doc.type === 'memory');
+    if (memories.length === 0) return null;
+    // Sort by most recent
+    memories.sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime());
+    return memories[0] as ContentDocument & { payload: MemoryPayload };
+  }, [contentData]);
 
   const presence = usePresence(spaceSlug, currentMemberId);
   const myPresence = currentMemberId ? presence[currentMemberId] : null;
   const partnerPresence = partnerMemberId ? presence[partnerMemberId] : null;
-
-  const memoryOfTheDayImage = PlaceHolderImages.find((p) => p.id === 'memory-wall-feature');
 
   const getPresenceStatus = (memberId: string | null) => {
     if (!memberId) return "Offline";
@@ -201,24 +226,27 @@ export default function PersonalSpacePage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
-                <InteractionFeed spaceId={spaceSlug} currentMemberId={currentMemberId} />
                 
-                {memoryOfTheDayImage && (
+                {memoryOfTheDay && (
                   <Card className="overflow-hidden group">
                     <CardHeader>
                         <CardTitle>Memory of the Day</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="relative aspect-[16/9]">
-                            <Image src={memoryOfTheDayImage.imageUrl} alt="Memory of the day" fill className="object-cover transition-transform duration-500 group-hover:scale-105" data-ai-hint={memoryOfTheDayImage.imageHint} />
+                            <Image src={memoryOfTheDay.payload.imageUrl} alt={memoryOfTheDay.payload.caption || 'Memory of the day'} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                             <div className="absolute bottom-0 left-0 p-6">
-                                <h3 className="text-primary-foreground font-headline text-2xl">You added this 3 months ago.</h3>
+                                <h3 className="text-primary-foreground font-headline text-2xl">
+                                  {memoryOfTheDay.payload.caption || `Added ${formatDistanceToNow(memoryOfTheDay.createdAt.toDate(), { addSuffix: true })}`}
+                                </h3>
                             </div>
                         </div>
                     </CardContent>
                   </Card>
                 )}
+
+                <InteractionFeed spaceId={spaceSlug} currentMemberId={currentMemberId} />
             </div>
 
             <div className="space-y-6">
@@ -294,3 +322,5 @@ export default function PersonalSpacePage() {
     </>
   );
 }
+
+    
