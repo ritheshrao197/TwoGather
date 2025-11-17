@@ -30,13 +30,18 @@ export function ChatPanel() {
   const [partnerMemberId, setPartnerMemberId] = useState<string | null>(null);
 
   useEffect(() => {
-    const memberId = localStorage.getItem(`memberId-for-${spaceSlug}`);
-    const allMembers = JSON.parse(localStorage.getItem(`allMembers-for-${spaceSlug}`) || '[]');
-    const partner = allMembers.find((m: { id: string }) => m.id !== memberId);
-    
-    setCurrentMemberId(memberId);
-    if (partner) {
-      setPartnerMemberId(partner.id);
+    if (typeof window !== 'undefined') {
+      const memberId = localStorage.getItem(`memberId-for-${spaceSlug}`);
+      const allMembersRaw = localStorage.getItem(`allMembers-for-${spaceSlug}`);
+      if (memberId && allMembersRaw) {
+        const allMembers = JSON.parse(allMembersRaw);
+        const partner = allMembers.find((m: { id: string }) => m.id !== memberId);
+        
+        setCurrentMemberId(memberId);
+        if (partner) {
+          setPartnerMemberId(partner.id);
+        }
+      }
     }
   }, [spaceSlug]);
   
