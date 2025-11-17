@@ -17,6 +17,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useFirebase } from '@/firebase';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { collection, serverTimestamp } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { Loader2 } from 'lucide-react';
 
 interface AddMemoryDialogProps {
   spaceId: string;
@@ -31,18 +33,24 @@ export function AddMemoryDialog({
   open,
   onOpenChange,
 }: AddMemoryDialogProps) {
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [caption, setCaption] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { firestore } = useFirebase();
+  const { firestore, storage } = useFirebase();
   const { toast } = useToast();
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmitMemory = async () => {
-    if (!imageUrl.trim()) {
+    if (!imageFile) {
       toast({
         variant: 'destructive',
         title: 'Missing Image',
-        description: 'Please provide an image URL for the memory.',
+        description: 'Please select an image file to upload.',
       });
       return;
     }
@@ -57,28 +65,36 @@ export function AddMemoryDialog({
 
     setIsLoading(true);
 
-    const contentRef = collection(firestore, `spaces/${spaceId}/content`);
-    const newMemory = {
-      spaceId,
-      authorMemberId: authorId,
-      type: 'memory',
-      payload: {
-        imageUrl,
-        caption,
-      },
-      visibility: 'members',
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    };
-
     try {
+      // 1. Upload the image to Firebase Storage
+      const imageRef = ref(storage, `spaces/${spaceId}/memories/${Date.now()}_${imageFile.name}`);
+      const uploadResult = await uploadBytes(imageRef, imageFile);
+      const imageUrl = await getDownloadURL(uploadResult.ref);
+
+      // 2. Create the memory document in Firestore
+      const contentRef = collection(firestore, `spaces/${spaceId}/content`);
+      const newMemory = {
+        spaceId,
+        authorMemberId: authorId,
+        type: 'memory',
+        payload: {
+          imageUrl,
+          caption,
+        },
+        visibility: 'members',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      };
+      
       addDocumentNonBlocking(contentRef, newMemory);
 
       toast({
         title: 'Memory Added!',
         description: 'Your memory has been added to the wall.',
       });
-      setImageUrl('');
+
+      // Reset form and close dialog
+      setImageFile(null);
       setCaption('');
       onOpenChange(false);
     } catch (error) {
@@ -104,12 +120,12 @@ export function AddMemoryDialog({
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid w-full gap-1.5">
-            <Label htmlFor="image-url">Image URL</Label>
+            <Label htmlFor="image-file">Image</Label>
             <Input
-              id="image-url"
-              placeholder="https://example.com/your-image.jpg"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
+              id="image-file"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
               disabled={isLoading}
             />
           </div>
@@ -129,9 +145,9 @@ export function AddMemoryDialog({
           <Button
             type="submit"
             onClick={handleSubmitMemory}
-            disabled={isLoading}
+            disabled={isLoading || !imageFile}
           >
-            {isLoading ? 'Adding...' : 'Add Memory'}
+            {isLoading ? <Loader2 className="animate-spin" /> : 'Add Memory'}
           </Button>
         </DialogFooter>
       </DialogContent>
