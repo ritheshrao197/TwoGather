@@ -17,7 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Users } from 'lucide-react';
 import { useFirebase } from '@/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { doc, setDoc, writeBatch } from 'firebase/firestore';
+import { doc, writeBatch } from 'firebase/firestore';
 
 export default function CreateSpacePage() {
   const [spaceName, setSpaceName] = useState('');
@@ -57,7 +57,7 @@ export default function CreateSpacePage() {
       const spaceId = slug;
       const partnerId = `partner-${Date.now()}`;
 
-      // 3. Create the space and the creator's member document in a single batch.
+      // 3. Create the space and both member documents in a single atomic batch.
       const batch = writeBatch(firestore);
 
       const spaceRef = doc(firestore, 'spaces', spaceId);
@@ -77,7 +77,6 @@ export default function CreateSpacePage() {
         createdAt: new Date().toISOString(),
       });
       
-      // Also add the partner's document in the same batch, but as unclaimed.
       const partnerMemberRef = doc(firestore, `spaces/${spaceId}/members`, partnerId);
       batch.set(partnerMemberRef, {
         displayName: partnerName,
