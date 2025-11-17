@@ -16,7 +16,6 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebase } from '@/firebase';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Loader2 } from 'lucide-react';
 
 interface AddMemoryDialogProps {
@@ -25,6 +24,48 @@ interface AddMemoryDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
+
+const compressImage = (file: File, maxSize: number = 1024): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let { width, height } = img;
+
+        if (width > height) {
+          if (width > maxSize) {
+            height *= maxSize / width;
+            width = maxSize;
+          }
+        } else {
+          if (height > maxSize) {
+            width *= maxSize / height;
+            height = maxSize;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          return reject(new Error('Failed to get canvas context'));
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Get the data-URL as a JPEG image with a quality setting
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        resolve(dataUrl);
+      };
+      img.onerror = (error) => reject(error);
+    };
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 
 export function AddMemoryDialog({
   spaceId,
@@ -35,7 +76,7 @@ export function AddMemoryDialog({
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [caption, setCaption] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { firestore, storage } = useFirebase();
+  const { firestore } = useFirebase();
   const { toast } = useToast();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,10 +106,8 @@ export function AddMemoryDialog({
     setIsLoading(true);
 
     try {
-      // 1. Upload the image to Firebase Storage
-      const imageRef = ref(storage, `spaces/${spaceId}/memories/${Date.now()}_${imageFile.name}`);
-      const uploadResult = await uploadBytes(imageRef, imageFile);
-      const imageUrl = await getDownloadURL(uploadResult.ref);
+      // 1. Compress the image and get a Data URI
+      const imageUrl = await compressImage(imageFile);
 
       // 2. Create the memory document in Firestore
       const contentRef = collection(firestore, `spaces/${spaceId}/content`);
