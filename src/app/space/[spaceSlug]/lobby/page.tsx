@@ -16,9 +16,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, User, KeyRound } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useFirebase, useMemoFirebase, useCollection, useDoc } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
+import { signInAnonymously } from 'firebase/auth';
 
 // Define types for our data
 interface SpaceData {
@@ -40,11 +41,33 @@ export default function SpaceLobbyPage() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
-  const { firestore } = useFirebase();
+  const { firestore, auth } = useFirebase();
   const spaceSlug = params.spaceSlug as string;
 
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
   const [memberPassword, setMemberPassword] = useState('');
+  const [isAuthenticating, setIsAuthenticating] = useState(true);
+
+  // Authenticate the user anonymously when the component mounts
+  useEffect(() => {
+    const authenticateUser = async () => {
+      try {
+        // Sign in anonymously to get permissions to read Firestore data
+        await signInAnonymously(auth);
+        setIsAuthenticating(false);
+      } catch (error) {
+        console.error('Error signing in anonymously:', error);
+        toast({
+          variant: 'destructive',
+          title: 'Authentication Error',
+          description: 'Failed to authenticate. Please try again.',
+        });
+        setIsAuthenticating(false);
+      }
+    };
+
+    authenticateUser();
+  }, [auth, toast]);
 
   // Create memoized references for Firestore queries
   const memoizedSpaceRef = useMemoFirebase(
@@ -96,6 +119,17 @@ export default function SpaceLobbyPage() {
     router.push(`/claim?space=${spaceSlug}&member=${memberName}`);
   };
   
+  // Handle authentication state
+  if (isAuthenticating) {
+    return (
+      <div className="flex flex-col min-h-dvh bg-background text-foreground">
+        <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
+          <h1 className="text-2xl font-bold">Authenticating...</h1>
+        </main>
+      </div>
+    );
+  }
+
   // Handle loading states
   if (spaceLoading || membersLoading) {
     return (

@@ -58,8 +58,8 @@ export default function EnterPage() {
       console.error('Error verifying space password:', error);
       toast({
         variant: 'destructive',
-        title: 'An Error Occurred',
-        description: 'Could not verify space password. Please try again.',
+        title: 'Server Configuration Error',
+        description: 'The server is not properly configured. Please contact the administrator.',
       });
       setIsLoading(false);
     }
@@ -92,7 +92,7 @@ export default function EnterPage() {
                 type="text"
                 placeholder="our-special-place"
                 value={spaceSlug}
-                onChange={(e) => setSpaceSlug(e.target.value.toLowerCase().replace(/\\s+/g, '-'))}
+                onChange={(e) => setSpaceSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))}
                 disabled={isLoading}
               />
             </div>
