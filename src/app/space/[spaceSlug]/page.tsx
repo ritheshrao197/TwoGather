@@ -36,6 +36,7 @@ import {
 import { AddNoteDialog } from '@/components/content/add-note-dialog';
 import { DailyCheckInDialog } from '@/components/rituals/daily-check-in-dialog';
 import { SendGratitudeDialog } from '@/components/rituals/send-gratitude-dialog';
+import { QuickQuestionDialog } from '@/components/rituals/quick-question-dialog';
 import { useNotes, NoteDocument } from '@/hooks/useNotes';
 import { usePresence, SpacePresence } from '@/hooks/usePresence';
 import { useTapSync } from '@/hooks/useTapSync';
@@ -65,6 +66,7 @@ export default function PersonalSpacePage() {
   const [isAddNoteDialogOpen, setIsAddNoteDialogOpen] = useState(false);
   const [isCheckInDialogOpen, setIsCheckInDialogOpen] = useState(false);
   const [isGratitudeDialogOpen, setIsGratitudeDialogOpen] = useState(false);
+  const [isQuestionDialogOpen, setIsQuestionDialogOpen] = useState(false);
 
   // Simplified flow: retrieve current member from local storage.
   useEffect(() => {
@@ -206,6 +208,7 @@ export default function PersonalSpacePage() {
       <AddNoteDialog spaceId={spaceSlug} open={isAddNoteDialogOpen} onOpenChange={setIsAddNoteDialogOpen} authorId={currentMemberId}/>
       <DailyCheckInDialog spaceId={spaceSlug} open={isCheckInDialogOpen} onOpenChange={setIsCheckInDialogOpen} authorId={currentMemberId} />
       {partnerMemberId && <SendGratitudeDialog spaceId={spaceSlug} open={isGratitudeDialogOpen} onOpenChange={setIsGratitudeDialogOpen} authorId={currentMemberId} targetId={partnerMemberId} />}
+      <QuickQuestionDialog spaceId={spaceSlug} open={isQuestionDialogOpen} onOpenChange={setIsQuestionDialogOpen} authorId={currentMemberId} />
       
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
         <Header />
@@ -340,7 +343,7 @@ export default function PersonalSpacePage() {
                           </div>
                           <ChevronRight/>
                       </div>
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer">
+                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer" onClick={() => setIsQuestionDialogOpen(true)}>
                           <div className="flex items-center gap-3">
                               <MessageCircle className="text-blue-400"/>
                               <span className="font-caption text-sm">Quick Question</span>
