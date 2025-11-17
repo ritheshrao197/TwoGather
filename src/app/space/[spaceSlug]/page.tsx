@@ -368,8 +368,6 @@ export default function PersonalSpacePage() {
                   </Button>
                 </CardContent>
               </Card>
-
-              <InteractionFeed spaceId={spaceSlug} currentMemberId={currentMemberId} />
               
               <Card>
                 <CardHeader>
@@ -403,6 +401,8 @@ export default function PersonalSpacePage() {
                     </Link>
                 </CardContent>
               </Card>
+
+              <InteractionFeed spaceId={spaceSlug} currentMemberId={currentMemberId} />
             </div>
             
           </div>
@@ -421,3 +421,5 @@ export default function PersonalSpacePage() {
     </>
   );
 }
+
+    

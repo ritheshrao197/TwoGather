@@ -2,11 +2,14 @@
 'use client';
 
 import { useInteractions, InteractionDocument, CheckInPayload, GratitudePayload, QuickQuestionPayload } from '@/hooks/useInteractions';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
 import { Heart, MessageCircle, Smile } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useEffect, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 
 interface InteractionFeedProps {
   spaceId: string;
@@ -15,6 +18,40 @@ interface InteractionFeedProps {
 
 export function InteractionFeed({ spaceId, currentMemberId }: InteractionFeedProps) {
   const { data: interactions, isLoading } = useInteractions(spaceId);
+  const [lastSeenId, setLastSeenId] = useState<string | null>(null);
+  const [unseenCount, setUnseenCount] = useState(0);
+
+  useEffect(() => {
+    // Get the last seen interaction ID from local storage on mount
+    const storedId = localStorage.getItem(`lastSeenInteraction-${spaceId}`);
+    setLastSeenId(storedId);
+  }, [spaceId]);
+
+  useEffect(() => {
+    if (interactions && interactions.length > 0) {
+      if (lastSeenId) {
+        const lastSeenIndex = interactions.findIndex(i => i.id === lastSeenId);
+        if (lastSeenIndex > -1) {
+          setUnseenCount(lastSeenIndex);
+        } else {
+          // If last seen is not in the list, all are unseen
+          setUnseenCount(interactions.length);
+        }
+      } else {
+        // If nothing has been seen, all are unseen
+        setUnseenCount(interactions.length);
+      }
+    }
+  }, [interactions, lastSeenId]);
+
+  const handleAccordionOpen = () => {
+    if (interactions && interactions.length > 0) {
+      const latestId = interactions[0].id;
+      localStorage.setItem(`lastSeenInteraction-${spaceId}`, latestId);
+      setLastSeenId(latestId);
+      setUnseenCount(0);
+    }
+  };
 
   const getMemberName = (id: string) => id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
@@ -54,8 +91,6 @@ export function InteractionFeed({ spaceId, currentMemberId }: InteractionFeedPro
 
   const renderInteraction = (interaction: InteractionDocument) => {
     const authorName = getMemberName(interaction.authorMemberId);
-    const isCurrentUser = interaction.authorMemberId === currentMemberId;
-
     return (
       <div key={interaction.id} className="flex items-start gap-3">
         <Avatar className="w-8 h-8 border-2 border-transparent">
@@ -92,13 +127,6 @@ export function InteractionFeed({ spaceId, currentMemberId }: InteractionFeedPro
                           <Skeleton className="h-4 w-[100px]" />
                       </div>
                   </div>
-                   <div className="flex items-center space-x-4">
-                      <Skeleton className="h-10 w-10 rounded-full" />
-                      <div className="space-y-2">
-                          <Skeleton className="h-4 w-[150px]" />
-                          <Skeleton className="h-4 w-[100px]" />
-                      </div>
-                  </div>
               </CardContent>
           </Card>
       )
@@ -106,17 +134,27 @@ export function InteractionFeed({ spaceId, currentMemberId }: InteractionFeedPro
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Activity Feed</CardTitle>
-        <CardDescription>Recent check-ins and shared moments.</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {interactions && interactions.length > 0 ? (
-          interactions.map(renderInteraction)
-        ) : (
-          <p className="text-sm text-muted-foreground text-center py-4">No recent activity yet. Be the first!</p>
-        )}
-      </CardContent>
+      <Accordion type="single" collapsible onValueChange={handleAccordionOpen}>
+        <AccordionItem value="item-1" className="border-b-0">
+          <AccordionTrigger className="p-6 hover:no-underline">
+            <div className="flex justify-between items-center w-full">
+              <CardTitle>Activity Feed</CardTitle>
+              {unseenCount > 0 && <Badge variant="destructive">{unseenCount}</Badge>}
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-6 pb-6">
+            <div className="space-y-6">
+              {interactions && interactions.length > 0 ? (
+                interactions.slice(0, 3).map(renderInteraction)
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">No recent activity yet. Be the first!</p>
+              )}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </Card>
   );
 }
+
+    
