@@ -61,6 +61,23 @@
       },
       "required": ["text"]
     },
+    "Memory": {
+      "title": "Memory",
+      "type": "object",
+      "description": "A memory on the Memory Wall, containing an image and a caption.",
+      "properties": {
+        "imageUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "The URL of the image for the memory."
+        },
+        "caption": {
+          "type": "string",
+          "description": "The caption for the memory."
+        }
+      },
+      "required": ["imageUrl"]
+    },
     "Content": {
       "title": "Content",
       "type": "object",
@@ -72,7 +89,8 @@
         "type": { "type": "string", "enum": ["public_post", "memory", "note", "shared_entry", "vault", "file"] },
         "payload": {
           "oneOf": [
-            { "$ref": "#/entities/Note" }
+            { "$ref": "#/entities/Note" },
+            { "$ref": "#/entities/Memory" }
           ]
         },
         "visibility": { "type": "string", "enum": ["members", "public"] },

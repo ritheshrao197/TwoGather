@@ -350,7 +350,7 @@ export default function PersonalSpacePage() {
                   <CardTitle>Explore Your Space</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                    <Link href="#" className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                    <Link href={`/space/${spaceSlug}/memory-wall`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
                         <span className="font-caption text-sm">Memory Wall</span>
                         <div className="relative"><Bell className="w-4 h-4 text-transparent"/><div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-primary animate-pulse"></div></div>
                     </Link>
