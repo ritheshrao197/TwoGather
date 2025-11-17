@@ -25,7 +25,8 @@ import {
   User,
   ClipboardList,
   CalendarCheck2,
-  Paperclip
+  Paperclip,
+  Gamepad2
 } from 'lucide-react';
 import { DailyCheckInDialog } from '@/components/rituals/daily-check-in-dialog';
 import { SendGratitudeDialog } from '@/components/rituals/send-gratitude-dialog';
@@ -277,6 +278,10 @@ export default function PersonalSpacePage() {
                             <span className="font-caption text-sm flex items-center gap-2"><Lock className="w-4 h-4 text-muted-foreground"/>Vault</span>
                             <ChevronRight className="w-4 h-4 text-muted-foreground"/>
                         </Link>
+                        <Link href={`/space/${spaceSlug}/games`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                            <span className="font-caption text-sm flex items-center gap-2"><Gamepad2 className="w-4 h-4 text-muted-foreground"/>Mini-Games</span>
+                            <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                        </Link>
                          <Link href="#" className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors opacity-50 cursor-not-allowed">
                             <span className="font-caption text-sm flex items-center gap-2"><CalendarCheck2 className="w-4 h-4 text-muted-foreground"/>Shared Planner</span>
                             <ChevronRight className="w-4 h-4 text-muted-foreground"/>
@@ -288,8 +293,14 @@ export default function PersonalSpacePage() {
                     <CardHeader><CardTitle>Profile & Customization</CardTitle></CardHeader>
                     <CardContent className="space-y-2">
                          <Link href={`/space/${spaceSlug}/profile`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
-                            <span className="font-caption text-sm flex items-center gap-2"><User className="w-4 h-4 text-muted-foreground"/>Your Profile</span>
-                            <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                           <span className="font-caption text-sm flex items-center gap-2">
+                                <Avatar className="w-6 h-6">
+                                    <AvatarImage src={currentMember?.profile?.avatarUrl} />
+                                    <AvatarFallback>{currentMember?.displayName?.[0]}</AvatarFallback>
+                                </Avatar>
+                                Your Profile
+                           </span>
+                           <ChevronRight className="w-4 h-4 text-muted-foreground"/>
                         </Link>
                         <Link href="#" className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors opacity-50 cursor-not-allowed">
                             <span className="font-caption text-sm flex items-center gap-2"><Palette className="w-4 h-4 text-muted-foreground"/>Theme & Layout</span>
@@ -322,5 +333,3 @@ export default function PersonalSpacePage() {
     </>
   );
 }
-
-    
