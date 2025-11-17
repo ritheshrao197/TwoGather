@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, User, KeyRound, Loader2 } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useCollection, useDoc, useFirebase, useMemoFirebase } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
 
@@ -30,16 +30,50 @@ export default function SpaceLobbyPage() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
-  const { firestore } = useFirebase();
+  const { auth, firestore } = useFirebase();
   const spaceSlug = params.spaceSlug as string;
 
+  const [hasLobbyAccess, setHasLobbyAccess] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
   const [memberPassword, setMemberPassword] = useState('');
+
+  // Verify lobby access on component mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && spaceSlug) {
+      const hasAccess = sessionStorage.getItem(`space-auth-${spaceSlug}`) === 'true';
+      if (!hasAccess) {
+        toast({
+            variant: 'destructive',
+            title: 'Access Denied',
+            description: 'You must enter the space password to access the lobby.',
+        });
+        router.push('/enter');
+      } else {
+        // Now that we have access, we can try to sign in anonymously to read data
+        if (!auth.currentUser) {
+            signInAnonymously(auth).catch(err => {
+                console.error("Anonymous sign-in failed", err);
+                toast({
+                    variant: 'destructive',
+                    title: 'Authentication Failed',
+                    description: 'Could not authenticate to fetch space details.'
+                });
+                router.push('/enter');
+            });
+        }
+        setHasLobbyAccess(true);
+      }
+    }
+  }, [spaceSlug, router, toast, auth]);
 
   const spaceRef = useMemoFirebase(() => spaceSlug ? doc(firestore, 'spaces', spaceSlug) : null, [firestore, spaceSlug]);
   const { data: spaceData, isLoading: isSpaceLoading } = useDoc(spaceRef);
 
-  const membersRef = useMemoFirebase(() => spaceSlug ? collection(firestore, `spaces/${spaceSlug}/members`) : null, [firestore, spaceSlug]);
+  // Only attempt to load members if we have access and are not a guest
+  const membersRef = useMemoFirebase(
+    () => (hasLobbyAccess && spaceSlug) ? collection(firestore, `spaces/${spaceSlug}/members`) : null,
+    [hasLobbyAccess, firestore, spaceSlug]
+  );
   const { data: members, isLoading: areMembersLoading } = useCollection<Member>(membersRef);
 
   const selectedMember = useMemo(() => {
@@ -73,7 +107,7 @@ export default function SpaceLobbyPage() {
     router.push(`/claim?space=${spaceSlug}&member=${memberName}`);
   };
   
-  const isLoading = isSpaceLoading || areMembersLoading;
+  const isLoading = isSpaceLoading || areMembersLoading || !hasLobbyAccess;
 
   if (isLoading) {
     return (

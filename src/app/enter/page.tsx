@@ -1,31 +1,67 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { KeyRound, Users } from 'lucide-react';
+import { KeyRound, Users, Loader2 } from 'lucide-react';
+import { verifySpacePassword } from '@/actions/auth';
 
 export default function EnterPage() {
   const [spaceSlug, setSpaceSlug] = useState('');
   const [spacePassword, setSpacePassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleEnterLobby = () => {
-    // TODO: Verify space slug and password against Firebase
-    if (spaceSlug && spacePassword) {
-      router.push(`/space/${spaceSlug}/lobby`);
-    } else {
+  const handleEnterLobby = async () => {
+    if (!spaceSlug || !spacePassword) {
       toast({
         variant: 'destructive',
         title: 'Invalid Input',
         description: 'Please provide a space name and password.',
       });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await verifySpacePassword({ spaceSlug, spacePassword });
+      if (result.success) {
+        toast({
+          title: 'Success!',
+          description: 'Entering the lobby...',
+        });
+        // Store a token in session storage to prove we've entered the password
+        sessionStorage.setItem(`space-auth-${spaceSlug}`, 'true');
+        router.push(`/space/${spaceSlug}/lobby`);
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Access Denied',
+          description: result.error || 'The space name or password may be incorrect.',
+        });
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('Error verifying space password:', error);
+      toast({
+        variant: 'destructive',
+        title: 'An Error Occurred',
+        description: 'Could not verify space password. Please try again.',
+      });
+      setIsLoading(false);
     }
   };
 
@@ -43,12 +79,10 @@ export default function EnterPage() {
       <div className="w-full max-w-sm">
         <Card className="border-primary/20">
           <CardHeader className="items-center text-center pt-8">
-             <div className="bg-primary/10 p-4 rounded-full">
+            <div className="bg-primary/10 p-4 rounded-full">
               <KeyRound className="w-8 h-8 text-primary" />
             </div>
-            <CardTitle className="font-headline text-2xl mt-4">
-              Space Lobby
-            </CardTitle>
+            <CardTitle className="font-headline text-2xl mt-4">Space Lobby</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -58,7 +92,8 @@ export default function EnterPage() {
                 type="text"
                 placeholder="our-special-place"
                 value={spaceSlug}
-                onChange={(e) => setSpaceSlug(e.target.value)}
+                onChange={(e) => setSpaceSlug(e.target.value.toLowerCase().replace(/\\s+/g, '-'))}
+                disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
@@ -74,12 +109,13 @@ export default function EnterPage() {
                     handleEnterLobby();
                   }
                 }}
+                disabled={isLoading}
               />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button className="w-full" onClick={handleEnterLobby}>
-              Enter Lobby
+            <Button className="w-full" onClick={handleEnterLobby} disabled={isLoading}>
+              {isLoading ? <Loader2 className="animate-spin" /> : 'Enter Lobby'}
             </Button>
             <p className="text-sm text-muted-foreground font-caption">
               Don't have a space yet?{' '}
