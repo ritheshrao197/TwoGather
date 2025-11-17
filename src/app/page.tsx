@@ -1,17 +1,29 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from '@/components/ui/card';
 import { Header } from '@/components/shared/header';
 import { Footer } from '@/components/shared/footer';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Gift, Images, Archive } from 'lucide-react';
 
 export default function Home() {
-  const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
-  const personalPageImage = PlaceHolderImages.find(p => p.id === 'personal-page-feature');
-  const memoryWallImage = PlaceHolderImages.find(p => p.id === 'memory-wall-feature');
-  const sharedArchiveImage = PlaceHolderImages.find(p => p.id === 'shared-archive-feature');
+  const heroImage = PlaceHolderImages.find((p) => p.id === 'hero-image');
+  const personalPageImage = PlaceHolderImages.find(
+    (p) => p.id === 'personal-page-feature'
+  );
+  const memoryWallImage = PlaceHolderImages.find(
+    (p) => p.id === 'memory-wall-feature'
+  );
+  const sharedArchiveImage = PlaceHolderImages.find(
+    (p) => p.id === 'shared-archive-feature'
+  );
 
   return (
     <div className="flex flex-col min-h-dvh bg-background text-foreground">
@@ -34,7 +46,8 @@ export default function Home() {
               Your Private World, Together.
             </h1>
             <p className="mt-4 max-w-2xl text-lg md:text-xl text-foreground/80 font-caption drop-shadow-md">
-              A shared space for two, built on privacy and connection. Create personal pages, build a memory wall, and unlock a shared archive.
+              A shared space for two, built on privacy and connection. Create
+              personal pages, build a memory wall, and unlock a shared archive.
             </p>
             <Link href="/enter">
               <Button size="lg" className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90">
@@ -48,10 +61,15 @@ export default function Home() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm font-caption">Key Features</div>
-                <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Crafted for Connection</h2>
+                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm font-caption">
+                  Key Features
+                </div>
+                <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">
+                  Crafted for Connection
+                </h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed font-caption">
-                  Discover a new way to share your world with one special person, with features designed for privacy and intimacy.
+                  Discover a new way to share your world with one special
+                  person, with features designed for privacy and intimacy.
                 </p>
               </div>
             </div>
@@ -65,7 +83,8 @@ export default function Home() {
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="font-caption mb-4">
-                    A private page for each of you, curated by the other. Share wishes, notes, and collections meant only for their eyes.
+                    A private page for each of you, curated by the other. Share
+                    wishes, notes, and collections meant only for their eyes.
                   </CardDescription>
                   {personalPageImage && (
                     <Image
@@ -88,10 +107,11 @@ export default function Home() {
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="font-caption mb-4">
-                    Build a beautiful masonry gallery of your shared moments. Add images, videos, and audio with captions and dates.
+                    Build a beautiful masonry gallery of your shared moments.
+                    Add images, videos, and audio with captions and dates.
                   </CardDescription>
                   {memoryWallImage && (
-                     <Image
+                    <Image
                       src={memoryWallImage.imageUrl}
                       alt={memoryWallImage.description}
                       width={400}
@@ -111,10 +131,12 @@ export default function Home() {
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="font-caption mb-4">
-                    Unlock a shared space when you're both online. Discover a timeline of your journey, an idea board for plans, and fun tools.
+                    Unlock a shared space when you're both online. Discover a
+                    timeline of your journey, an idea board for plans, and fun
+                    tools.
                   </CardDescription>
                   {sharedArchiveImage && (
-                     <Image
+                    <Image
                       src={sharedArchiveImage.imageUrl}
                       alt={sharedArchiveImage.description}
                       width={400}
@@ -136,7 +158,9 @@ export default function Home() {
                 Private by Design. Secure by Default.
               </h2>
               <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed font-caption">
-                Your space is yours alone. We use end-to-end principles for security and never look at your data. Your privacy is not the product.
+                Your space is yours alone. We use end-to-end principles for
+                security and never look at your data. Your privacy is not the
+                product.
               </p>
             </div>
           </div>
