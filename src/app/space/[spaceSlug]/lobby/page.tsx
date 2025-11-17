@@ -80,6 +80,10 @@ export default function SpaceLobbyPage() {
     // In this simplified flow, we store the chosen member ID in local storage
     // to "log them in" for the session.
     localStorage.setItem(`memberId-for-${spaceSlug}`, memberId);
+    // Also store the partner's ID for the presence hook
+    if (membersData) {
+      localStorage.setItem(`allMembers-for-${spaceSlug}`, JSON.stringify(membersData));
+    }
     router.push(`/space/${spaceSlug}`);
   };
 

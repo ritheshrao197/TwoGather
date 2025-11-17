@@ -3,7 +3,9 @@
 import { firebaseConfig } from '@/firebase/config';
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore'
+import { getFirestore } from 'firebase/firestore';
+import { getDatabase } from 'firebase/database';
+import { getStorage } from 'firebase/storage';
 
 // IMPORTANT: DO NOT MODIFY THIS FUNCTION
 export function initializeFirebase() {
@@ -47,11 +49,15 @@ export function getSdks(firebaseApp: FirebaseApp) {
   try {
     const auth = getAuth(firebaseApp);
     const firestore = getFirestore(firebaseApp);
+    const rtdb = getDatabase(firebaseApp);
+    const storage = getStorage(firebaseApp);
     console.log('Firebase SDKs initialized successfully');
     return {
       firebaseApp,
       auth,
-      firestore
+      firestore,
+      rtdb,
+      storage
     };
   } catch (error) {
     console.error('Error initializing Firebase SDKs:', error);

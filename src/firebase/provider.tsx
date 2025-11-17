@@ -1,23 +1,30 @@
 'use client';
 
-import React, { DependencyList, createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
+import React, { DependencyList, createContext, useContext, ReactNode, useMemo } from 'react';
 import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
-import { Auth, User, onAuthStateChanged } from 'firebase/auth';
+import { Auth } from 'firebase/auth';
+import { Database } from 'firebase/database';
+import { FirebaseStorage } from 'firebase/storage';
+
 
 interface FirebaseProviderProps {
   children: ReactNode;
   firebaseApp: FirebaseApp;
   firestore: Firestore;
   auth: Auth;
+  rtdb: Database;
+  storage: FirebaseStorage;
 }
 
 // Combined state for the Firebase context
 export interface FirebaseContextState {
-  areServicesAvailable: boolean; // True if core services (app, firestore, auth instance) are provided
+  areServicesAvailable: boolean; // True if core services are provided
   firebaseApp: FirebaseApp | null;
   firestore: Firestore | null;
-  auth: Auth | null; // The Auth service instance
+  auth: Auth | null;
+  rtdb: Database | null;
+  storage: FirebaseStorage | null;
 }
 
 // Return type for useFirebase()
@@ -25,31 +32,33 @@ export interface FirebaseServices {
   firebaseApp: FirebaseApp;
   firestore: Firestore;
   auth: Auth;
+  rtdb: Database;
+  storage: FirebaseStorage;
 }
 
 // React Context
 export const FirebaseContext = createContext<FirebaseContextState | undefined>(undefined);
 
-/**
- * FirebaseProvider manages and provides Firebase services.
- * NOTE: User authentication state is removed from this provider in the simplified flow.
- */
 export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   children,
   firebaseApp,
   firestore,
   auth,
+  rtdb,
+  storage,
 }) => {
   // Memoize the context value
   const contextValue = useMemo((): FirebaseContextState => {
-    const servicesAvailable = !!(firebaseApp && firestore && auth);
+    const servicesAvailable = !!(firebaseApp && firestore && auth && rtdb && storage);
     return {
       areServicesAvailable: servicesAvailable,
       firebaseApp: servicesAvailable ? firebaseApp : null,
       firestore: servicesAvailable ? firestore : null,
       auth: servicesAvailable ? auth : null,
+      rtdb: servicesAvailable ? rtdb : null,
+      storage: servicesAvailable ? storage : null,
     };
-  }, [firebaseApp, firestore, auth]);
+  }, [firebaseApp, firestore, auth, rtdb, storage]);
 
   return (
     <FirebaseContext.Provider value={contextValue}>
@@ -69,7 +78,7 @@ export const useFirebase = (): FirebaseServices => {
     throw new Error('useFirebase must be used within a FirebaseProvider.');
   }
 
-  if (!context.areServicesAvailable || !context.firebaseApp || !context.firestore || !context.auth) {
+  if (!context.areServicesAvailable || !context.firebaseApp || !context.firestore || !context.auth || !context.rtdb || !context.storage) {
     throw new Error('Firebase core services not available. Check FirebaseProvider props.');
   }
 
@@ -77,6 +86,8 @@ export const useFirebase = (): FirebaseServices => {
     firebaseApp: context.firebaseApp,
     firestore: context.firestore,
     auth: context.auth,
+    rtdb: context.rtdb,
+    storage: context.storage,
   };
 };
 
@@ -108,6 +119,3 @@ export function useMemoFirebase<T>(factory: () => T, deps: DependencyList): T | 
   
   return memoized;
 }
-
-// useUser hook is no longer needed in the simplified flow.
-// It is removed to avoid confusion.

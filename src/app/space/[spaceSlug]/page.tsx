@@ -34,30 +34,50 @@ import {
 } from 'lucide-react';
 import { AddNoteDialog } from '@/components/content/add-note-dialog';
 import { useNotes, NoteDocument } from '@/hooks/useNotes';
-import { formatDistanceToNow } from 'date-fns';
+import { usePresence, SpacePresence } from '@/hooks/usePresence';
+import { useTapSync } from '@/hooks/useTapSync';
+import { useToast } from '@/hooks/use-toast';
+import { formatDistanceToNow, fromUnixTime } from 'date-fns';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Separator } from '@/components/ui/separator';
 
 export default function PersonalSpacePage() {
   const params = useParams();
   const router = useRouter();
+  const { toast } = useToast();
   const spaceSlug = params.spaceSlug as string;
 
   const [currentMemberId, setCurrentMemberId] = useState<string | null>(null);
+  const [partnerMemberId, setPartnerMemberId] = useState<string | null>(null);
   const [welcomeMessage, setWelcomeMessage] = useState('Welcome back.');
   const [welcomeIcon, setWelcomeIcon] = useState(<Sun className="w-5 h-5" />);
 
-  // In the simplified flow, we retrieve the current member from local storage.
+  // Simplified flow: retrieve current member from local storage.
   useEffect(() => {
     const memberId = localStorage.getItem(`memberId-for-${spaceSlug}`);
+    const allMembers = JSON.parse(localStorage.getItem(`allMembers-for-${spaceSlug}`) || '[]');
+    const partner = allMembers.find((m: {id: string}) => m.id !== memberId);
+
     if (!memberId) {
-      // If no member is chosen, send them back to the lobby.
       router.push(`/space/${spaceSlug}/lobby`);
     } else {
       setCurrentMemberId(memberId);
+      if (partner) {
+        setPartnerMemberId(partner.id);
+      }
     }
   }, [spaceSlug, router]);
 
+  const presence = usePresence(spaceSlug, currentMemberId);
+  const myPresence = currentMemberId ? presence[currentMemberId] : null;
+  const partnerPresence = partnerMemberId ? presence[partnerMemberId] : null;
+
+  const { handleTap, isSyncing, syncSuccess } = useTapSync(spaceSlug, currentMemberId, () => {
+    toast({
+      title: '✨ Synced!',
+      description: 'You and your partner tapped at the same time.',
+    });
+  });
 
   const { data: notes, isLoading: notesLoading } = useNotes(spaceSlug);
   const [isAddNoteDialogOpen, setIsAddNoteDialogOpen] = useState(false);
@@ -79,6 +99,22 @@ export default function PersonalSpacePage() {
       setWelcomeIcon(<Moon className="w-5 h-5 text-indigo-400" />);
     }
   }, []);
+  
+  const getPresenceStatus = () => {
+    const bothOnline = myPresence?.online && partnerPresence?.online;
+    if (bothOnline) return "You are both online.";
+    if (myPresence?.online && !partnerPresence?.online) {
+      const lastSeen = partnerPresence?.lastSeen;
+      if (typeof lastSeen === 'number') {
+        return `Partner was last seen ${formatDistanceToNow(fromUnixTime(lastSeen / 1000), { addSuffix: true })}`;
+      }
+      return "Partner is offline.";
+    }
+    return "You're online.";
+  };
+
+  const areBothOnline = myPresence?.online && partnerPresence?.online;
+
 
   if (!currentMemberId) {
     return (
@@ -122,7 +158,6 @@ export default function PersonalSpacePage() {
         <Header />
         <main className="flex-1 container mx-auto px-4 py-8 pt-24">
           
-          {/* 1. Soft Welcome Moment */}
           <section className="mb-10 text-center">
             <h1 className="text-3xl md:text-4xl font-headline font-bold text-foreground animate-in fade-in duration-1000">
               Welcome, {currentMemberId}.
@@ -134,10 +169,8 @@ export default function PersonalSpacePage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            {/* Left Column */}
             <div className="lg:col-span-2 space-y-6">
 
-                {/* 2. Live Duo Presence Panel & 3. Personalized Welcome Tile */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Card className="flex flex-col justify-between group">
                         <CardHeader>
@@ -145,27 +178,31 @@ export default function PersonalSpacePage() {
                                 <span>Presence</span>
                                 <div className="flex items-center gap-2">
                                     <div className="relative">
-                                        <Avatar className="w-8 h-8 border-2 border-green-400">
+                                        <Avatar className={`w-8 h-8 border-2 ${myPresence?.online ? 'border-green-400' : 'border-transparent'}`}>
                                             <AvatarImage src={`https://i.pravatar.cc/150?u=${currentMemberId}`} />
                                             <AvatarFallback>{currentMemberId?.[0]}</AvatarFallback>
                                         </Avatar>
-                                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-background" />
+                                        {myPresence?.online && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-background" />}
                                     </div>
-                                    <div className="h-px w-6 bg-muted-foreground/30"></div>
+                                    <div className={`h-px w-6 transition-colors ${areBothOnline ? 'bg-green-400' : 'bg-muted-foreground/30'}`}></div>
                                      <div className="relative">
-                                        <Avatar className="w-8 h-8 border-2 border-transparent opacity-50">
-                                            <AvatarImage src="https://i.pravatar.cc/150?u=partner" />
-                                            <AvatarFallback>P</AvatarFallback>
+                                        <Avatar className={`w-8 h-8 border-2 transition-all ${partnerPresence?.online ? 'border-green-400' : 'border-transparent opacity-50'}`}>
+                                            <AvatarImage src={`https://i.pravatar.cc/150?u=${partnerMemberId}`} />
+                                            <AvatarFallback>{partnerMemberId?.[0]}</AvatarFallback>
                                         </Avatar>
+                                        {partnerPresence?.online && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-background" />}
                                     </div>
                                 </div>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-sm text-muted-foreground font-caption">You're online. Partner was last seen 2 hours ago.</p>
+                            <p className="text-sm text-muted-foreground font-caption">{getPresenceStatus()}</p>
                         </CardContent>
                         <CardContent>
-                          <Button variant="secondary" className="w-full invisible group-hover:visible transition-all"><Zap className="mr-2" />Tap to sync</Button>
+                          <Button variant="secondary" className={`w-full transition-all ${!areBothOnline && 'invisible group-hover:invisible'}`} onClick={handleTap} disabled={isSyncing}>
+                              {isSyncing ? <Sparkles className="mr-2 animate-ping" /> : <Zap className="mr-2" />}
+                              {isSyncing ? 'Waiting...' : 'Tap to sync'}
+                          </Button>
                         </CardContent>
                     </Card>
 
@@ -177,7 +214,6 @@ export default function PersonalSpacePage() {
                     </Card>
                 </div>
               
-                {/* 4. What's on your mind? */}
                 <Card>
                     <CardContent className="flex items-center gap-4 pt-6">
                         <Pen className="text-primary"/>
@@ -186,7 +222,6 @@ export default function PersonalSpacePage() {
                     </CardContent>
                 </Card>
 
-                {/* 5. Memory of the Day */}
                 {memoryOfTheDayImage && (
                   <Card className="overflow-hidden group">
                     <div className="relative aspect-[16/9]">
@@ -203,7 +238,6 @@ export default function PersonalSpacePage() {
                   </Card>
                 )}
 
-                {/* 7. Living Notes Board */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center justify-between">
@@ -228,10 +262,8 @@ export default function PersonalSpacePage() {
 
             </div>
 
-            {/* Right Column */}
             <div className="space-y-6">
 
-              {/* 6. Daily Mini-Interaction */}
               <Card>
                   <CardHeader><CardTitle>Tiny Rituals</CardTitle></CardHeader>
                   <CardContent className="space-y-3">
@@ -259,7 +291,6 @@ export default function PersonalSpacePage() {
                   </CardContent>
               </Card>
 
-              {/* 8. Shared Goal Bubble */}
               <Card>
                   <CardHeader>
                     <CardTitle>This Week's Goal</CardTitle>
@@ -275,7 +306,6 @@ export default function PersonalSpacePage() {
                   </CardContent>
               </Card>
 
-              {/* 9. Ambient Widgets */}
               <Card>
                   <CardHeader><CardTitle>Ambient Mood</CardTitle></CardHeader>
                   <CardContent className="grid grid-cols-2 gap-2 text-center">
@@ -286,7 +316,6 @@ export default function PersonalSpacePage() {
                   </CardContent>
               </Card>
               
-              {/* 11 & 12. Quick Navigation with Notification Dots */}
               <Card>
                 <CardHeader>
                   <CardTitle>Explore Your Space</CardTitle>
@@ -307,7 +336,6 @@ export default function PersonalSpacePage() {
                 </CardContent>
               </Card>
 
-               {/* 13. Highlights from this week */}
                 <Card>
                     <CardHeader><CardTitle>This Week's Highlights</CardTitle></CardHeader>
                     <CardContent className="text-sm font-caption text-muted-foreground space-y-2">
@@ -319,7 +347,6 @@ export default function PersonalSpacePage() {
             </div>
           </div>
           
-          {/* 14. Friendly Footer */}
           <footer className="mt-16 text-center">
               <p className="text-sm font-caption text-muted-foreground">Your shared space grows with every small moment.</p>
               <p className="text-sm font-caption text-muted-foreground">Take your time here.</p>
