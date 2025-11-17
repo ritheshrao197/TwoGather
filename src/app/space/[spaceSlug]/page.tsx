@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -40,17 +41,23 @@ import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, fromUnixTime } from 'date-fns';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Separator } from '@/components/ui/separator';
+import { useFirebase } from '@/firebase';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { collection, serverTimestamp } from 'firebase/firestore';
+
 
 export default function PersonalSpacePage() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
   const spaceSlug = params.spaceSlug as string;
+  const { firestore } = useFirebase();
 
   const [currentMemberId, setCurrentMemberId] = useState<string | null>(null);
   const [partnerMemberId, setPartnerMemberId] = useState<string | null>(null);
   const [welcomeMessage, setWelcomeMessage] = useState('Welcome back.');
   const [welcomeIcon, setWelcomeIcon] = useState(<Sun className="w-5 h-5" />);
+  const [quickNoteText, setQuickNoteText] = useState('');
 
   // Simplified flow: retrieve current member from local storage.
   useEffect(() => {
@@ -105,8 +112,12 @@ export default function PersonalSpacePage() {
     if (bothOnline) return "You are both online.";
     if (myPresence?.online && !partnerPresence?.online) {
       const lastSeen = partnerPresence?.lastSeen;
-      if (typeof lastSeen === 'number') {
-        return `Partner was last seen ${formatDistanceToNow(fromUnixTime(lastSeen / 1000), { addSuffix: true })}`;
+      if (typeof lastSeen === 'number' && lastSeen > 0) {
+        try {
+          return `Partner was last seen ${formatDistanceToNow(fromUnixTime(lastSeen / 1000), { addSuffix: true })}`;
+        } catch (e) {
+            return "Partner is offline.";
+        }
       }
       return "Partner is offline.";
     }
@@ -114,6 +125,39 @@ export default function PersonalSpacePage() {
   };
 
   const areBothOnline = myPresence?.online && partnerPresence?.online;
+
+  const handleShareQuickNote = async () => {
+    if (!quickNoteText.trim() || !firestore || !currentMemberId) return;
+
+    const contentRef = collection(firestore, `spaces/${spaceSlug}/content`);
+    const newNote = {
+      spaceId: spaceSlug,
+      authorMemberId: currentMemberId,
+      type: 'note',
+      payload: {
+        text: quickNoteText.trim(),
+      },
+      visibility: 'members',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
+    try {
+      addDocumentNonBlocking(contentRef, newNote);
+      toast({
+        title: 'Note Shared!',
+        description: 'Your thought has been added to the Living Notes.',
+      });
+      setQuickNoteText('');
+    } catch (error) {
+      console.error('Error sharing quick note:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Could not share your note. Please try again.',
+      });
+    }
+  };
 
 
   if (!currentMemberId) {
@@ -160,7 +204,7 @@ export default function PersonalSpacePage() {
           
           <section className="mb-10 text-center">
             <h1 className="text-3xl md:text-4xl font-headline font-bold text-foreground animate-in fade-in duration-1000">
-              Welcome, {currentMemberId}.
+              Welcome, {currentMemberId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}.
             </h1>
             <p className="text-muted-foreground font-caption mt-2 animate-in fade-in duration-1000 delay-500">
               This is your shared space. Take a breath, settle in.
@@ -180,7 +224,7 @@ export default function PersonalSpacePage() {
                                     <div className="relative">
                                         <Avatar className={`w-8 h-8 border-2 ${myPresence?.online ? 'border-green-400' : 'border-transparent'}`}>
                                             <AvatarImage src={`https://i.pravatar.cc/150?u=${currentMemberId}`} />
-                                            <AvatarFallback>{currentMemberId?.[0]}</AvatarFallback>
+                                            <AvatarFallback>{currentMemberId?.[0].toUpperCase()}</AvatarFallback>
                                         </Avatar>
                                         {myPresence?.online && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-background" />}
                                     </div>
@@ -188,7 +232,7 @@ export default function PersonalSpacePage() {
                                      <div className="relative">
                                         <Avatar className={`w-8 h-8 border-2 transition-all ${partnerPresence?.online ? 'border-green-400' : 'border-transparent opacity-50'}`}>
                                             <AvatarImage src={`https://i.pravatar.cc/150?u=${partnerMemberId}`} />
-                                            <AvatarFallback>{partnerMemberId?.[0]}</AvatarFallback>
+                                            <AvatarFallback>{partnerMemberId?.[0].toUpperCase()}</AvatarFallback>
                                         </Avatar>
                                         {partnerPresence?.online && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-background" />}
                                     </div>
@@ -217,8 +261,14 @@ export default function PersonalSpacePage() {
                 <Card>
                     <CardContent className="flex items-center gap-4 pt-6">
                         <Pen className="text-primary"/>
-                        <Textarea placeholder="Write one thought or feeling..." rows={1} className="flex-1 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0" />
-                        <Button size="sm">Share</Button>
+                        <Textarea 
+                            placeholder="Write one thought or feeling..." 
+                            rows={1} 
+                            className="flex-1 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0" 
+                            value={quickNoteText}
+                            onChange={(e) => setQuickNoteText(e.target.value)}
+                        />
+                        <Button size="sm" onClick={handleShareQuickNote} disabled={!quickNoteText.trim()}>Share</Button>
                     </CardContent>
                 </Card>
 
@@ -361,3 +411,5 @@ export default function PersonalSpacePage() {
     </>
   );
 }
+
+    
