@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-image",
+      "description": "A silhouette of two people against a sunset.",
+      "imageUrl": "https://images.unsplash.com/photo-1474552226712-ac0f0961a954?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb3VwbGUlMjBzaWxob3VldHRlfGVufDB8fHx8MTc2MzM1Njg3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "couple silhouette"
+    },
+    {
+      "id": "personal-page-feature",
+      "description": "A person writing in a journal.",
+      "imageUrl": "https://images.unsplash.com/photo-1550592704-6c76defa9985?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxqb3VybmFsJTIwd3JpdGluZ3xlbnwwfHx8fDE3NjMyNzc1MzR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "journal writing"
+    },
+    {
+      "id": "memory-wall-feature",
+      "description": "A wall with many photos.",
+      "imageUrl": "https://images.unsplash.com/photo-1676835981079-7810565db333?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cGhvdG8lMjBnYWxsZXJ5fGVufDB8fHx8MTc2MzM1Njg3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "photo gallery"
+    },
+    {
+      "id": "shared-archive-feature",
+      "description": "An old, open book.",
+      "imageUrl": "https://images.unsplash.com/photo-1622724315801-943775b1c805?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxvbGQlMjBib29rfGVufDB8fHx8MTc2MzI1NzI5MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "old book"
+    }
+  ]
 }
