@@ -20,18 +20,20 @@ import { collection, serverTimestamp } from 'firebase/firestore';
 
 interface AddNoteDialogProps {
   spaceId: string;
+  authorId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export function AddNoteDialog({
   spaceId,
+  authorId,
   open,
   onOpenChange,
 }: AddNoteDialogProps) {
   const [noteText, setNoteText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { firestore, user } = useFirebase();
+  const { firestore } = useFirebase();
   const { toast } = useToast();
 
   const handleSubmitNote = async () => {
@@ -43,11 +45,11 @@ export function AddNoteDialog({
       });
       return;
     }
-    if (!user) {
+    if (!authorId) {
       toast({
         variant: 'destructive',
-        title: 'Not Authenticated',
-        description: 'You must be signed in to leave a note.',
+        title: 'Unknown Author',
+        description: 'Cannot post a note without being identified. Please re-enter the space.',
       });
       return;
     }
@@ -57,7 +59,7 @@ export function AddNoteDialog({
     const contentRef = collection(firestore, `spaces/${spaceId}/content`);
     const newNote = {
       spaceId,
-      authorMemberId: user.uid,
+      authorMemberId: authorId,
       type: 'note',
       payload: {
         text: noteText,
@@ -68,7 +70,6 @@ export function AddNoteDialog({
     };
 
     try {
-      // We use the non-blocking version to provide a snappy UI response
       addDocumentNonBlocking(contentRef, newNote);
 
       toast({
@@ -78,8 +79,6 @@ export function AddNoteDialog({
       setNoteText('');
       onOpenChange(false);
     } catch (error) {
-      // The non-blocking function will emit a global error,
-      // but we can also catch potential synchronous errors here.
       console.error('Error adding note:', error);
       toast({
         variant: 'destructive',

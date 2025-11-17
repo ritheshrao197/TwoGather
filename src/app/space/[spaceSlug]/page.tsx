@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -9,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
-import { useUser } from '@/firebase';
 import { useState, useEffect } from 'react';
 import {
   ArrowLeft,
@@ -30,6 +28,9 @@ import {
   Plus,
   Palette,
   Bell,
+  Check,
+  Zap,
+  Gift
 } from 'lucide-react';
 import { AddNoteDialog } from '@/components/content/add-note-dialog';
 import { useNotes, NoteDocument } from '@/hooks/useNotes';
@@ -40,21 +41,27 @@ import { Separator } from '@/components/ui/separator';
 export default function PersonalSpacePage() {
   const params = useParams();
   const router = useRouter();
-  const { user, isUserLoading } = useUser();
   const spaceSlug = params.spaceSlug as string;
-  const { data: notes, isLoading: notesLoading } = useNotes(user ? spaceSlug : '');
 
-  const [isAddNoteDialogOpen, setIsAddNoteDialogOpen] = useState(false);
+  const [currentMemberId, setCurrentMemberId] = useState<string | null>(null);
   const [welcomeMessage, setWelcomeMessage] = useState('Welcome back.');
   const [welcomeIcon, setWelcomeIcon] = useState(<Sun className="w-5 h-5" />);
 
-  const memoryOfTheDayImage = PlaceHolderImages.find((p) => p.id === 'memory-wall-feature');
-
+  // In the simplified flow, we retrieve the current member from local storage.
   useEffect(() => {
-    if (!isUserLoading && !user) {
+    const memberId = localStorage.getItem(`memberId-for-${spaceSlug}`);
+    if (!memberId) {
+      // If no member is chosen, send them back to the lobby.
       router.push(`/space/${spaceSlug}/lobby`);
+    } else {
+      setCurrentMemberId(memberId);
     }
-  }, [user, isUserLoading, router, spaceSlug]);
+  }, [spaceSlug, router]);
+
+
+  const { data: notes, isLoading: notesLoading } = useNotes(spaceSlug);
+  const [isAddNoteDialogOpen, setIsAddNoteDialogOpen] = useState(false);
+  const memoryOfTheDayImage = PlaceHolderImages.find((p) => p.id === 'memory-wall-feature');
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -73,14 +80,14 @@ export default function PersonalSpacePage() {
     }
   }, []);
 
-  if (isUserLoading || !user) {
+  if (!currentMemberId) {
     return (
       <div className="flex flex-col min-h-dvh bg-background">
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <Sparkles className="mx-auto h-12 w-12 animate-spin text-primary" />
-            <p className="mt-4 font-caption text-muted-foreground">Waking up your space...</p>
+            <p className="mt-4 font-caption text-muted-foreground">Verifying your entry...</p>
           </div>
         </main>
       </div>
@@ -110,7 +117,7 @@ export default function PersonalSpacePage() {
 
   return (
     <>
-      <AddNoteDialog spaceId={spaceSlug} open={isAddNoteDialogOpen} onOpenChange={setIsAddNoteDialogOpen} />
+      <AddNoteDialog spaceId={spaceSlug} open={isAddNoteDialogOpen} onOpenChange={setIsAddNoteDialogOpen} authorId={currentMemberId}/>
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
         <Header />
         <main className="flex-1 container mx-auto px-4 py-8 pt-24">
@@ -118,7 +125,7 @@ export default function PersonalSpacePage() {
           {/* 1. Soft Welcome Moment */}
           <section className="mb-10 text-center">
             <h1 className="text-3xl md:text-4xl font-headline font-bold text-foreground animate-in fade-in duration-1000">
-              Welcome back, {user.displayName || 'friend'}.
+              Welcome, {currentMemberId}.
             </h1>
             <p className="text-muted-foreground font-caption mt-2 animate-in fade-in duration-1000 delay-500">
               This is your shared space. Take a breath, settle in.
@@ -139,8 +146,8 @@ export default function PersonalSpacePage() {
                                 <div className="flex items-center gap-2">
                                     <div className="relative">
                                         <Avatar className="w-8 h-8 border-2 border-green-400">
-                                            <AvatarImage src={`https://i.pravatar.cc/150?u=${user.uid}`} />
-                                            <AvatarFallback>{user.displayName?.[0]}</AvatarFallback>
+                                            <AvatarImage src={`https://i.pravatar.cc/150?u=${currentMemberId}`} />
+                                            <AvatarFallback>{currentMemberId?.[0]}</AvatarFallback>
                                         </Avatar>
                                         <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-background" />
                                     </div>
@@ -158,12 +165,12 @@ export default function PersonalSpacePage() {
                             <p className="text-sm text-muted-foreground font-caption">You're online. Partner was last seen 2 hours ago.</p>
                         </CardContent>
                         <CardContent>
-                          <Button variant="secondary" className="w-full invisible group-hover:visible transition-all">Tap to sync</Button>
+                          <Button variant="secondary" className="w-full invisible group-hover:visible transition-all"><Zap className="mr-2" />Tap to sync</Button>
                         </CardContent>
                     </Card>
 
                     <Card className="flex flex-col justify-center">
-                        <CardContent className="flex items-center gap-4 text-center">
+                        <CardContent className="flex items-center gap-4 text-center p-6">
                             {welcomeIcon}
                             <p className="text-sm font-caption text-muted-foreground">{welcomeMessage}</p>
                         </CardContent>
@@ -181,9 +188,9 @@ export default function PersonalSpacePage() {
 
                 {/* 5. Memory of the Day */}
                 {memoryOfTheDayImage && (
-                  <Card className="overflow-hidden">
+                  <Card className="overflow-hidden group">
                     <div className="relative aspect-[16/9]">
-                        <Image src={memoryOfTheDayImage.imageUrl} alt="Memory of the day" fill className="object-cover" />
+                        <Image src={memoryOfTheDayImage.imageUrl} alt="Memory of the day" fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                         <div className="absolute bottom-0 left-0 p-6">
                             <p className="text-primary-foreground font-caption text-sm mb-1">A small moment worth revisiting.</p>
@@ -205,6 +212,7 @@ export default function PersonalSpacePage() {
                         <Plus className="mr-2 h-4 w-4" /> New Note
                       </Button>
                     </CardTitle>
+                    <CardDescription>Lightweight messages and thoughts for each other.</CardDescription>
                   </CardHeader>
                   <CardContent>
                     {notesLoading && <div className="text-center text-muted-foreground font-caption">Loading notes...</div>}
@@ -227,21 +235,21 @@ export default function PersonalSpacePage() {
               <Card>
                   <CardHeader><CardTitle>Tiny Rituals</CardTitle></CardHeader>
                   <CardContent className="space-y-3">
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer">
                           <div className="flex items-center gap-3">
                               <Smile className="text-primary"/>
                               <span className="font-caption text-sm">Daily Check-in</span>
                           </div>
                           <ChevronRight/>
                       </div>
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer">
                           <div className="flex items-center gap-3">
                               <Heart className="text-red-400"/>
                               <span className="font-caption text-sm">Send Gratitude Blink</span>
                           </div>
                           <ChevronRight/>
                       </div>
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer">
                           <div className="flex items-center gap-3">
                               <MessageCircle className="text-blue-400"/>
                               <span className="font-caption text-sm">Quick Question</span>
@@ -290,6 +298,10 @@ export default function PersonalSpacePage() {
                     </Link>
                     <Link href="#" className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
                         <span className="font-caption text-sm">Agreements Board</span>
+                        <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                    </Link>
+                     <Link href="#" className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                        <span className="font-caption text-sm">Vault</span>
                         <ChevronRight className="w-4 h-4 text-muted-foreground"/>
                     </Link>
                 </CardContent>

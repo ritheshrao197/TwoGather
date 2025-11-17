@@ -14,9 +14,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Users } from 'lucide-react';
+import { Users, Loader2 } from 'lucide-react';
 import { useFirebase } from '@/firebase';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, writeBatch } from 'firebase/firestore';
 
 export default function CreateSpacePage() {
@@ -24,15 +23,13 @@ export default function CreateSpacePage() {
   const [yourName, setYourName] = useState('');
   const [partnerName, setPartnerName] = useState('');
   const [spacePassword, setSpacePassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const { auth, firestore } = useFirebase();
+  const { firestore } = useFirebase();
 
   const handleCreateSpace = async () => {
-    if (!spaceName || !yourName || !partnerName || !spacePassword || !email || !password) {
+    if (!spaceName || !yourName || !partnerName || !spacePassword) {
       toast({
         variant: 'destructive',
         title: 'Missing Information',
@@ -44,44 +41,34 @@ export default function CreateSpacePage() {
     setIsLoading(true);
 
     try {
-      // 1. Create user with email and password and sign them in.
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const creatorUid = userCredential.user.uid;
-      
-      // 2. Update user's auth profile with display name.
-      await updateProfile(userCredential.user, {
-        displayName: yourName
-      });
-      
       const slug = spaceName.toLowerCase().replace(/\s+/g, '-');
       const spaceId = slug;
-      const partnerId = `partner-${Date.now()}`;
 
-      // 3. Create the space and both member documents in a single atomic batch.
+      // In a real app, you would hash the password on a server.
+      // For this simplified flow, we store it directly.
+      // This is NOT secure for a production app.
+      const spacePasswordHash = spacePassword; 
+      
       const batch = writeBatch(firestore);
 
       const spaceRef = doc(firestore, 'spaces', spaceId);
       batch.set(spaceRef, {
         displayName: spaceName,
         slug: slug,
-        spacePasswordHash: spacePassword, // In a real app, you'd hash this.
-        publicEnabled: false,
+        spacePasswordHash: spacePasswordHash,
         createdAt: new Date().toISOString(),
       });
       
-      const creatorMemberRef = doc(firestore, `spaces/${spaceId}/members`, creatorUid);
-      batch.set(creatorMemberRef, {
+      const yourMemberRef = doc(firestore, `spaces/${spaceId}/members`, yourName.toLowerCase().replace(/\s+/g, '-'));
+      batch.set(yourMemberRef, {
         displayName: yourName,
-        claimed: true,
-        lastSeen: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
+        isClaimed: false, // Simplified flow doesn't use claiming
       });
       
-      const partnerMemberRef = doc(firestore, `spaces/${spaceId}/members`, partnerId);
+      const partnerMemberRef = doc(firestore, `spaces/${spaceId}/members`, partnerName.toLowerCase().replace(/\s+/g, '-'));
       batch.set(partnerMemberRef, {
         displayName: partnerName,
-        claimed: false,
-        createdAt: new Date().toISOString(),
+        isClaimed: false,
       });
 
       await batch.commit();
@@ -90,20 +77,14 @@ export default function CreateSpacePage() {
         title: 'Space Created!',
         description: `Your space "${spaceName}" is ready.`,
       });
-      router.push(`/space/${slug}/lobby`);
+      router.push(`/enter`);
 
     } catch (error: any) {
       console.error('Error creating space:', error);
       let errorMessage = 'Could not create the space. Please try again.';
       
-      if (error.code === 'auth/email-already-in-use') {
-        errorMessage = 'This email is already in use. Please use a different email or sign in instead.';
-      } else if (error.code === 'auth/invalid-email') {
-        errorMessage = 'Please provide a valid email address.';
-      } else if (error.code === 'auth/weak-password') {
-        errorMessage = 'Password should be at least 6 characters.';
-      } else if (error.message && error.message.includes('Missing or insufficient permissions')) {
-        errorMessage = 'You do not have permission to create a space. This might be a security rule issue. Please try again or contact support.';
+      if (error.message?.includes('permission-denied')) {
+        errorMessage = 'You do not have permission to create a space. This might be a security rule issue.';
       }
       
       toast({
@@ -146,31 +127,7 @@ export default function CreateSpacePage() {
                 disabled={isLoading}
               />
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">Your Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="your@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Your Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="your-name">Your Name</Label>
                 <Input
@@ -193,11 +150,11 @@ export default function CreateSpacePage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="space-password">Shared Space Password</Label>
+              <Label htmlFor="space-password">One Shared Password</Label>
               <Input
                 id="space-password"
                 type="password"
-                placeholder="A secret password for your space lobby"
+                placeholder="A secret password for your space"
                 value={spacePassword}
                 onChange={(e) => setSpacePassword(e.target.value)}
                 disabled={isLoading}
@@ -206,13 +163,13 @@ export default function CreateSpacePage() {
           </CardContent>
           <CardFooter>
             <Button className="w-full" onClick={handleCreateSpace} disabled={isLoading}>
-              {isLoading ? 'Creating...' : 'Create Space'}
+              {isLoading ? <Loader2 className="animate-spin" /> : 'Create Space'}
             </Button>
           </CardFooter>
         </Card>
         
         <div className="mt-4 text-center text-sm text-muted-foreground">
-          <p>This creates your account, your partner will claim theirs on the next screen.</p>
+          <p>Already have a space? <Link href="/enter" className="underline">Enter here</Link>.</p>
         </div>
       </div>
     </div>

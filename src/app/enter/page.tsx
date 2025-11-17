@@ -17,6 +17,9 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { KeyRound, Loader2 } from 'lucide-react';
 import { verifySpacePassword } from '@/actions/auth';
+import { useFirebase } from '@/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+
 
 export default function EnterPage() {
   const [spaceSlug, setSpaceSlug] = useState('');
@@ -24,6 +27,7 @@ export default function EnterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const { firestore } = useFirebase();
 
   const handleEnterLobby = async () => {
     if (!spaceSlug || !spacePassword) {
@@ -36,10 +40,35 @@ export default function EnterPage() {
     }
 
     setIsLoading(true);
-    // For now, we'll bypass the password check and go straight to the lobby
-    // In a real app, you would verify the password first
-    // The lobby will handle its own authentication to view data
-    router.push(`/space/${spaceSlug}/lobby`);
+
+    try {
+      const spaceRef = doc(firestore, 'spaces', spaceSlug);
+      const spaceSnap = await getDoc(spaceRef);
+
+      if (!spaceSnap.exists()) {
+        toast({ variant: 'destructive', title: 'Not Found', description: 'This space does not exist.' });
+        setIsLoading(false);
+        return;
+      }
+      
+      const spaceData = spaceSnap.data();
+
+      // In a real app, this check would happen on a server against a hashed password.
+      // This is NOT a secure way to check a password.
+      if (spaceData.spacePasswordHash !== spacePassword) {
+         toast({ variant: 'destructive', title: 'Access Denied', description: 'The password for this space is incorrect.' });
+         setIsLoading(false);
+         return;
+      }
+
+      // If password is correct, redirect to the lobby
+      router.push(`/space/${spaceSlug}/lobby`);
+
+    } catch (error) {
+       console.error("Error verifying space password:", error);
+       toast({ variant: 'destructive', title: 'Error', description: 'Could not verify space details. Please try again.' });
+       setIsLoading(false);
+    }
   };
 
   return (
@@ -74,7 +103,7 @@ export default function EnterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="space-password">Space Password</Label>
+              <Label htmlFor="space-password">Shared Password</Label>
               <Input
                 id="space-password"
                 type="password"
