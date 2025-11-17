@@ -1,6 +1,7 @@
 
 'use client';
 
+import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,7 +10,7 @@ import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -151,7 +152,14 @@ export default function ProfilePage() {
   };
 
   if (isLoadingMember || !currentMemberId) {
-    return <div className="flex items-center justify-center min-h-dvh"><Loader2 className="animate-spin" /></div>;
+    return (
+      <div className="flex flex-col min-h-dvh bg-background text-foreground">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+            <Loader2 className="animate-spin text-primary" size={32} />
+        </main>
+      </div>
+    );
   }
 
   return (
