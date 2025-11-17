@@ -78,6 +78,17 @@
       },
       "required": ["imageUrl"]
     },
+    "Agreement": {
+      "title": "Agreement",
+      "type": "object",
+      "description": "A commitment or rule created by members of a space.",
+      "properties": {
+        "title": { "type": "string", "description": "The title of the agreement." },
+        "description": { "type": "string", "description": "An optional description of the agreement." },
+        "status": { "type": "string", "enum": ["active", "completed"], "description": "The current status of the agreement." }
+      },
+      "required": ["title", "status"]
+    },
     "Content": {
       "title": "Content",
       "type": "object",
@@ -86,11 +97,12 @@
         "id": { "type": "string", "description": "Unique identifier for the content." },
         "spaceId": { "type": "string", "description": "The ID of the space this content belongs to." },
         "authorMemberId": { "type": "string", "description": "The ID of the member who authored this content." },
-        "type": { "type": "string", "enum": ["public_post", "memory", "note", "shared_entry", "vault", "file"] },
+        "type": { "type": "string", "enum": ["public_post", "memory", "note", "shared_entry", "vault", "file", "agreement", "check-in", "gratitude", "quick_question_response"] },
         "payload": {
           "oneOf": [
             { "$ref": "#/entities/Note" },
-            { "$ref": "#/entities/Memory" }
+            { "$ref": "#/entities/Memory" },
+            { "$ref": "#/entities/Agreement" }
           ]
         },
         "visibility": { "type": "string", "enum": ["members", "public"] },
