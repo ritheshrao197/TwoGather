@@ -36,9 +36,11 @@ export default function Home() {
             <p className="mt-4 max-w-2xl text-lg md:text-xl text-foreground/80 font-caption drop-shadow-md">
               A shared space for two, built on privacy and connection. Create personal pages, build a memory wall, and unlock a shared archive.
             </p>
-            <Button asChild size="lg" className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90">
-              <Link href="/enter">Get Started</Link>
-            </Button>
+            <Link href="/enter" passHref legacyBehavior>
+              <Button asChild size="lg" className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90">
+                <a>Get Started</a>
+              </Button>
+            </Link>
           </div>
         </section>
 
