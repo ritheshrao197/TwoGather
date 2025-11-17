@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -17,6 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useFirebase } from '@/firebase';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
+import { getCaptionSuggestions } from '@/ai/flows/memory-wall-caption-suggestions';
 
 interface AddMemoryDialogProps {
   spaceId: string;
@@ -82,6 +84,39 @@ export function AddMemoryDialog({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setImageFile(e.target.files[0]);
+    }
+  };
+
+  const handleGenerateCaptions = async () => {
+    if (!imageFile) {
+        toast({
+            variant: 'destructive',
+            title: 'No Image',
+            description: 'Please select an image first to generate captions.',
+        });
+        return;
+    }
+
+    try {
+        const result = await getCaptionSuggestions({
+            imageDescription: "A photo for a couple's memory wall.", // This can be improved
+            additionalContext: "The memory is being added to a private space for a couple."
+        });
+
+        if (result.captions && result.captions.length > 0) {
+            setCaption(result.captions[0]); // Use the first suggestion
+            toast({
+                title: 'Caption Suggested!',
+                description: 'We\'ve added a suggestion for your caption.',
+            });
+        }
+    } catch (error) {
+        console.error("Error generating captions:", error);
+        toast({
+            variant: 'destructive',
+            title: 'AI Error',
+            description: 'Could not generate caption suggestions at this time.',
+        });
     }
   };
 
@@ -175,6 +210,9 @@ export function AddMemoryDialog({
               rows={3}
               disabled={isLoading}
             />
+             <Button variant="link" size="sm" className="justify-end px-0" onClick={handleGenerateCaptions} disabled={!imageFile}>
+                Generate with AI
+            </Button>
           </div>
         </div>
         <DialogFooter>

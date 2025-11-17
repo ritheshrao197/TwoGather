@@ -8,50 +8,38 @@ import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Textarea } from '@/components/ui/textarea';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  ArrowLeft,
-  Sun,
-  Moon,
-  Cloudy,
-  Sunset,
-  Sparkles,
   Heart,
   MessageCircle,
-  Wind,
-  Droplets,
-  Flower2,
-  CalendarHeart,
   Smile,
   Pen,
   ChevronRight,
   Plus,
   Palette,
-  Bell,
-  Check,
-  Zap,
-  Gift,
+  Settings,
+  BookUser,
+  LayoutGrid,
   Lock,
   MessageSquare,
   User,
+  ClipboardList,
+  CalendarCheck2,
+  Paperclip
 } from 'lucide-react';
-import { AddNoteDialog } from '@/components/content/add-note-dialog';
 import { DailyCheckInDialog } from '@/components/rituals/daily-check-in-dialog';
 import { SendGratitudeDialog } from '@/components/rituals/send-gratitude-dialog';
 import { QuickQuestionDialog } from '@/components/rituals/quick-question-dialog';
 import { InteractionFeed } from '@/components/rituals/interaction-feed';
-import { useNotes, NoteDocument } from '@/hooks/useNotes';
-import { usePresence, SpacePresence } from '@/hooks/usePresence';
-import { useTapSync } from '@/hooks/useTapSync';
+import { usePresence } from '@/hooks/usePresence';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, fromUnixTime } from 'date-fns';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Separator } from '@/components/ui/separator';
 import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
-import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { collection, serverTimestamp, doc } from 'firebase/firestore';
-import { cn } from '@/lib/utils';
+import { collection } from 'firebase/firestore';
+import { useChatStore } from '@/hooks/useChatStore';
+import { AddMemoryDialog } from '@/components/content/add-memory-dialog';
+import { AddNoteDialog } from '@/components/content/add-note-dialog';
 
 
 interface MemberProfile {
@@ -73,18 +61,17 @@ export default function PersonalSpacePage() {
   const { toast } = useToast();
   const spaceSlug = params.spaceSlug as string;
   const { firestore } = useFirebase();
+  const { toggleChat } = useChatStore();
 
   const [currentMemberId, setCurrentMemberId] = useState<string | null>(null);
   const [partnerMemberId, setPartnerMemberId] = useState<string | null>(null);
-  const [welcomeMessage, setWelcomeMessage] = useState('Welcome back.');
-  const [welcomeIcon, setWelcomeIcon] = useState(<Sun className="w-5 h-5" />);
-  const [quickNoteText, setQuickNoteText] = useState('');
   
   // Dialog states
-  const [isAddNoteDialogOpen, setIsAddNoteDialogOpen] = useState(false);
   const [isCheckInDialogOpen, setIsCheckInDialogOpen] = useState(false);
   const [isGratitudeDialogOpen, setIsGratitudeDialogOpen] = useState(false);
   const [isQuestionDialogOpen, setIsQuestionDialogOpen] = useState(false);
+  const [isAddMemoryDialogOpen, setIsAddMemoryDialogOpen] = useState(false);
+  const [isAddNoteDialogOpen, setIsAddNoteDialogOpen] = useState(false);
 
   // Simplified flow: retrieve current member from local storage.
   useEffect(() => {
@@ -115,301 +102,187 @@ export default function PersonalSpacePage() {
   const myPresence = currentMemberId ? presence[currentMemberId] : null;
   const partnerPresence = partnerMemberId ? presence[partnerMemberId] : null;
 
-  const { handleTap, isSyncing, syncSuccess } = useTapSync(spaceSlug, currentMemberId, () => {
-    toast({
-      title: '✨ Synced!',
-      description: 'You and your partner tapped at the same time.',
-    });
-  });
-
-  const { data: notes, isLoading: notesLoading } = useNotes(spaceSlug);
   const memoryOfTheDayImage = PlaceHolderImages.find((p) => p.id === 'memory-wall-feature');
 
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) {
-      setWelcomeMessage('Good morning. Hope today feels calm and bright.');
-      setWelcomeIcon(<Sun className="w-5 h-5 text-yellow-400" />);
-    } else if (hour < 18) {
-      setWelcomeMessage('Hope your day is going smoothly.');
-      setWelcomeIcon(<Cloudy className="w-5 h-5 text-sky-400" />);
-    } else if (hour < 21) {
-      setWelcomeMessage('Slow down. You made it through the day.');
-      setWelcomeIcon(<Sunset className="w-5 h-5 text-orange-400" />);
-    } else {
-      setWelcomeMessage('Rest well. This space is here whenever you need it.');
-      setWelcomeIcon(<Moon className="w-5 h-5 text-indigo-400" />);
-    }
-  }, []);
+  const getPresenceStatus = (memberId: string | null) => {
+    if (!memberId) return "Offline";
+    const memberPresence = presence[memberId];
 
-  const getPresenceStatus = () => {
-    const bothOnline = myPresence?.online && partnerPresence?.online;
-    if (bothOnline) return "You are both online.";
-    if (myPresence?.online && !partnerPresence?.online) {
-      const lastSeen = partnerPresence?.lastSeen;
-      if (typeof lastSeen === 'number' && lastSeen > 0) {
-        try {
-          return `Partner was last seen ${formatDistanceToNow(fromUnixTime(lastSeen / 1000), { addSuffix: true })}`;
-        } catch (e) {
-            return "Partner is offline.";
-        }
+    if (memberPresence?.online) return "Online now";
+    if (memberPresence?.lastSeen) {
+      try {
+        return `Last seen ${formatDistanceToNow(fromUnixTime(memberPresence.lastSeen / 1000), { addSuffix: true })}`;
+      } catch (e) {
+          return "Offline";
       }
-      return "Partner is offline.";
     }
-    return "You're online.";
+    return "Offline";
   };
-
-  const areBothOnline = myPresence?.online && partnerPresence?.online;
-
-  const handleShareQuickNote = async () => {
-    if (!quickNoteText.trim() || !firestore || !currentMemberId) return;
-
-    const contentRef = collection(firestore, `spaces/${spaceSlug}/content`);
-    const newNote = {
-      spaceId: spaceSlug,
-      authorMemberId: currentMemberId,
-      type: 'note',
-      payload: {
-        text: quickNoteText.trim(),
-      },
-      visibility: 'members',
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    };
-
-    try {
-      addDocumentNonBlocking(contentRef, newNote);
-      toast({
-        title: 'Note Shared!',
-        description: 'Your thought has been added to the Living Notes.',
-      });
-      setQuickNoteText('');
-    } catch (error) {
-      console.error('Error sharing quick note:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Could not share your note. Please try again.',
-      });
-    }
-  };
-
+  
   if (!currentMemberId || !membersData) {
     return (
       <div className="flex flex-col min-h-dvh bg-background">
-        <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <Sparkles className="mx-auto h-12 w-12 animate-spin text-primary" />
-            <p className="mt-4 font-caption text-muted-foreground">Verifying your entry...</p>
+            <p className="mt-4 font-caption text-muted-foreground">Loading your space...</p>
           </div>
         </main>
       </div>
     );
   }
 
-  const renderNote = (note: NoteDocument) => {
-    const randomColorClasses = [
-      "bg-yellow-200/20 hover:bg-yellow-200/30",
-      "bg-blue-200/20 hover:bg-blue-200/30",
-      "bg-green-200/20 hover:bg-green-200/30",
-      "bg-purple-200/20 hover:bg-purple-200/30",
-      "bg-pink-200/20 hover:bg-pink-200/30",
-    ];
-    const randomClass = randomColorClasses[note.id.charCodeAt(0) % randomColorClasses.length];
-
-    return (
-        <div key={note.id} className={`${randomClass} p-4 rounded-lg text-sm font-caption flex flex-col justify-between transition-all duration-300 transform hover:scale-105 hover:shadow-lg`}>
-            <p className="flex-grow">{note.payload.text}</p>
-            <p className="text-xs text-muted-foreground mt-2 text-right">
-                {note.createdAt?.toDate ? formatDistanceToNow(note.createdAt.toDate(), { addSuffix: true }) : 'just now'}
-            </p>
-        </div>
-    );
-  };
-
-
   return (
     <>
-      <AddNoteDialog spaceId={spaceSlug} open={isAddNoteDialogOpen} onOpenChange={setIsAddNoteDialogOpen} authorId={currentMemberId}/>
       <DailyCheckInDialog spaceId={spaceSlug} open={isCheckInDialogOpen} onOpenChange={setIsCheckInDialogOpen} authorId={currentMemberId} />
       {partnerMemberId && <SendGratitudeDialog spaceId={spaceSlug} open={isGratitudeDialogOpen} onOpenChange={setIsGratitudeDialogOpen} authorId={currentMemberId} targetId={partnerMemberId} />}
       <QuickQuestionDialog spaceId={spaceSlug} open={isQuestionDialogOpen} onOpenChange={setIsQuestionDialogOpen} authorId={currentMemberId} />
-      
+      <AddMemoryDialog spaceId={spaceSlug} authorId={currentMemberId} open={isAddMemoryDialogOpen} onOpenChange={setIsAddMemoryDialogOpen} />
+      <AddNoteDialog spaceId={spaceSlug} authorId={currentMemberId} open={isAddNoteDialogOpen} onOpenChange={setIsAddNoteDialogOpen} />
+
       <div className="flex flex-col min-h-dvh bg-background text-foreground transition-colors duration-1000">
         <Header />
         <main className="flex-1 container mx-auto px-4 py-8 pt-24">
           
           <section className="mb-10 text-center">
-            <h1 className="text-3xl md:text-4xl font-headline font-bold text-foreground animate-in fade-in duration-1000">
+            <h1 className="text-3xl md:text-4xl font-headline font-bold text-foreground">
               Welcome, {currentMember?.displayName}.
             </h1>
-            <p className="text-muted-foreground font-caption mt-2 animate-in fade-in duration-1000 delay-500">
+            <p className="text-muted-foreground font-caption mt-2">
               This is your shared space. Take a breath, settle in.
             </p>
           </section>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative">
-            
+          <section className="mb-8">
+            <div className="flex justify-center items-center gap-4">
+                <Link href={`/space/${spaceSlug}/profile`} className="flex flex-col items-center gap-2 text-center group">
+                   <div className="relative">
+                        <Avatar className="w-16 h-16 border-2 border-primary/50 group-hover:border-primary transition-colors">
+                            <AvatarImage src={currentMember?.profile?.avatarUrl} />
+                            <AvatarFallback>{currentMember?.displayName?.[0]}</AvatarFallback>
+                        </Avatar>
+                        {myPresence?.online && <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-400 rounded-full border-2 border-background" />}
+                   </div>
+                   <span className="text-sm font-medium">{currentMember?.displayName}</span>
+                   <span className="text-xs text-muted-foreground">{getPresenceStatus(currentMemberId)}</span>
+                </Link>
+                <div className="h-px w-12 bg-border"></div>
+                 <Link href="#" className="flex flex-col items-center gap-2 text-center group cursor-not-allowed opacity-70">
+                   <div className="relative">
+                        <Avatar className="w-16 h-16 border-2 border-border group-hover:border-primary transition-colors">
+                            <AvatarImage src={partnerMember?.profile?.avatarUrl} />
+                            <AvatarFallback>{partnerMember?.displayName?.[0]}</AvatarFallback>
+                        </Avatar>
+                        {partnerPresence?.online && <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-400 rounded-full border-2 border-background" />}
+                   </div>
+                   <span className="text-sm font-medium">{partnerMember?.displayName}</span>
+                   <span className="text-xs text-muted-foreground">{getPresenceStatus(partnerMemberId)}</span>
+                </Link>
+            </div>
+          </section>
+
+          <section className="mb-8">
+             <Card>
+                <CardContent className="p-4 flex justify-around items-center">
+                    <Button variant="ghost" className="flex flex-col h-auto gap-2" onClick={() => setIsCheckInDialogOpen(true)}>
+                        <Smile className="w-6 h-6 text-primary"/>
+                        <span className="text-xs font-caption">Daily Check-in</span>
+                    </Button>
+                     <Button variant="ghost" className="flex flex-col h-auto gap-2" onClick={() => setIsGratitudeDialogOpen(true)}>
+                        <Heart className="w-6 h-6 text-red-500"/>
+                        <span className="text-xs font-caption">Gratitude Blink</span>
+                    </Button>
+                     <Button variant="ghost" className="flex flex-col h-auto gap-2" onClick={() => setIsQuestionDialogOpen(true)}>
+                        <MessageCircle className="w-6 h-6 text-blue-500"/>
+                        <span className="text-xs font-caption">Quick Question</span>
+                    </Button>
+                </CardContent>
+            </Card>
+          </section>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card className="flex flex-col justify-between group">
-                        <CardHeader>
-                            <CardTitle className="flex items-center justify-between">
-                                <span>Presence</span>
-                                <div className="flex items-center gap-2">
-                                    <div className="relative">
-                                        <Avatar className={`w-8 h-8 border-2 ${myPresence?.online ? 'border-green-400' : 'border-transparent'}`}>
-                                            <AvatarImage src={currentMember?.profile?.avatarUrl} />
-                                            <AvatarFallback>{currentMember?.displayName?.[0].toUpperCase()}</AvatarFallback>
-                                        </Avatar>
-                                        {myPresence?.online && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-background" />}
-                                    </div>
-                                    <div className={`h-px w-6 transition-colors ${areBothOnline ? 'bg-green-400' : 'bg-muted-foreground/30'}`}></div>
-                                     <div className="relative">
-                                        <Avatar className={`w-8 h-8 border-2 transition-all ${partnerPresence?.online ? 'border-green-400' : 'border-transparent opacity-50'}`}>
-                                            <AvatarImage src={partnerMember?.profile?.avatarUrl} />
-                                            <AvatarFallback>{partnerMember?.displayName?.[0].toUpperCase()}</AvatarFallback>
-                                        </Avatar>
-                                        {partnerPresence?.online && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-background" />}
-                                    </div>
-                                </div>
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-sm text-muted-foreground font-caption">{getPresenceStatus()}</p>
-                        </CardContent>
-                        <CardContent>
-                          <Button variant="secondary" className={`w-full transition-all ${!areBothOnline && 'invisible group-hover:invisible'}`} onClick={handleTap} disabled={isSyncing}>
-                              {isSyncing ? <Sparkles className="mr-2 animate-ping" /> : <Zap className="mr-2" />}
-                              {isSyncing ? 'Waiting...' : 'Tap to sync'}
-                          </Button>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="flex flex-col justify-center">
-                        <CardContent className="flex items-center gap-4 text-center p-6">
-                            {welcomeIcon}
-                            <p className="text-sm font-caption text-muted-foreground">{welcomeMessage}</p>
-                        </CardContent>
-                    </Card>
-                </div>
-              
-                <Card>
-                    <CardContent className="flex items-center gap-4 pt-6">
-                        <Pen className="text-primary"/>
-                        <Textarea 
-                            placeholder="Write one thought or feeling..." 
-                            rows={1} 
-                            className="flex-1 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0" 
-                            value={quickNoteText}
-                            onChange={(e) => setQuickNoteText(e.target.value)}
-                        />
-                        <Button size="sm" onClick={handleShareQuickNote} disabled={!quickNoteText.trim()}>Share</Button>
-                    </CardContent>
-                </Card>
-
+                <InteractionFeed spaceId={spaceSlug} currentMemberId={currentMemberId} />
+                
                 {memoryOfTheDayImage && (
                   <Card className="overflow-hidden group">
-                    <div className="relative aspect-[16/9]">
-                        <Image src={memoryOfTheDayImage.imageUrl} alt="Memory of the day" fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-                        <div className="absolute bottom-0 left-0 p-6">
-                            <p className="text-primary-foreground font-caption text-sm mb-1">A small moment worth revisiting.</p>
-                            <h3 className="text-primary-foreground font-headline text-2xl">You added this 3 months ago.</h3>
+                    <CardHeader>
+                        <CardTitle>Memory of the Day</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="relative aspect-[16/9]">
+                            <Image src={memoryOfTheDayImage.imageUrl} alt="Memory of the day" fill className="object-cover transition-transform duration-500 group-hover:scale-105" data-ai-hint={memoryOfTheDayImage.imageHint} />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                            <div className="absolute bottom-0 left-0 p-6">
+                                <h3 className="text-primary-foreground font-headline text-2xl">You added this 3 months ago.</h3>
+                            </div>
                         </div>
-                        <div className="absolute top-4 right-4 flex gap-2">
-                          <Button size="icon" variant="ghost" className="text-white hover:text-red-500 hover:bg-white/10"><Heart /></Button>
-                        </div>
-                    </div>
+                    </CardContent>
                   </Card>
                 )}
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span>Living Notes</span>
-                      <Button variant="secondary" size="sm" onClick={() => setIsAddNoteDialogOpen(true)}>
-                        <Plus className="mr-2 h-4 w-4" /> New Note
-                      </Button>
-                    </CardTitle>
-                    <CardDescription>Lightweight messages and thoughts for each other.</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {notesLoading && <div className="text-center text-muted-foreground font-caption">Loading notes...</div>}
-                    {!notesLoading && notes && notes.length > 0 ? (
-                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                         {notes.map(renderNote)}
-                       </div>
-                    ) : (
-                       <p className="text-muted-foreground font-caption text-sm text-center py-4">No notes yet. Why not leave the first one?</p>
-                    )}
-                  </CardContent>
-                </Card>
-
             </div>
 
             <div className="space-y-6">
-               <Card>
-                <CardHeader>
-                  <CardTitle>Tiny Rituals</CardTitle>
-                  <CardDescription>Small ways to connect each day.</CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-2">
-                  <Button variant="outline" onClick={() => setIsCheckInDialogOpen(true)}>
-                    <Smile className="mr-2" /> Daily Check-in
-                  </Button>
-                  <Button variant="outline" onClick={() => setIsGratitudeDialogOpen(true)}>
-                    <Heart className="mr-2" /> Send Gratitude Blink
-                  </Button>
-                  <Button variant="outline" onClick={() => setIsQuestionDialogOpen(true)}>
-                    <MessageCircle className="mr-2" /> Quick Question
-                  </Button>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Explore Your Space</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                    <Link href={`/space/${spaceSlug}/profile`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
-                        <span className="font-caption text-sm">Your Profile</span>
-                         <div className="flex items-center gap-2">
-                           <Avatar className="w-6 h-6">
-                              <AvatarImage src={currentMember?.profile?.avatarUrl} />
-                              <AvatarFallback><User className="w-4 h-4 text-muted-foreground"/></AvatarFallback>
-                           </Avatar>
-                           <ChevronRight className="w-4 h-4 text-muted-foreground"/>
-                        </div>
-                    </Link>
-                    <Link href={`/space/${spaceSlug}/memory-wall`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
-                        <span className="font-caption text-sm">Memory Wall</span>
-                        <div className="relative"><Bell className="w-4 h-4 text-transparent"/><div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-primary animate-pulse"></div></div>
-                    </Link>
-                    <Link href={`/space/${spaceSlug}/agreements`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
-                        <span className="font-caption text-sm">Agreements Board</span>
-                        <ChevronRight className="w-4 h-4 text-muted-foreground"/>
-                    </Link>
-                     <Link href={`/space/${spaceSlug}/vault`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
-                        <span className="font-caption text-sm">Vault</span>
-                         <div className="flex items-center gap-2">
-                           <Lock className="w-4 h-4 text-muted-foreground"/>
-                           <ChevronRight className="w-4 h-4 text-muted-foreground"/>
-                        </div>
-                    </Link>
-                </CardContent>
-              </Card>
+                <Card>
+                    <CardHeader><CardTitle>Quick Actions</CardTitle></CardHeader>
+                    <CardContent className="grid grid-cols-2 gap-4">
+                        <Button variant="outline" className="h-20 flex-col gap-1" onClick={() => setIsAddMemoryDialogOpen(true)}><Paperclip/><span>Add Memory</span></Button>
+                        <Button variant="outline" className="h-20 flex-col gap-1" onClick={() => setIsAddNoteDialogOpen(true)}><Pen/><span>Write Note</span></Button>
+                        <Button variant="outline" className="h-20 flex-col gap-1" disabled><ClipboardList/><span>Shared Task</span></Button>
+                        <Button variant="outline" className="h-20 flex-col gap-1" onClick={toggleChat}><MessageSquare/><span>Open Chat</span></Button>
+                    </CardContent>
+                </Card>
 
-              <InteractionFeed spaceId={spaceSlug} currentMemberId={currentMemberId} />
+                <Card>
+                    <CardHeader>
+                    <CardTitle>Explore Your Space</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                        <Link href={`/space/${spaceSlug}/memory-wall`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                            <span className="font-caption text-sm flex items-center gap-2"><LayoutGrid className="w-4 h-4 text-muted-foreground"/>Memory Wall</span>
+                            <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                        </Link>
+                        <Link href={`/space/${spaceSlug}/agreements`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                            <span className="font-caption text-sm flex items-center gap-2"><BookUser className="w-4 h-4 text-muted-foreground"/>Agreements</span>
+                            <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                        </Link>
+                         <Link href={`/space/${spaceSlug}/vault`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                            <span className="font-caption text-sm flex items-center gap-2"><Lock className="w-4 h-4 text-muted-foreground"/>Vault</span>
+                            <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                        </Link>
+                         <Link href="#" className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors opacity-50 cursor-not-allowed">
+                            <span className="font-caption text-sm flex items-center gap-2"><CalendarCheck2 className="w-4 h-4 text-muted-foreground"/>Shared Planner</span>
+                            <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                        </Link>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader><CardTitle>Profile & Customization</CardTitle></CardHeader>
+                    <CardContent className="space-y-2">
+                         <Link href={`/space/${spaceSlug}/profile`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                            <span className="font-caption text-sm flex items-center gap-2"><User className="w-4 h-4 text-muted-foreground"/>Your Profile</span>
+                            <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                        </Link>
+                        <Link href="#" className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors opacity-50 cursor-not-allowed">
+                            <span className="font-caption text-sm flex items-center gap-2"><Palette className="w-4 h-4 text-muted-foreground"/>Theme & Layout</span>
+                            <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                        </Link>
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardHeader><CardTitle>Settings</CardTitle></CardHeader>
+                    <CardContent className="space-y-2">
+                         <Link href="#" className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors opacity-50 cursor-not-allowed">
+                            <span className="font-caption text-sm flex items-center gap-2"><Settings className="w-4 h-4 text-muted-foreground"/>Space Settings</span>
+                            <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                        </Link>
+                    </CardContent>
+                </Card>
             </div>
-            
           </div>
           
           <footer className="mt-16 text-center">
               <p className="text-sm font-caption text-muted-foreground">Your shared space grows with every small moment.</p>
-              <p className="text-sm font-caption text-muted-foreground">Take your time here.</p>
               <Button asChild variant="link" className="mt-4">
                   <Link href={`/space/${spaceSlug}/lobby`}>
                       Back to Lobby
@@ -421,5 +294,3 @@ export default function PersonalSpacePage() {
     </>
   );
 }
-
-    
