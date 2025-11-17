@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -6,7 +5,7 @@ import Link from 'next/link';
 import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { ArrowLeft, Gamepad2, BrainCircuit, Puzzle, PencilRuler, Users, Wand2, Rows3, CheckSquare, Brain, Loader2 } from 'lucide-react';
+import { ArrowLeft, Gamepad2, BrainCircuit, Puzzle, PencilRuler, Users, Wand2, Rows3, CheckSquare, Loader2 } from 'lucide-react';
 import { useFirebase } from '@/firebase';
 import { ref, push, set } from 'firebase/database';
 import { useState } from 'react';
@@ -21,6 +20,14 @@ const games = [
     description: 'Quick rounds of the classic game, with a timer.',
     players: '2',
     time: '1-3 min'
+  },
+  {
+    id: 'would-you-rather',
+    icon: CheckSquare,
+    title: 'Would You Rather?',
+    description: 'Funny dilemma cards that reveal your compatibility.',
+    players: '2',
+    time: '3-10 min'
   },
   {
     id: 'quick-quiz',
@@ -54,14 +61,6 @@ const games = [
     players: '2',
     time: '3-6 min'
   },
-  {
-    id: 'would-you-rather',
-    icon: CheckSquare,
-    title: 'Would You Rather',
-    description: 'Compare answers to fun dilemma cards.',
-    players: '2',
-    time: '3-10 min'
-  },
 ];
 
 export default function GamesHubPage() {
@@ -73,11 +72,7 @@ export default function GamesHubPage() {
   const [isLoading, setIsLoading] = useState<string | null>(null);
 
   const handlePlayNow = async (gameId: string) => {
-     if (gameId !== 'tic-tac-toe') {
-        toast({ variant: 'destructive', title: 'Coming Soon!', description: 'This game is not yet available.' });
-        return;
-    }
-    
+   if (gameId === 'tic-tac-toe') {
     setIsLoading(gameId);
 
     try {
@@ -121,12 +116,18 @@ export default function GamesHubPage() {
 
         const sessionId = newSessionRef.key;
         router.push(`/space/${spaceSlug}/games/tic-tac-toe/${sessionId}`);
-
     } catch (error) {
         console.error("Failed to start game session:", error);
         toast({ variant: 'destructive', title: 'Error', description: 'Could not start a new game session.' });
         setIsLoading(null);
     }
+   } else if (gameId === 'would-you-rather') {
+    // Navigate to the Would You Rather game
+    router.push(`/space/${spaceSlug}/games/would-you-rather`);
+   } else {
+      toast({ variant: 'destructive', title: 'Coming Soon!', description: 'This game is not yet available.' });
+      return;
+   }
   };
 
   return (
@@ -141,44 +142,47 @@ export default function GamesHubPage() {
                 <p className="text-muted-foreground font-caption mt-1">A collection of fun, two-player games.</p>
               </div>
           </div>
+          <Button asChild variant="outline">
+            <Link href={`/space/${spaceSlug}`}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Space
+            </Link>
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {games.map((game) => (
-            <Card key={game.id} className="flex flex-col">
-              <CardHeader className="flex flex-row items-start gap-4">
-                <div className="bg-primary/10 p-3 rounded-lg">
-                    <game.icon className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                    <CardTitle className="font-headline">{game.title}</CardTitle>
-                    <CardDescription className="font-caption pt-1">{game.description}</CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <div className="flex items-center gap-4 text-sm text-muted-foreground font-caption">
-                    <div className="flex items-center gap-1.5"><Users className="w-4 h-4" /> {game.players} players</div>
-                </div>
-              </C`
-    <file>src/components/ui/textarea.tsx</file>
-    <content><![CDATA[import * as React from 'react';
-
-import {cn} from '@/lib/utils';
-
-const Textarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<'textarea'>>(
-  ({className, ...props}, ref) => {
-    return (
-      <textarea
-        className={cn(
-          'flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
-    );
-  }
-);
-Textarea.displayName = 'Textarea';
-
-export {Textarea};
+          {games.map((game) => {
+            const IconComponent = game.icon;
+            return (
+              <Card key={game.id} className="flex flex-col">
+                <CardHeader className="flex flex-row items-start gap-4">
+                  <div className="bg-primary/10 p-3 rounded-lg">
+                      <IconComponent className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                      <CardTitle className="font-headline">{game.title}</CardTitle>
+                      <CardDescription className="font-caption pt-1">{game.description}</CardDescription>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground font-caption">
+                      <div className="flex items-center gap-1.5"><Users className="w-4 h-4" /> {game.players} players</div>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button 
+                    className="w-full" 
+                    onClick={() => handlePlayNow(game.id)}
+                    disabled={isLoading === game.id}
+                  >
+                    {isLoading === game.id ? <Loader2 className="animate-spin" /> : 'Play Now'}
+                  </Button>
+                </CardFooter>
+              </Card>
+            );
+          })}
+        </div>
+      </main>
+    </div>
+  );
+}
