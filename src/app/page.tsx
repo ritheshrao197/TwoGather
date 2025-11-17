@@ -49,11 +49,9 @@ export default function Home() {
               A shared space for two, built on privacy and connection. Create
               personal pages, build a memory wall, and unlock a shared archive.
             </p>
-            <Link href="/enter">
-              <Button size="lg" className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90">
-                Get Started
-              </Button>
-            </Link>
+            <Button asChild size="lg" className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90">
+              <Link href="/enter">Get Started</Link>
+            </Button>
           </div>
         </section>
 

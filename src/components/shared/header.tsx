@@ -11,11 +11,9 @@ export function Header() {
         <span className="ml-3 text-lg font-headline">Shared Spaces</span>
       </Link>
       <nav className="ml-auto flex gap-4 sm:gap-6">
-        <Link href="/enter">
-          <Button variant="outline" className="border-primary/50 text-foreground hover:bg-primary/10 hover:text-foreground">
-            Enter Space
-          </Button>
-        </Link>
+        <Button asChild variant="outline" className="border-primary/50 text-foreground hover:bg-primary/10 hover:text-foreground">
+          <Link href="/enter">Enter Space</Link>
+        </Button>
       </nav>
     </header>
   );
