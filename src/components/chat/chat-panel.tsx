@@ -43,12 +43,12 @@ export function ChatPanel() {
   const [isSending, setIsSending] = useState(false);
 
   const handleSendMessage = async () => {
-    if (!messageText.trim() || !currentMemberId || !partnerMemberId) return;
+    if (!messageText.trim() || !currentMemberId || !partnerMemberId || !firestore) return;
 
     setIsSending(true);
 
     const message = {
-      id: new Date().toISOString(),
+      id: new Date().toISOString() + Math.random(), // Add random number for better unique key
       authorId: currentMemberId,
       text: messageText,
       timestamp: Date.now(),
@@ -58,23 +58,20 @@ export function ChatPanel() {
     addMessage(message);
     setMessageText('');
 
-    if (!isPartnerOnline) {
-      // Partner is offline, store message in Firestore
-      try {
-        const pendingMessagesRef = collection(firestore, `spaces/${spaceSlug}/pendingMessages`);
-        await addDoc(pendingMessagesRef, {
-          fromMemberId: currentMemberId,
-          toMemberId: partnerMemberId,
-          text: message.text,
-          timestamp: serverTimestamp(),
-        });
-      } catch (error) {
-        console.error("Failed to send offline message:", error);
-        // Here you could add logic to show an error in the UI for the specific message
-      }
-    } else {
-      // Partner is online, send via WebRTC (when implemented)
-      // For now, it's just added locally.
+    // Always send the message to the pending collection.
+    // The usePendingMessages hook on the receiver's end will pick it up and delete it.
+    // This handles both online and offline cases with one mechanism.
+    try {
+      const pendingMessagesRef = collection(firestore, `spaces/${spaceSlug}/pendingMessages`);
+      await addDoc(pendingMessagesRef, {
+        fromMemberId: currentMemberId,
+        toMemberId: partnerMemberId,
+        text: message.text,
+        timestamp: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      // Here you could add logic to show an error in the UI for the specific message
     }
 
     setIsSending(false);
