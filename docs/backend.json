@@ -89,6 +89,18 @@
       },
       "required": ["title", "status"]
     },
+    "VaultEntry": {
+        "title": "VaultEntry",
+        "type": "object",
+        "description": "An encrypted, private entry in a member's vault.",
+        "properties": {
+            "encryptedText": {
+                "type": "string",
+                "description": "The client-side encrypted content of the vault entry."
+            }
+        },
+        "required": ["encryptedText"]
+    },
     "Content": {
       "title": "Content",
       "type": "object",
@@ -97,15 +109,16 @@
         "id": { "type": "string", "description": "Unique identifier for the content." },
         "spaceId": { "type": "string", "description": "The ID of the space this content belongs to." },
         "authorMemberId": { "type": "string", "description": "The ID of the member who authored this content." },
-        "type": { "type": "string", "enum": ["public_post", "memory", "note", "shared_entry", "vault", "file", "agreement", "check-in", "gratitude", "quick_question_response"] },
+        "type": { "type": "string", "enum": ["public_post", "memory", "note", "shared_entry", "vault", "file", "agreement", "check-in", "gratitude", "quick_question_response", "vault_entry"] },
         "payload": {
           "oneOf": [
             { "$ref": "#/entities/Note" },
             { "$ref": "#/entities/Memory" },
-            { "$ref": "#/entities/Agreement" }
+            { "$ref": "#/entities/Agreement" },
+            { "$ref": "#/entities/VaultEntry" }
           ]
         },
-        "visibility": { "type": "string", "enum": ["members", "public"] },
+        "visibility": { "type": "string", "enum": ["members", "public", "private"] },
         "createdAt": { "type": "string", "format": "date-time" },
         "updatedAt": { "type": "string", "format": "date-time" },
         "deletedAt": { "type": "string", "format": "date-time" }
@@ -164,3 +177,5 @@
     ]
   }
 }
+
+    

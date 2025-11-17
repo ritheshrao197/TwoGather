@@ -31,7 +31,8 @@ import {
   Bell,
   Check,
   Zap,
-  Gift
+  Gift,
+  Lock,
 } from 'lucide-react';
 import { AddNoteDialog } from '@/components/content/add-note-dialog';
 import { DailyCheckInDialog } from '@/components/rituals/daily-check-in-dialog';
@@ -358,9 +359,12 @@ export default function PersonalSpacePage() {
                         <span className="font-caption text-sm">Agreements Board</span>
                         <ChevronRight className="w-4 h-4 text-muted-foreground"/>
                     </Link>
-                     <Link href="#" className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                     <Link href={`/space/${spaceSlug}/vault`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
                         <span className="font-caption text-sm">Vault</span>
-                        <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                         <div className="flex items-center gap-2">
+                           <Lock className="w-4 h-4 text-muted-foreground"/>
+                           <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                        </div>
                     </Link>
                 </CardContent>
               </Card>
@@ -381,3 +385,5 @@ export default function PersonalSpacePage() {
     </>
   );
 }
+
+    
