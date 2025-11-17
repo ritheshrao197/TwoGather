@@ -2,7 +2,6 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -15,9 +14,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, User, KeyRound } from 'lucide-react';
+import { ArrowLeft, User, KeyRound, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { useFirebase, useMemoFirebase, useCollection, useDoc } from '@/firebase';
+import { useFirebase, useMemoFirebase, useCollection, useDoc, useUser } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
 
@@ -42,45 +41,43 @@ export default function SpaceLobbyPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { firestore, auth } = useFirebase();
+  const { user, isUserLoading } = useUser();
   const spaceSlug = params.spaceSlug as string;
 
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
   const [memberPassword, setMemberPassword] = useState('');
   const [isAuthenticating, setIsAuthenticating] = useState(true);
 
-  // Authenticate the user anonymously when the component mounts
+  // When component mounts, if no user is found after loading, sign in anonymously.
   useEffect(() => {
-    const authenticateUser = async () => {
-      try {
-        // Sign in anonymously to get permissions to read Firestore data
-        await signInAnonymously(auth);
-        setIsAuthenticating(false);
-      } catch (error) {
-        console.error('Error signing in anonymously:', error);
+    if (!isUserLoading && !user) {
+      signInAnonymously(auth).catch((error) => {
+        console.error("Anonymous sign-in failed", error);
         toast({
           variant: 'destructive',
           title: 'Authentication Error',
-          description: 'Failed to authenticate. Please try again.',
+          description: 'Could not connect to the service.',
         });
-        setIsAuthenticating(false);
-      }
-    };
+      });
+    }
+    // Once we're done with the initial user loading/auth check, we can stop the auth spinner.
+    if (!isUserLoading) {
+      setIsAuthenticating(false);
+    }
+  }, [isUserLoading, user, auth, toast]);
 
-    authenticateUser();
-  }, [auth, toast]);
-
-  // Create memoized references for Firestore queries
+  // Memoize Firestore references. Only create them if we have a user and a space slug.
   const memoizedSpaceRef = useMemoFirebase(
-    () => doc(firestore, 'spaces', spaceSlug),
-    [firestore, spaceSlug]
+    () => (user && spaceSlug ? doc(firestore, 'spaces', spaceSlug) : null),
+    [user, firestore, spaceSlug]
   );
 
   const memoizedMembersRef = useMemoFirebase(
-    () => collection(firestore, 'spaces', spaceSlug, 'members'),
-    [firestore, spaceSlug]
+    () => (user && spaceSlug ? collection(firestore, 'spaces', spaceSlug, 'members') : null),
+    [user, firestore, spaceSlug]
   );
 
-  // Use the Firebase hooks to fetch data
+  // Use the Firebase hooks to fetch data. These hooks will wait until the refs are not null.
   const {
     data: spaceData,
     isLoading: spaceLoading,
@@ -119,23 +116,17 @@ export default function SpaceLobbyPage() {
     router.push(`/claim?space=${spaceSlug}&member=${memberName}`);
   };
   
-  // Handle authentication state
-  if (isAuthenticating) {
-    return (
-      <div className="flex flex-col min-h-dvh bg-background text-foreground">
-        <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
-          <h1 className="text-2xl font-bold">Authenticating...</h1>
-        </main>
-      </div>
-    );
-  }
+  // Show a loading state while authenticating or fetching initial data.
+  const isLoading = isAuthenticating || spaceLoading || membersLoading;
 
-  // Handle loading states
-  if (spaceLoading || membersLoading) {
+  if (isLoading) {
     return (
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
         <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
-          <h1 className="text-2xl font-bold">Loading...</h1>
+          <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+          <h1 className="text-2xl font-bold font-headline">
+            {isAuthenticating ? 'Authenticating...' : 'Loading Space...'}
+          </h1>
         </main>
       </div>
     );
@@ -148,6 +139,7 @@ export default function SpaceLobbyPage() {
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
         <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
           <h1 className="text-2xl font-bold">Error loading space data.</h1>
+          <p className="text-muted-foreground mt-2">The space may not exist or you may not have permission to view it.</p>
           <Button asChild variant="link" className="mt-4">
             <Link href="/enter">Return to entrance</Link>
           </Button>
@@ -156,12 +148,13 @@ export default function SpaceLobbyPage() {
     );
   }
 
-  // Handle case where space doesn't exist
+  // Handle case where space doesn't exist after loading
   if (!spaceData) {
     return (
       <div className="flex flex-col min-h-dvh bg-background text-foreground">
         <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
           <h1 className="text-2xl font-bold">Space not found.</h1>
+          <p className="text-muted-foreground mt-2">Please check the name and try again.</p>
           <Button asChild variant="link" className="mt-4">
             <Link href="/enter">Return to entrance</Link>
           </Button>
