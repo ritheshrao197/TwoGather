@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -83,8 +84,9 @@ export default function CreateSpacePage() {
       console.error('Error creating space:', error);
       let errorMessage = 'Could not create the space. Please try again.';
       
-      if (error.message?.includes('permission-denied')) {
-        errorMessage = 'You do not have permission to create a space. This might be a security rule issue.';
+      // We check for a more specific permission error message now.
+      if (error.code === 'permission-denied' || error.message?.includes('permission-denied')) {
+        errorMessage = 'You do not have permission to create a space. This might be a security rule issue. Please try again or contact support.';
       }
       
       toast({
