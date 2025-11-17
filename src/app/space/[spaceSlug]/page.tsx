@@ -64,7 +64,7 @@ interface MemberProfile {
 interface MemberData {
   id: string;
   displayName: string;
-  profile: MemberProfile;
+  profile?: MemberProfile;
 }
 
 export default function PersonalSpacePage() {
@@ -261,7 +261,7 @@ export default function PersonalSpacePage() {
                                 <div className="flex items-center gap-2">
                                     <div className="relative">
                                         <Avatar className={`w-8 h-8 border-2 ${myPresence?.online ? 'border-green-400' : 'border-transparent'}`}>
-                                            <AvatarImage src={currentMember?.profile.avatarUrl} />
+                                            <AvatarImage src={currentMember?.profile?.avatarUrl} />
                                             <AvatarFallback>{currentMember?.displayName?.[0].toUpperCase()}</AvatarFallback>
                                         </Avatar>
                                         {myPresence?.online && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-background" />}
@@ -269,7 +269,7 @@ export default function PersonalSpacePage() {
                                     <div className={`h-px w-6 transition-colors ${areBothOnline ? 'bg-green-400' : 'bg-muted-foreground/30'}`}></div>
                                      <div className="relative">
                                         <Avatar className={`w-8 h-8 border-2 transition-all ${partnerPresence?.online ? 'border-green-400' : 'border-transparent opacity-50'}`}>
-                                            <AvatarImage src={partnerMember?.profile.avatarUrl} />
+                                            <AvatarImage src={partnerMember?.profile?.avatarUrl} />
                                             <AvatarFallback>{partnerMember?.displayName?.[0].toUpperCase()}</AvatarFallback>
                                         </Avatar>
                                         {partnerPresence?.online && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-background" />}
@@ -378,7 +378,7 @@ export default function PersonalSpacePage() {
                         <span className="font-caption text-sm">Your Profile</span>
                          <div className="flex items-center gap-2">
                            <Avatar className="w-6 h-6">
-                              <AvatarImage src={currentMember?.profile.avatarUrl} />
+                              <AvatarImage src={currentMember?.profile?.avatarUrl} />
                               <AvatarFallback><User className="w-4 h-4 text-muted-foreground"/></AvatarFallback>
                            </Avatar>
                            <ChevronRight className="w-4 h-4 text-muted-foreground"/>
