@@ -10,6 +10,16 @@ import { Heart, MessageCircle, Smile } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
+import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
+
+interface MemberData {
+  id: string;
+  displayName: string;
+  profile?: {
+    avatarUrl?: string;
+  }
+}
 
 interface InteractionFeedProps {
   spaceId: string;
@@ -17,7 +27,15 @@ interface InteractionFeedProps {
 }
 
 export function InteractionFeed({ spaceId, currentMemberId }: InteractionFeedProps) {
+  const { firestore } = useFirebase();
   const { data: interactions, isLoading } = useInteractions(spaceId);
+  
+  const memoizedMembersRef = useMemoFirebase(
+    () => (firestore && spaceId ? collection(firestore, 'spaces', spaceId, 'members') : null),
+    [firestore, spaceId]
+  );
+  const { data: membersData } = useCollection<MemberData>(memoizedMembersRef);
+
   const [lastSeenId, setLastSeenId] = useState<string | null>(null);
   const [unseenCount, setUnseenCount] = useState(0);
 
@@ -52,8 +70,6 @@ export function InteractionFeed({ spaceId, currentMemberId }: InteractionFeedPro
       setUnseenCount(0);
     }
   };
-
-  const getMemberName = (id: string) => id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
   const renderPayload = (interaction: InteractionDocument) => {
     switch (interaction.type) {
@@ -90,11 +106,13 @@ export function InteractionFeed({ spaceId, currentMemberId }: InteractionFeedPro
   }
 
   const renderInteraction = (interaction: InteractionDocument) => {
-    const authorName = getMemberName(interaction.authorMemberId);
+    const author = membersData?.find(m => m.id === interaction.authorMemberId);
+    const authorName = author?.displayName || 'A member';
+    
     return (
       <div key={interaction.id} className="flex items-start gap-3">
         <Avatar className="w-8 h-8 border-2 border-transparent">
-            <AvatarImage src={`https://i.pravatar.cc/150?u=${interaction.authorMemberId}`} />
+            <AvatarImage src={author?.profile?.avatarUrl} />
             <AvatarFallback>{authorName[0]}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
@@ -156,5 +174,3 @@ export function InteractionFeed({ spaceId, currentMemberId }: InteractionFeedPro
     </Card>
   );
 }
-
-    
