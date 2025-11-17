@@ -27,7 +27,17 @@
         "passwordSetBy": { "type": "string", "description": "The member ID who set this password." },
         "claimCodeId": { "type": "string", "description": "A reference to a one-time claim code." },
         "lastSeen": { "type": "string", "format": "date-time", "description": "Timestamp of the member's last activity." },
-        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when the member was created." }
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when the member was created." },
+        "profile": {
+          "type": "object",
+          "description": "The member's personal profile data.",
+          "properties": {
+            "avatarUrl": { "type": "string", "description": "URL of the member's avatar image." },
+            "bio": { "type": "string", "description": "A short bio." },
+            "mood": { "type": "string", "description": "A short status or mood message." },
+            "pronouns": { "type": "string", "description": "The member's pronouns." }
+          }
+        }
       },
       "required": ["id", "spaceId", "displayName", "claimed", "createdAt"]
     },

@@ -34,6 +34,7 @@ import {
   Gift,
   Lock,
   MessageSquare,
+  User,
 } from 'lucide-react';
 import { AddNoteDialog } from '@/components/content/add-note-dialog';
 import { DailyCheckInDialog } from '@/components/rituals/daily-check-in-dialog';
@@ -47,10 +48,24 @@ import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, fromUnixTime } from 'date-fns';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Separator } from '@/components/ui/separator';
-import { useFirebase } from '@/firebase';
+import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { collection, serverTimestamp } from 'firebase/firestore';
+import { collection, serverTimestamp, doc } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
+
+
+interface MemberProfile {
+  avatarUrl?: string;
+  bio?: string;
+  mood?: string;
+  pronouns?: string;
+}
+
+interface MemberData {
+  id: string;
+  displayName: string;
+  profile: MemberProfile;
+}
 
 export default function PersonalSpacePage() {
   const params = useParams();
@@ -86,6 +101,15 @@ export default function PersonalSpacePage() {
       }
     }
   }, [spaceSlug, router]);
+
+  const memoizedMembersRef = useMemoFirebase(
+    () => (firestore && spaceSlug ? collection(firestore, 'spaces', spaceSlug, 'members') : null),
+    [firestore, spaceSlug]
+  );
+  const { data: membersData } = useCollection<MemberData>(memoizedMembersRef);
+
+  const currentMember = membersData?.find(m => m.id === currentMemberId);
+  const partnerMember = membersData?.find(m => m.id === partnerMemberId);
 
   const presence = usePresence(spaceSlug, currentMemberId);
   const myPresence = currentMemberId ? presence[currentMemberId] : null;
@@ -170,7 +194,7 @@ export default function PersonalSpacePage() {
     }
   };
 
-  if (!currentMemberId) {
+  if (!currentMemberId || !membersData) {
     return (
       <div className="flex flex-col min-h-dvh bg-background">
         <Header />
@@ -218,7 +242,7 @@ export default function PersonalSpacePage() {
           
           <section className="mb-10 text-center">
             <h1 className="text-3xl md:text-4xl font-headline font-bold text-foreground animate-in fade-in duration-1000">
-              Welcome, {currentMemberId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}.
+              Welcome, {currentMember?.displayName}.
             </h1>
             <p className="text-muted-foreground font-caption mt-2 animate-in fade-in duration-1000 delay-500">
               This is your shared space. Take a breath, settle in.
@@ -237,16 +261,16 @@ export default function PersonalSpacePage() {
                                 <div className="flex items-center gap-2">
                                     <div className="relative">
                                         <Avatar className={`w-8 h-8 border-2 ${myPresence?.online ? 'border-green-400' : 'border-transparent'}`}>
-                                            <AvatarImage src={`https://i.pravatar.cc/150?u=${currentMemberId}`} />
-                                            <AvatarFallback>{currentMemberId?.[0].toUpperCase()}</AvatarFallback>
+                                            <AvatarImage src={currentMember?.profile.avatarUrl} />
+                                            <AvatarFallback>{currentMember?.displayName?.[0].toUpperCase()}</AvatarFallback>
                                         </Avatar>
                                         {myPresence?.online && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-background" />}
                                     </div>
                                     <div className={`h-px w-6 transition-colors ${areBothOnline ? 'bg-green-400' : 'bg-muted-foreground/30'}`}></div>
                                      <div className="relative">
                                         <Avatar className={`w-8 h-8 border-2 transition-all ${partnerPresence?.online ? 'border-green-400' : 'border-transparent opacity-50'}`}>
-                                            <AvatarImage src={`https://i.pravatar.cc/150?u=${partnerMemberId}`} />
-                                            <AvatarFallback>{partnerMemberId?.[0].toUpperCase()}</AvatarFallback>
+                                            <AvatarImage src={partnerMember?.profile.avatarUrl} />
+                                            <AvatarFallback>{partnerMember?.displayName?.[0].toUpperCase()}</AvatarFallback>
                                         </Avatar>
                                         {partnerPresence?.online && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-background" />}
                                     </div>
@@ -352,6 +376,13 @@ export default function PersonalSpacePage() {
                   <CardTitle>Explore Your Space</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
+                    <Link href={`/space/${spaceSlug}/profile`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                        <span className="font-caption text-sm">Your Profile</span>
+                         <div className="flex items-center gap-2">
+                           <User className="w-4 h-4 text-muted-foreground"/>
+                           <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                        </div>
+                    </Link>
                     <Link href={`/space/${spaceSlug}/memory-wall`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
                         <span className="font-caption text-sm">Memory Wall</span>
                         <div className="relative"><Bell className="w-4 h-4 text-transparent"/><div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-primary animate-pulse"></div></div>

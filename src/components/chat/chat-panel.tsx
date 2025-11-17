@@ -18,9 +18,17 @@ import { cn } from '@/lib/utils';
 import { useChatStore } from '@/hooks/useChatStore';
 import { Send, X, Wifi, WifiOff, MessageCircle, Loader2 } from 'lucide-react';
 import { usePresence } from '@/hooks/usePresence';
+import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { useParams } from 'next/navigation';
-import { useFirebase } from '@/firebase';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+
+interface MemberData {
+  id: string;
+  displayName: string;
+  profile?: {
+    avatarUrl?: string;
+  }
+}
 
 export function ChatPanel() {
   const { 
@@ -41,6 +49,14 @@ export function ChatPanel() {
 
   const [messageText, setMessageText] = useState('');
   const [isSending, setIsSending] = useState(false);
+
+  const memoizedMembersRef = useMemoFirebase(
+    () => (firestore && spaceSlug ? collection(firestore, 'spaces', spaceSlug, 'members') : null),
+    [firestore, spaceSlug]
+  );
+  const { data: membersData } = useCollection<MemberData>(memoizedMembersRef);
+  const currentMember = membersData?.find(m => m.id === currentMemberId);
+  const partnerMember = membersData?.find(m => m.id === partnerMemberId);
 
   const handleSendMessage = async () => {
     if (!messageText.trim() || !currentMemberId || !partnerMemberId || !firestore) return;
@@ -124,8 +140,8 @@ export function ChatPanel() {
                 >
                   {message.authorId === partnerMemberId && (
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={`https://i.pravatar.cc/150?u=${partnerMemberId}`} />
-                      <AvatarFallback>{partnerMemberId?.[0].toUpperCase()}</AvatarFallback>
+                      <AvatarImage src={partnerMember?.profile?.avatarUrl} />
+                      <AvatarFallback>{partnerMember?.displayName?.[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
                   )}
                   <div
@@ -143,8 +159,8 @@ export function ChatPanel() {
                   </div>
                   {message.authorId === currentMemberId && (
                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={`https://i.pravatar.cc/150?u=${currentMemberId}`} />
-                        <AvatarFallback>{currentMemberId?.[0].toUpperCase()}</AvatarFallback>
+                        <AvatarImage src={currentMember?.profile?.avatarUrl} />
+                        <AvatarFallback>{currentMember?.displayName?.[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
                   )}
                 </div>

@@ -10,6 +10,7 @@ import {
   CardTitle,
   CardContent,
 } from '@/components/ui/card';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, User, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -23,6 +24,9 @@ interface SpaceData {
 interface MemberData {
   id: string;
   displayName: string;
+  profile?: {
+    avatarUrl?: string;
+  }
 }
 
 export default function SpaceLobbyPage() {
@@ -139,7 +143,12 @@ export default function SpaceLobbyPage() {
                    <CardTitle>{member.displayName}</CardTitle>
                  </CardHeader>
                  <CardContent>
-                   <User className="w-16 h-16 mx-auto text-muted-foreground" />
+                    <Avatar className="w-24 h-24 mx-auto border-4 border-transparent group-hover:border-primary/20 transition-colors">
+                      <AvatarImage src={member.profile?.avatarUrl} />
+                      <AvatarFallback>
+                        <User className="w-12 h-12 text-muted-foreground" />
+                      </AvatarFallback>
+                    </Avatar>
                  </CardContent>
                  <CardContent>
                     <Button className="w-full">Enter as {member.displayName}</Button>

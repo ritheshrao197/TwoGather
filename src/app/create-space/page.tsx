@@ -64,12 +64,24 @@ export default function CreateSpacePage() {
       batch.set(yourMemberRef, {
         displayName: yourName,
         isClaimed: false, // Simplified flow doesn't use claiming
+        profile: {
+          avatarUrl: '',
+          bio: '',
+          mood: '',
+          pronouns: ''
+        }
       });
       
       const partnerMemberRef = doc(firestore, `spaces/${spaceId}/members`, partnerName.toLowerCase().replace(/\s+/g, '-'));
       batch.set(partnerMemberRef, {
         displayName: partnerName,
         isClaimed: false,
+        profile: {
+          avatarUrl: '',
+          bio: '',
+          mood: '',
+          pronouns: ''
+        }
       });
 
       await batch.commit();
