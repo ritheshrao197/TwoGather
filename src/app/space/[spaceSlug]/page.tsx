@@ -33,16 +33,19 @@ import {
   Zap,
   Gift,
   Lock,
+  MessageSquare,
 } from 'lucide-react';
 import { AddNoteDialog } from '@/components/content/add-note-dialog';
 import { DailyCheckInDialog } from '@/components/rituals/daily-check-in-dialog';
 import { SendGratitudeDialog } from '@/components/rituals/send-gratitude-dialog';
 import { QuickQuestionDialog } from '@/components/rituals/quick-question-dialog';
 import { InteractionFeed } from '@/components/rituals/interaction-feed';
+import { ChatPanel } from '@/components/chat/chat-panel';
 import { useNotes, NoteDocument } from '@/hooks/useNotes';
 import { usePresence, SpacePresence } from '@/hooks/usePresence';
 import { useTapSync } from '@/hooks/useTapSync';
 import { useToast } from '@/hooks/use-toast';
+import { useChatStore } from '@/hooks/useChatStore';
 import { formatDistanceToNow, fromUnixTime } from 'date-fns';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Separator } from '@/components/ui/separator';
@@ -63,6 +66,9 @@ export default function PersonalSpacePage() {
   const [welcomeMessage, setWelcomeMessage] = useState('Welcome back.');
   const [welcomeIcon, setWelcomeIcon] = useState(<Sun className="w-5 h-5" />);
   const [quickNoteText, setQuickNoteText] = useState('');
+  
+  const { isChatOpen, toggleChat } = useChatStore();
+
 
   // Dialog states
   const [isAddNoteDialogOpen, setIsAddNoteDialogOpen] = useState(false);
@@ -224,7 +230,7 @@ export default function PersonalSpacePage() {
             </p>
           </section>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative">
             
             <div className="lg:col-span-2 space-y-6">
 
@@ -366,9 +372,19 @@ export default function PersonalSpacePage() {
                            <ChevronRight className="w-4 h-4 text-muted-foreground"/>
                         </div>
                     </Link>
+                    <button onClick={toggleChat} className="w-full flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                        <span className="font-caption text-sm">Private Chat</span>
+                        <div className="flex items-center gap-2">
+                           <MessageSquare className="w-4 h-4 text-muted-foreground"/>
+                           <ChevronRight className="w-4 h-4 text-muted-foreground"/>
+                        </div>
+                    </button>
                 </CardContent>
               </Card>
             </div>
+            
+            <ChatPanel />
+
           </div>
           
           <footer className="mt-16 text-center">
@@ -385,5 +401,3 @@ export default function PersonalSpacePage() {
     </>
   );
 }
-
-    
