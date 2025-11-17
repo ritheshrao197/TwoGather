@@ -7,9 +7,13 @@ import { Button } from '@/components/ui/button';
 import { MessageSquare } from 'lucide-react';
 import { useChatStore } from '@/hooks/useChatStore';
 import { InitChatStore } from '@/hooks/use-init-chat-store';
+import { usePendingMessages } from '@/hooks/usePendingMessages';
 
 export default function SpaceLayout({ children }: { children: ReactNode }) {
-  const { toggleChat } = useChatStore();
+  const { toggleChat, currentMemberId } = useChatStore();
+  
+  // Initialize the hook to check for pending messages
+  usePendingMessages();
 
   return (
     <>

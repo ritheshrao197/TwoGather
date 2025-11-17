@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -15,24 +16,71 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { useChatStore } from '@/hooks/useChatStore';
-import { Send, X, Wifi, WifiOff, MessageCircle } from 'lucide-react';
+import { Send, X, Wifi, WifiOff, MessageCircle, Loader2 } from 'lucide-react';
 import { usePresence } from '@/hooks/usePresence';
 import { useParams } from 'next/navigation';
+import { useFirebase } from '@/firebase';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 
 export function ChatPanel() {
-  const { isChatOpen, toggleChat, currentMemberId, partnerMemberId } = useChatStore();
+  const { 
+    isChatOpen, 
+    toggleChat, 
+    messages, 
+    addMessage, 
+    currentMemberId, 
+    partnerMemberId 
+  } = useChatStore();
   const params = useParams();
   const spaceSlug = params.spaceSlug as string;
+  const { firestore } = useFirebase();
   
   const presence = usePresence(spaceSlug, currentMemberId);
   const partnerPresence = partnerMemberId ? presence[partnerMemberId] : null;
   const isPartnerOnline = partnerPresence?.online ?? false;
 
-  const messages = [
-    { id: 1, author: 'partner', text: 'Hey, how was your day?', ts: '5 min ago' },
-    { id: 2, author: 'me', text: 'It was pretty good! Finally finished that big project.', ts: '4 min ago' },
-    { id: 3, author: 'partner', text: 'That\'s awesome! We should celebrate this weekend.', ts: '3 min ago' },
-  ];
+  const [messageText, setMessageText] = useState('');
+  const [isSending, setIsSending] = useState(false);
+
+  const handleSendMessage = async () => {
+    if (!messageText.trim() || !currentMemberId || !partnerMemberId) return;
+
+    setIsSending(true);
+
+    const message = {
+      id: new Date().toISOString(),
+      authorId: currentMemberId,
+      text: messageText,
+      timestamp: Date.now(),
+    };
+    
+    // Optimistically add message to local UI
+    addMessage(message);
+    setMessageText('');
+
+    if (!isPartnerOnline) {
+      // Partner is offline, store message in Firestore
+      try {
+        const pendingMessagesRef = collection(firestore, `spaces/${spaceSlug}/pendingMessages`);
+        await addDoc(pendingMessagesRef, {
+          fromMemberId: currentMemberId,
+          toMemberId: partnerMemberId,
+          text: message.text,
+          timestamp: serverTimestamp(),
+        });
+      } catch (error) {
+        console.error("Failed to send offline message:", error);
+        // Here you could add logic to show an error in the UI for the specific message
+      }
+    } else {
+      // Partner is online, send via WebRTC (when implemented)
+      // For now, it's just added locally.
+    }
+
+    setIsSending(false);
+  };
+  
+  const sortedMessages = messages.sort((a, b) => a.timestamp - b.timestamp);
 
   return (
     <div
@@ -69,15 +117,15 @@ export function ChatPanel() {
         <CardContent className="flex-1 p-0">
           <ScrollArea className="h-full p-4">
             <div className="space-y-4">
-              {messages.map((message) => (
+              {sortedMessages.map((message) => (
                 <div
                   key={message.id}
                   className={cn(
                     'flex items-end gap-2',
-                    message.author === 'me' ? 'justify-end' : 'justify-start'
+                    message.authorId === currentMemberId ? 'justify-end' : 'justify-start'
                   )}
                 >
-                  {message.author === 'partner' && (
+                  {message.authorId === partnerMemberId && (
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={`https://i.pravatar.cc/150?u=${partnerMemberId}`} />
                       <AvatarFallback>{partnerMemberId?.[0].toUpperCase()}</AvatarFallback>
@@ -86,15 +134,17 @@ export function ChatPanel() {
                   <div
                     className={cn(
                       'max-w-[75%] rounded-lg p-3 text-sm',
-                      message.author === 'me'
+                      message.authorId === currentMemberId
                         ? 'bg-primary text-primary-foreground'
                         : 'bg-muted'
                     )}
                   >
                     <p>{message.text}</p>
-                     <p className={cn("text-xs mt-1", message.author === 'me' ? 'text-primary-foreground/70' : 'text-muted-foreground/70')}>{message.ts}</p>
+                     <p className={cn("text-xs mt-1", message.authorId === currentMemberId ? 'text-primary-foreground/70' : 'text-muted-foreground/70')}>
+                       {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                     </p>
                   </div>
-                  {message.author === 'me' && (
+                  {message.authorId === currentMemberId && (
                      <Avatar className="h-8 w-8">
                         <AvatarImage src={`https://i.pravatar.cc/150?u=${currentMemberId}`} />
                         <AvatarFallback>{currentMemberId?.[0].toUpperCase()}</AvatarFallback>
@@ -111,13 +161,22 @@ export function ChatPanel() {
                     placeholder="Type a message..."
                     className="flex-1 resize-none"
                     rows={1}
+                    value={messageText}
+                    onChange={(e) => setMessageText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }
+                    }}
+                    disabled={isSending}
                 />
-                <Button>
-                    <Send className="h-4 w-4" />
+                <Button onClick={handleSendMessage} disabled={isSending || !messageText.trim()}>
+                    {isSending ? <Loader2 className="animate-spin" /> : <Send />}
                 </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-                This chat is peer-to-peer. Messages are not stored on the server.
+                Offline messages will be sent when your partner comes online.
             </p>
         </CardFooter>
       </Card>

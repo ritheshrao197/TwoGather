@@ -101,6 +101,18 @@
         },
         "required": ["encryptedText"]
     },
+    "PendingMessage": {
+      "title": "PendingMessage",
+      "type": "object",
+      "description": "A temporary chat message stored while a user is offline.",
+      "properties": {
+        "fromMemberId": { "type": "string" },
+        "toMemberId": { "type": "string" },
+        "text": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["fromMemberId", "toMemberId", "text", "timestamp"]
+    },
     "Content": {
       "title": "Content",
       "type": "object",
@@ -173,9 +185,17 @@
           },
           "description": "Stores content within a space."
         }
+      },
+      {
+        "path": "/spaces/{spaceId}/pendingMessages/{messageId}",
+        "definition": {
+          "entityName": "PendingMessage",
+          "schema": {
+            "$ref": "#/entities/PendingMessage"
+          },
+          "description": "Stores temporary chat messages for offline users."
+        }
       }
     ]
   }
 }
-
-    
