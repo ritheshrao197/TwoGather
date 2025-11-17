@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { ArrowLeft, Gamepad2, BrainCircuit, Puzzle, PencilRuler, Users, Wand2, Rows3, CheckSquare, Loader2 } from 'lucide-react';
+import { ArrowLeft, Gamepad2, BrainCircuit, Puzzle, PencilRuler, Users, Wand2, Rows3, CheckSquare, Loader2, BookOpen } from 'lucide-react';
 import { useFirebase } from '@/firebase';
 import { ref, push, set } from 'firebase/database';
 import { useState } from 'react';
@@ -24,10 +24,18 @@ const games = [
   {
     id: 'would-you-rather',
     icon: CheckSquare,
-    title: 'Would You Rather?',
-    description: 'Funny dilemma cards that reveal your compatibility.',
+    title: 'Dilemmas',
+    description: 'Funny choice cards that reveal how well you sync up.',
     players: '2',
     time: '3-10 min'
+  },
+  {
+    id: 'story-in-10-words',
+    icon: BookOpen,
+    title: 'Story in 10 Words',
+    description: 'A co-op story game where you each write 5 words.',
+    players: '2',
+    time: '2-5 min'
   },
   {
     id: 'quick-quiz',
@@ -122,8 +130,9 @@ export default function GamesHubPage() {
         setIsLoading(null);
     }
    } else if (gameId === 'would-you-rather') {
-    // Navigate to the Would You Rather game
     router.push(`/space/${spaceSlug}/games/would-you-rather`);
+   } else if (gameId === 'story-in-10-words') {
+    router.push(`/space/${spaceSlug}/games/story-in-10-words`);
    } else {
       toast({ variant: 'destructive', title: 'Coming Soon!', description: 'This game is not yet available.' });
       return;
