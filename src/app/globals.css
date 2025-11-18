@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-  :root, .theme-midnight-blue {
+  :root {
     --background: 225 35% 20%; /* Soft Midnight Blue */
     --foreground: 210 40% 98%;
     --card: 225 35% 23%;
@@ -24,6 +24,28 @@
     --input: 225 35% 30%;
     --ring: 244 33% 83%;
     --radius: 0.5rem;
+  }
+  
+  .theme-midnight-blue {
+    --background: 225 35% 20%; /* Soft Midnight Blue */
+    --foreground: 210 40% 98%;
+    --card: 225 35% 23%;
+    --card-foreground: 210 40% 98%;
+    --popover: 225 35% 23%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 244 33% 83%; /* Muted Lavender */
+    --primary-foreground: 225 35% 15%;
+    --secondary: 225 35% 25%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 225 35% 25%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 147 50% 78%; /* Mint Green */
+    --accent-foreground: 147 50% 15%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 225 35% 30%;
+    --input: 225 35% 30%;
+    --ring: 244 33% 83%;
   }
   
   .theme-calm-sand {
@@ -342,6 +364,7 @@
   }
   
   /* Bold & Energetic */
+  :root.theme-electric-sunset,
   .theme-electric-sunset {
     --background: 15 100% 61%; /* #FF6E3A */
     --foreground: 0 70% 12%; /* #2E0F0F */
@@ -364,6 +387,7 @@
     --ring: 0 100% 62%;
   }
   
+  :root.theme-vivid-aurora,
   .theme-vivid-aurora {
     --background: 220 80% 6%; /* #06142E */
     --foreground: 200 80% 95%; /* #DDF3FF */
@@ -386,6 +410,7 @@
     --ring: 180 100% 50%;
   }
   
+  :root.theme-tropical-burst,
   .theme-tropical-burst {
     --background: 55 100% 94%; /* #FFFCE1 */
     --foreground: 15 30% 18%; /* #3B2C2A */
@@ -408,6 +433,7 @@
     --ring: 5 100% 66%;
   }
   
+  :root.theme-color-pop,
   .theme-color-pop {
     --background: 300 100% 96%; /* #FEE8FF */
     --foreground: 260 25% 20%; /* #2F2342 */
