@@ -6,9 +6,10 @@ import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { ArrowLeft, Palette, Type, Save, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 const colorThemes = [
   { id: 'midnight-blue', name: 'Midnight Blue', colors: ['hsl(225 35% 20%)', 'hsl(244 33% 83%)', 'hsl(147 50% 78%)'] },
@@ -27,24 +28,24 @@ const fontThemes = [
 export default function ThemePage() {
   const params = useParams();
   const spaceSlug = params.spaceSlug as string;
+  const { toast } = useToast();
 
   const [selectedColorTheme, setSelectedColorTheme] = useState('midnight-blue');
   const [selectedFontTheme, setSelectedFontTheme] = useState('gentle-rounded');
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    // On mount, read the current theme from the root element
-    const root = document.documentElement;
-    const currentTheme = Array.from(root.classList).find(cls => cls.startsWith('theme-'));
-    const currentFont = Array.from(root.classList).find(cls => cls.startsWith('font-'));
+    // On mount, read the current theme from local storage for this space
+    const savedColorTheme = localStorage.getItem(`space-theme-color-${spaceSlug}`);
+    const savedFontTheme = localStorage.getItem(`space-theme-font-${spaceSlug}`);
 
-    if (currentTheme) {
-      setSelectedColorTheme(currentTheme.replace('theme-', ''));
+    if (savedColorTheme) {
+      setSelectedColorTheme(savedColorTheme);
     }
-    if (currentFont) {
-      setSelectedFontTheme(currentFont.replace('font-', ''));
+    if (savedFontTheme) {
+      setSelectedFontTheme(savedFontTheme);
     }
-  }, []);
+  }, [spaceSlug]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -81,9 +82,26 @@ export default function ThemePage() {
     };
   }
 
+  const handleSaveTheme = () => {
+    setIsSaving(true);
+    localStorage.setItem(`space-theme-color-${spaceSlug}`, selectedColorTheme);
+    localStorage.setItem(`space-theme-font-${spaceSlug}`, selectedFontTheme);
+    toast({
+        title: 'Theme Saved!',
+        description: 'Your new look has been saved for this space.',
+    });
+    setTimeout(() => setIsSaving(false), 1000);
+  };
+  
   const handleReset = () => {
       setSelectedColorTheme('midnight-blue');
       setSelectedFontTheme('gentle-rounded');
+      localStorage.removeItem(`space-theme-color-${spaceSlug}`);
+      localStorage.removeItem(`space-theme-font-${spaceSlug}`);
+      toast({
+        title: 'Theme Reset',
+        description: 'The theme has been reset to the default.',
+      });
   }
 
   return (
@@ -189,7 +207,7 @@ export default function ThemePage() {
                  <Button variant="ghost" onClick={handleReset} disabled={isSaving}>
                    <RotateCcw className="mr-2"/> Reset to Default
                 </Button>
-                <Button disabled={isSaving}>
+                <Button onClick={handleSaveTheme} disabled={isSaving}>
                    <Save className="mr-2"/> Save Theme
                 </Button>
               </div>
