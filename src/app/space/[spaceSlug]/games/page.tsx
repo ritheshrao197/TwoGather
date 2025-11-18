@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { ArrowLeft, Gamepad2, Users, Rows3, CheckSquare, Loader2, BookOpen, Sparkles, MessagesSquare } from 'lucide-react';
+import { ArrowLeft, Gamepad2, Users, Rows3, CheckSquare, Loader2, BookOpen, Sparkles, MessagesSquare, PencilRuler, BrainCircuit, Wand2, Puzzle } from 'lucide-react';
 import { useFirebase } from '@/firebase';
 import { ref, push, set } from 'firebase/database';
 import { useState } from 'react';
@@ -17,16 +17,16 @@ const games = [
   {
     id: 'tic-tac-toe',
     icon: Rows3,
-    title: 'Tic-Tac-Toe',
-    description: 'Quick rounds of the classic game, with a timer.',
+    title: 'Love Tic-Tac-Toe',
+    description: 'Play the classic game with cute love-themed icons.',
     players: '2',
     time: '1-3 min'
   },
   {
-    id: 'dilemmas',
+    id: 'would-you-rather',
     icon: CheckSquare,
-    title: 'Dilemmas',
-    description: 'Funny choice cards that reveal how well you sync up.',
+    title: 'Would You Rather?',
+    description: 'Funny dilemma cards that reveal your compatibility.',
     players: '2',
     time: '3-10 min'
   },
@@ -34,26 +34,42 @@ const games = [
     id: 'story-in-10-words',
     icon: BookOpen,
     title: 'Story in 10 Words',
-    description: 'A co-op story game where you each write 5 words.',
+    description: 'Create a 10-word story together, 5 words each.',
     players: '2',
     time: '2-5 min'
   },
   {
-    id: 'future-snapshots',
-    icon: Sparkles,
-    title: 'Future Snapshots',
-    description: 'Privately write your vision for a future moment, then reveal.',
+    id: 'quick-quiz',
+    icon: BrainCircuit,
+    title: 'Quick Quiz',
+    description: 'Short multiple-choice quizzes on fun topics.',
     players: '2',
     time: '3-5 min'
   },
   {
-    id: 'silent-signals',
-    icon: MessagesSquare,
-    title: 'Silent Signals',
-    description: 'Communicate using only emojis. Can you guess the meaning?',
+    id: 'word-scramble',
+    icon: Wand2,
+    title: 'Word Scramble',
+    description: 'Unscramble the same word list; fastest wins.',
     players: '2',
-    time: '2-4 min'
-  }
+    time: '2-6 min'
+  },
+  {
+    id: 'memory-match',
+    icon: Puzzle,
+    title: 'Memory Match',
+    description: 'Classic flip tiles, take turns revealing pairs.',
+    players: '2',
+    time: '3-7 min'
+  },
+  {
+    id: 'draw-guess',
+    icon: PencilRuler,
+    title: 'Draw & Guess',
+    description: 'One partner draws a word, the other guesses.',
+    players: '2',
+    time: '3-6 min'
+  },
 ];
 
 export default function GamesHubPage() {
@@ -85,48 +101,47 @@ export default function GamesHubPage() {
             setIsLoading(null);
             return;
         }
-        
-        const sessionsRefPath = 'realtime/sessions';
-        const sessionsRef = ref(rtdb, sessionsRefPath);
+
+        const sessionsRef = ref(rtdb, `realtime/sessions`);
         const newSessionRef = push(sessionsRef);
         
         const player1Id = memberId;
         const player2Id = partner.id;
 
-        const initialGameState = {
+        // Assign love-themed icons to players
+        const loveIcons = ['❤️', '💫', '🌙', '🔥', '🍀', '🌸', '⭐'];
+        const shuffledIcons = [...loveIcons].sort(() => Math.random() - 0.5);
+        const playerAIcon = shuffledIcons[0];
+        const playerBIcon = shuffledIcons[1];
+
+        await set(newSessionRef, {
             type: 'tic-tac-toe',
+            spaceId: spaceSlug,
+            players: {
+                [player1Id]: { symbol: playerAIcon },
+                [player2Id]: { symbol: playerBIcon }
+            },
             board: Array(9).fill(null),
             currentPlayer: player1Id,
             status: 'playing',
             winner: null,
-            players: {
-                [player1Id]: { symbol: 'X' },
-                [player2Id]: { symbol: 'O' }
-            },
-        };
-
-        await set(newSessionRef, {
-            ...initialGameState,
-            spaceId: spaceSlug,
             createdAt: Date.now(),
             expiresAt: Date.now() + 1000 * 60 * 60, // 1 hour expiry
         });
 
         const sessionId = newSessionRef.key;
-        router.push(`/space/${spaceSlug}/games/${gameId}/${sessionId}`);
+        router.push(`/space/${spaceSlug}/games/tic-tac-toe/${sessionId}`);
     } catch (error) {
         console.error("Failed to start game session:", error);
         toast({ variant: 'destructive', title: 'Error', description: 'Could not start a new game session.' });
         setIsLoading(null);
     }
-   } else if (gameId === 'dilemmas') {
+   } else if (gameId === 'would-you-rather') {
+    // Navigate to the Would You Rather game
     router.push(`/space/${spaceSlug}/games/would-you-rather`);
    } else if (gameId === 'story-in-10-words') {
+    // Navigate to the Story in 10 Words game
     router.push(`/space/${spaceSlug}/games/story-in-10-words`);
-   } else if (gameId === 'future-snapshots') {
-    router.push(`/space/${spaceSlug}/games/future-snapshots`);
-   } else if (gameId === 'silent-signals') {
-    router.push(`/space/${spaceSlug}/games/silent-signals`);
    } else {
       toast({ variant: 'destructive', title: 'Coming Soon!', description: 'This game is not yet available.' });
       return;

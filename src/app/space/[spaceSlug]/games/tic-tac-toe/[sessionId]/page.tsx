@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -10,12 +9,23 @@ import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, ArrowLeft, X, Circle, Trophy, Handshake, RefreshCw } from 'lucide-react';
+import { Loader2, ArrowLeft, Trophy, Handshake, RefreshCw, Heart, Sparkles, Moon, Flame, Leaf, Blossom, Star } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
+// Love-themed icons
+const LoveIcons = {
+  '❤️': Heart,
+  '💫': Sparkles,
+  '🌙': Moon,
+  '🔥': Flame,
+  '🍀': Leaf,
+  '🌸': Blossom,
+  '⭐': Star
+};
+
 interface PlayerInfo {
-    symbol: 'X' | 'O';
+    symbol: '❤️' | '💫' | '🌙' | '🔥' | '🍀' | '🌸' | '⭐';
 }
 
 interface GameState {
@@ -72,7 +82,7 @@ export default function TicTacToePage() {
         for (let i = 0; i < lines.length; i++) {
             const [a, b, c] = lines[i];
             if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-                return board[a]; // Returns 'X' or 'O'
+                return board[a]; // Returns the symbol
             }
         }
         return null;
@@ -148,6 +158,9 @@ export default function TicTacToePage() {
     const renderSquare = (index: number) => {
         const value = gameState?.board[index];
         const isClickable = !value && isMyTurn;
+        
+        // Get the appropriate icon component
+        const IconComponent = value ? LoveIcons[value as keyof typeof LoveIcons] : null;
 
         return (
             <button
@@ -155,12 +168,14 @@ export default function TicTacToePage() {
                 onClick={() => handleMove(index)}
                 disabled={!isClickable}
                 className={cn(
-                    "w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center bg-muted/50 rounded-lg transition-colors",
-                    isClickable && "cursor-pointer hover:bg-muted"
+                    "w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center bg-muted/50 rounded-lg transition-colors border-2 border-muted",
+                    isClickable && "cursor-pointer hover:bg-muted hover:border-primary/50",
+                    value && "border-primary/30"
                 )}
             >
-                {value === 'X' && <X className="w-16 h-16 text-red-500" />}
-                {value === 'O' && <Circle className="w-14 h-14 text-blue-500" />}
+                {value && IconComponent && (
+                    <IconComponent className="w-16 h-16 text-primary animate-in zoom-in duration-300" />
+                )}
             </button>
         );
     };
@@ -170,27 +185,46 @@ export default function TicTacToePage() {
 
         if (gameState.status === 'ended') {
             if (gameState.winner === 'draw') {
-                return <Alert className="bg-yellow-500/10 border-yellow-500/50 text-yellow-700 dark:text-yellow-400">
+                return <Alert className="bg-purple-500/10 border-purple-500/50 text-purple-700 dark:text-purple-400">
                     <Handshake className="h-4 w-4" />
-                    <AlertTitle>It's a Draw!</AlertTitle>
-                    <AlertDescription>Well played by both sides.</AlertDescription>
+                    <AlertTitle>Perfect Harmony! It's a Draw!</AlertTitle>
+                    <AlertDescription>Both players showed great skill. Harmony +1 ❤️</AlertDescription>
                 </Alert>
             }
             if (gameState.winner) {
                 const winnerName = getPlayerName(gameState.winner);
                 const isMe = gameState.winner === currentMemberId;
+                const winnerSymbol = gameState.players[gameState.winner].symbol;
+                const WinnerIcon = LoveIcons[winnerSymbol as keyof typeof LoveIcons];
+                
                 return <Alert className="bg-green-500/10 border-green-500/50 text-green-700 dark:text-green-400">
                     <Trophy className="h-4 w-4"/>
-                    <AlertTitle>{isMe ? "You Won!" : `${winnerName} Won!`}</AlertTitle>
-                    <AlertDescription>Congratulations on your victory!</AlertDescription>
+                    <AlertTitle className="flex items-center gap-2">
+                        {isMe ? "You Won!" : `${winnerName} Won!`}
+                        {WinnerIcon && <WinnerIcon className="w-5 h-5 text-primary" />}
+                    </AlertTitle>
+                    <AlertDescription>Congratulations! Winner gets a virtual hug! 🤗</AlertDescription>
                 </Alert>
             }
         }
         
         const turnPlayerName = getPlayerName(gameState.currentPlayer);
+        const turnSymbol = gameState.players[gameState.currentPlayer].symbol;
+        const TurnIcon = LoveIcons[turnSymbol as keyof typeof LoveIcons];
+        
         return (
-            <p className="text-center font-caption text-lg">
-                {isMyTurn ? "Your turn" : `Waiting for ${turnPlayerName}...`} ({gameState.players[gameState.currentPlayer].symbol})
+            <p className="text-center font-caption text-lg flex items-center justify-center gap-2">
+                {isMyTurn ? (
+                    <>
+                        <span>Your move</span>
+                        {TurnIcon && <TurnIcon className="w-5 h-5 text-primary" />}
+                    </>
+                ) : (
+                    <>
+                        <span>Waiting for {turnPlayerName}...</span>
+                        {TurnIcon && <TurnIcon className="w-5 h-5 text-primary" />}
+                    </>
+                )}
             </p>
         );
     }
@@ -209,7 +243,11 @@ export default function TicTacToePage() {
             <main className="flex-1 flex flex-col items-center justify-center p-4">
                 <Card className="w-full max-w-md mx-auto">
                     <CardHeader>
-                        <CardTitle className="text-center text-3xl font-headline">Tic-Tac-Toe</CardTitle>
+                        <CardTitle className="text-center text-3xl font-headline flex items-center justify-center gap-2">
+                            <Heart className="w-6 h-6 text-pink-500" />
+                            Love Tic-Tac-Toe
+                            <Heart className="w-6 h-6 text-pink-500" />
+                        </CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center gap-4">
                         <div className="mb-4 w-full">
@@ -221,7 +259,7 @@ export default function TicTacToePage() {
                     </CardContent>
                     <CardFooter className="flex-col gap-4">
                         {gameState.status === 'ended' && (
-                             <Button onClick={handleRestart} className="w-full">
+                             <Button onClick={handleRestart} className="w-full bg-pink-500 hover:bg-pink-600">
                                 <RefreshCw className="mr-2" /> Play Again
                             </Button>
                         )}
@@ -237,4 +275,3 @@ export default function TicTacToePage() {
         </div>
     );
 }
-
