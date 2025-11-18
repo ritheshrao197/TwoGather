@@ -120,8 +120,8 @@ export default function VaultPage() {
             <div className="flex items-center gap-3">
               <Lock className="w-10 h-10 text-primary" />
               <div>
-                <h1 className="text-4xl font-headline font-bold">My Vault</h1>
-                <p className="text-muted-foreground font-caption mt-1">Your private, encrypted entries. Only you can see these.</p>
+                <h1 className="text-4xl font-headline font-bold">Vault</h1>
+                <p className="text-muted-foreground font-caption mt-1">Private notes</p>
               </div>
             </div>
             <Button onClick={() => setIsAddDialogOpen(true)}>

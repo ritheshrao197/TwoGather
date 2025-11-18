@@ -115,10 +115,10 @@ export default function CreateSpacePage() {
     <div className="flex flex-col items-center justify-center min-h-dvh bg-background p-4 sm:p-6 lg:p-8">
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-headline font-bold text-foreground">
-          Create Your New Shared Space
+          Create a space
         </h1>
         <p className="mt-3 max-w-lg mx-auto text-muted-foreground font-caption">
-          A private world for just the two of you. Fill in the details below to get started.
+          A private place to share, plan, and grow.
         </p>
       </div>
 
@@ -128,11 +128,11 @@ export default function CreateSpacePage() {
             <div className="bg-primary/10 p-4 rounded-full">
               <Users className="w-8 h-8 text-primary" />
             </div>
-            <CardTitle className="font-headline text-2xl mt-4">New Space Details</CardTitle>
+            <CardTitle className="font-headline text-2xl mt-4">Create a space</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="space-name">Space Name</Label>
+              <Label htmlFor="space-name">Space name</Label>
               <Input
                 id="space-name"
                 placeholder="e.g., Our Cozy Corner"
@@ -143,7 +143,7 @@ export default function CreateSpacePage() {
             </div>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="your-name">Your Name</Label>
+                <Label htmlFor="your-name">Your name</Label>
                 <Input
                   id="your-name"
                   placeholder="Your name"
@@ -153,7 +153,7 @@ export default function CreateSpacePage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="partner-name">Partner's Name</Label>
+                <Label htmlFor="partner-name">Partner name</Label>
                 <Input
                   id="partner-name"
                   placeholder="Partner's name"
@@ -164,7 +164,7 @@ export default function CreateSpacePage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="space-password">One Shared Password</Label>
+              <Label htmlFor="space-password">Shared Password</Label>
               <Input
                 id="space-password"
                 type="password"
@@ -177,7 +177,7 @@ export default function CreateSpacePage() {
           </CardContent>
           <CardFooter>
             <Button className="w-full" onClick={handleCreateSpace} disabled={isLoading}>
-              {isLoading ? <Loader2 className="animate-spin" /> : 'Create Space'}
+              {isLoading ? <Loader2 className="animate-spin" /> : 'Create space'}
             </Button>
           </CardFooter>
         </Card>

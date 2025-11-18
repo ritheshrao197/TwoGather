@@ -6,8 +6,8 @@ import { FirebaseClientProvider } from '@/firebase';
 import { ThemeManager } from '@/components/shared/theme-manager';
 
 export const metadata: Metadata = {
-  title: 'Shared Spaces',
-  description: 'A private space for two.',
+  title: 'Between us — Subject. A private place to share, plan, and grow',
+  description: 'Between us — a private space to share moments, plan together, and build small routines. Invite only.',
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=DM+Sans:wght@400;500;700&family=Cormorant+Garamond:wght@600;700&family=Lora:wght@400;500&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased" suppressHydrationWarning>
         <ThemeManager />

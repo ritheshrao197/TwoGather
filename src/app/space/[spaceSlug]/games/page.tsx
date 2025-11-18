@@ -154,8 +154,8 @@ export default function GamesHubPage() {
           <div className="flex items-center gap-3">
               <Gamepad2 className="w-10 h-10 text-primary" />
               <div>
-                <h1 className="text-4xl font-headline font-bold">Mini-Games Hub</h1>
-                <p className="text-muted-foreground font-caption mt-1">A collection of fun, two-player games.</p>
+                <h1 className="text-4xl font-headline font-bold">Mini-Games</h1>
+                <p className="text-muted-foreground font-caption mt-1">Cards: Would You Rather • Story in 10 Words • Word Chain • Future Snapshots • Truth Tile • Silent Signals • Tic-Tac-Toe (fun version)</p>
               </div>
           </div>
           <Button asChild variant="outline">

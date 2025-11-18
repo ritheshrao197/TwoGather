@@ -1,25 +1,25 @@
 // Theme definitions with CSS variables
 export const themeDefinitions = {
   'midnight-blue': {
-    '--background': '225 35% 20%',
-    '--foreground': '210 40% 98%',
-    '--card': '225 35% 23%',
-    '--card-foreground': '210 40% 98%',
-    '--popover': '225 35% 23%',
-    '--popover-foreground': '210 40% 98%',
-    '--primary': '244 33% 83%',
-    '--primary-foreground': '225 35% 15%',
-    '--secondary': '225 35% 25%',
-    '--secondary-foreground': '210 40% 98%',
-    '--muted': '225 35% 25%',
-    '--muted-foreground': '215 20% 65%',
-    '--accent': '147 50% 78%',
-    '--accent-foreground': '147 50% 15%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '210 40% 98%',
-    '--border': '225 35% 30%',
-    '--input': '225 35% 30%',
-    '--ring': '244 33% 83%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   'calm-sand': {
     '--background': '45 50% 95%',
@@ -415,11 +415,11 @@ export const fontDefinitions = {
     '--font-body': "'Inter', sans-serif",
   },
   'clean-modern': {
-    '--font-heading': "'DM Sans', sans-serif",
+    '--font-heading': "'Poppins', sans-serif",
     '--font-body': "'Inter', sans-serif",
   },
   'calm-serif': {
-    '--font-heading': "'Cormorant Garamond', serif",
-    '--font-body': "'Lora', serif",
+    '--font-heading': "'Poppins', sans-serif",
+    '--font-body': "'Inter', sans-serif",
   },
 };

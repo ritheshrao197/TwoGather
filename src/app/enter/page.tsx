@@ -75,10 +75,10 @@ export default function EnterPage() {
     <div className="flex flex-col items-center justify-center min-h-dvh bg-background p-4 sm:p-6 lg:p-8">
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-headline font-bold text-foreground">
-          Enter Your Shared Space
+          Enter a space
         </h1>
         <p className="mt-3 max-w-md mx-auto text-muted-foreground font-caption">
-          Enter the name and password for your space to access the lobby.
+          A private place to share, plan, and grow.
         </p>
       </div>
 
@@ -88,11 +88,11 @@ export default function EnterPage() {
             <div className="bg-primary/10 p-4 rounded-full">
               <KeyRound className="w-8 h-8 text-primary" />
             </div>
-            <CardTitle className="font-headline text-2xl mt-4">Space Lobby</CardTitle>
+            <CardTitle className="font-headline text-2xl mt-4">Enter a space</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="space-slug">Space Name</Label>
+              <Label htmlFor="space-slug">Space name</Label>
               <Input
                 id="space-slug"
                 type="text"
@@ -121,7 +121,7 @@ export default function EnterPage() {
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
             <Button className="w-full" onClick={handleEnterLobby} disabled={isLoading}>
-              {isLoading ? <Loader2 className="animate-spin" /> : 'Enter Lobby'}
+              {isLoading ? <Loader2 className="animate-spin" /> : 'Enter'}
             </Button>
             <p className="text-sm text-muted-foreground font-caption">
               Don't have a space yet?{' '}

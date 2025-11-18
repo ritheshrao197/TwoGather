@@ -4,363 +4,363 @@
 
 @layer base {
   :root {
-    --background: 225 35% 20%; /* Soft Midnight Blue */
-    --foreground: 210 40% 98%;
-    --card: 225 35% 23%;
-    --card-foreground: 210 40% 98%;
-    --popover: 225 35% 23%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 244 33% 83%; /* Muted Lavender */
-    --primary-foreground: 225 35% 15%;
-    --secondary: 225 35% 25%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 225 35% 25%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 147 50% 78%; /* Mint Green */
-    --accent-foreground: 147 50% 15%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 225 35% 30%;
-    --input: 225 35% 30%;
-    --ring: 244 33% 83%;
-    --radius: 0.5rem;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
+    --radius: 12px;
   }
   
   .theme-midnight-blue {
-    --background: 225 35% 20%; /* Soft Midnight Blue */
-    --foreground: 210 40% 98%;
-    --card: 225 35% 23%;
-    --card-foreground: 210 40% 98%;
-    --popover: 225 35% 23%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 244 33% 83%; /* Muted Lavender */
-    --primary-foreground: 225 35% 15%;
-    --secondary: 225 35% 25%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 225 35% 25%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 147 50% 78%; /* Mint Green */
-    --accent-foreground: 147 50% 15%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 225 35% 30%;
-    --input: 225 35% 30%;
-    --ring: 244 33% 83%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
   
   .theme-calm-sand {
-    --background: 45 50% 95%; /* Light Sand */
-    --foreground: 45 20% 25%;
-    --card: 45 50% 98%;
-    --card-foreground: 45 20% 25%;
-    --popover: 45 50% 98%;
-    --popover-foreground: 45 20% 25%;
-    --primary: 40 30% 50%; /* Soft Brown */
-    --primary-foreground: 45 50% 98%;
-    --secondary: 45 40% 90%;
-    --secondary-foreground: 40 30% 30%;
-    --muted: 45 40% 90%;
-    --muted-foreground: 45 20% 45%;
-    --accent: 35 60% 70%; /* Muted Orange */
-    --accent-foreground: 35 60% 15%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 45 50% 98%;
-    --border: 45 30% 85%;
-    --input: 45 30% 85%;
-    --ring: 40 30% 50%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
 
   .theme-muted-lavender {
-    --background: 250 40% 96%;
-    --foreground: 250 15% 30%;
-    --card: 250 40% 99%;
-    --card-foreground: 250 15% 30%;
-    --popover: 250 40% 99%;
-    --popover-foreground: 250 15% 30%;
-    --primary: 250 35% 75%; /* Lavender */
-    --primary-foreground: 250 40% 10%;
-    --secondary: 250 30% 92%;
-    --secondary-foreground: 250 15% 30%;
-    --muted: 250 30% 92%;
-    --muted-foreground: 250 10% 55%;
-    --accent: 270 50% 80%; /* Soft Lilac */
-    --accent-foreground: 270 50% 20%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 250 30% 88%;
-    --input: 250 30% 88%;
-    --ring: 250 35% 75%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
 
   .theme-natural-green {
-    --background: 120 15% 97%;
-    --foreground: 120 20% 20%;
-    --card: 120 15% 99%;
-    --card-foreground: 120 20% 20%;
-    --popover: 120 15% 99%;
-    --popover-foreground: 120 20% 20%;
-    --primary: 130 25% 55%; /* Sage Green */
-    --primary-foreground: 130 25% 10%;
-    --secondary: 120 10% 93%;
-    --secondary-foreground: 120 20% 20%;
-    --muted: 120 10% 93%;
-    --muted-foreground: 120 10% 50%;
-    --accent: 100 30% 75%; /* Soft Leaf Green */
-    --accent-foreground: 100 30% 15%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 120 10% 88%;
-    --input: 120 10% 88%;
-    --ring: 130 25% 55%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
 
   .theme-minimal-grey {
-    --background: 0 0% 98%;
-    --foreground: 0 0% 15%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 15%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 15%;
-    --primary: 0 0% 40%; /* Medium Grey */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 95%;
-    --secondary-foreground: 0 0% 15%;
-    --muted: 0 0% 95%;
-    --muted-foreground: 0 0% 45%;
-    --accent: 0 0% 60%; /* Light Grey */
-    --accent-foreground: 0 0% 10%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 40%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
   
   /* New themes - Soft & Affectionate */
   .theme-blush-rose {
-    --background: 0 100% 98%; /* #FFF5F7 */
-    --foreground: 330 20% 15%; /* #4A2E3B */
-    --card: 0 100% 99%;
-    --card-foreground: 330 20% 15%;
-    --popover: 0 100% 99%;
-    --popover-foreground: 330 20% 15%;
-    --primary: 345 70% 65%; /* #E96A8D */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 330 70% 87%; /* #F7C1D9 */
-    --secondary-foreground: 330 20% 15%;
-    --muted: 330 70% 87%;
-    --muted-foreground: 330 15% 30%;
-    --accent: 0 100% 93%; /* #FFDDE8 */
-    --accent-foreground: 330 20% 15%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 330 20% 85%;
-    --input: 330 20% 85%;
-    --ring: 345 70% 65%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
   
   /* Comfort & Warmth */
   .theme-warm-hug {
-    --background: 30 100% 97%; /* #FFF8F0 */
-    --foreground: 30 30% 12%; /* #4B2F1F */
-    --card: 30 100% 98%;
-    --card-foreground: 30 30% 12%;
-    --popover: 30 100% 98%;
-    --popover-foreground: 30 30% 12%;
-    --primary: 25 60% 65%; /* #E7A46F */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 25 65% 82%; /* #F5CBA2 */
-    --secondary-foreground: 30 30% 12%;
-    --muted: 25 65% 82%;
-    --muted-foreground: 30 15% 30%;
-    --accent: 30 100% 85%; /* #FFD9BA */
-    --accent-foreground: 30 30% 12%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 30 20% 80%;
-    --input: 30 20% 80%;
-    --ring: 25 60% 65%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
   
   /* Intimate & Calm */
   .theme-midnight-romance {
-    --background: 270 25% 14%; /* #2B1B2E */
-    --foreground: 270 50% 97%; /* #F7E8FF */
-    --card: 270 25% 18%;
-    --card-foreground: 270 50% 97%;
-    --popover: 270 25% 18%;
-    --popover-foreground: 270 50% 97%;
-    --primary: 260 70% 65%; /* #A855F7 */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 270 70% 87%; /* #E0BBFF */
-    --secondary-foreground: 270 50% 97%;
-    --muted: 270 70% 87%;
-    --muted-foreground: 270 30% 70%;
-    --accent: 280 80% 45%; /* #B72EE8 */
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 270 20% 30%;
-    --input: 270 20% 30%;
-    --ring: 260 70% 65%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
   
   /* Classic & Nostalgic */
   .theme-love-letter-sepia {
-    --background: 30 40% 94%; /* #F7EFE5 */
-    --foreground: 30 60% 10%; /* #2E1C11 */
-    --card: 30 40% 96%;
-    --card-foreground: 30 60% 10%;
-    --popover: 30 40% 96%;
-    --popover-foreground: 30 60% 10%;
-    --primary: 25 50% 37%; /* #C07A41 */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 30 50% 80%; /* #E3C7A5 */
-    --secondary-foreground: 30 60% 10%;
-    --muted: 30 50% 80%;
-    --muted-foreground: 30 30% 30%;
-    --accent: 30 40% 88%; /* #F2D7BE */
-    --accent-foreground: 30 60% 10%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 30 30% 75%;
-    --input: 30 30% 75%;
-    --ring: 25 50% 37%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
   
   /* Cute & Playful */
   .theme-cotton-candy-love {
-    --background: 300 100% 98%; /* #FFF0FB */
-    --foreground: 300 20% 20%; /* #513544 */
-    --card: 300 100% 99%;
-    --card-foreground: 300 20% 20%;
-    --popover: 300 100% 99%;
-    --popover-foreground: 300 20% 20%;
-    --primary: 330 100% 70%; /* #FF87C3 */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 100% 77%; /* #8BCBFF */
-    --secondary-foreground: 300 20% 20%;
-    --muted: 210 100% 77%;
-    --muted-foreground: 300 15% 40%;
-    --accent: 300 100% 94%; /* #FFD6F1 */
-    --accent-foreground: 300 20% 20%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 300 30% 85%;
-    --input: 300 30% 85%;
-    --ring: 330 100% 70%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
   
   .theme-heart-pop {
-    --background: 0 100% 94%; /* #FFE0E6 */
-    --foreground: 340 55% 15%; /* #4A1822 */
-    --card: 0 100% 96%;
-    --card-foreground: 340 55% 15%;
-    --popover: 0 100% 96%;
-    --popover-foreground: 340 55% 15%;
-    --primary: 348 100% 65%; /* #FF4F70 */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 100% 75%; /* #FF8095 */
-    --secondary-foreground: 340 55% 15%;
-    --muted: 0 100% 75%;
-    --muted-foreground: 340 20% 40%;
-    --accent: 0 100% 88%; /* #FFC4CE */
-    --accent-foreground: 340 55% 15%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 30% 80%;
-    --input: 0 30% 80%;
-    --ring: 348 100% 65%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
   
   /* Magical & Dreamy */
   .theme-aurora-love {
-    --background: 320 100% 74%; /* #FF7BCB */
-    --foreground: 0 0% 100%; /* #FFFFFF */
-    --card: 320 100% 74%;
-    --card-foreground: 0 0% 100%;
-    --popover: 320 100% 74%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 320 100% 74%; /* #FF7BCB */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 220 100% 74%; /* #7AA3FF */
-    --secondary-foreground: 0 0% 100%;
-    --muted: 220 100% 74%;
-    --muted-foreground: 0 0% 90%;
-    --accent: 0 100% 96%; /* #FFE5FF */
-    --accent-foreground: 0 0% 20%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 80%;
-    --input: 0 0% 80%;
-    --ring: 320 100% 74%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
   
   /* Moody & Stylish */
   .theme-obsidian-noir {
-    --background: 0 0% 6%; /* #0F0F10 */
-    --foreground: 0 0% 94%; /* #F0F0F0 */
-    --card: 0 0% 16%;
-    --card-foreground: 0 0% 94%;
-    --popover: 0 0% 16%;
-    --popover-foreground: 0 0% 94%;
-    --primary: 0 0% 16%; /* #28282A */
-    --primary-foreground: 0 0% 94%;
-    --secondary: 0 0% 23%; /* #3A3A3D */
-    --secondary-foreground: 0 0% 94%;
-    --muted: 0 0% 23%;
-    --muted-foreground: 0 0% 70%;
-    --accent: 260 70% 70%; /* #9E71FF */
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 260 70% 70%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
   
   .theme-cosmic-twilight {
-    --background: 240 55% 10%; /* #0A0E2A */
-    --foreground: 260 50% 95%; /* #EDE3FF */
-    --card: 240 55% 15%;
-    --card-foreground: 260 50% 95%;
-    --popover: 240 55% 15%;
-    --popover-foreground: 260 50% 95%;
-    --primary: 250 45% 32%; /* #422D74 */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 250 45% 52%; /* #6D4BBF */
-    --secondary-foreground: 260 50% 95%;
-    --muted: 250 45% 52%;
-    --muted-foreground: 260 30% 80%;
-    --accent: 260 50% 78%; /* #B18CFF */
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 30% 25%;
-    --input: 240 30% 25%;
-    --ring: 250 45% 32%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
   
   .theme-stormy-night {
-    --background: 210 20% 12%; /* #1A1E25 */
-    --foreground: 210 30% 92%; /* #E7ECF2 */
-    --card: 210 20% 20%;
-    --card-foreground: 210 30% 92%;
-    --popover: 210 20% 20%;
-    --popover-foreground: 210 30% 92%;
-    --primary: 210 20% 28%; /* #3D4756 */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 20% 35%; /* #596273 */
-    --secondary-foreground: 210 30% 92%;
-    --muted: 210 20% 35%;
-    --muted-foreground: 210 15% 75%;
-    --accent: 220 100% 72%; /* #7393FF */
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 210 15% 30%;
-    --input: 210 15% 30%;
-    --ring: 210 20% 28%;
+    --background: 36 12% 98%; /* Soft Ivory */
+    --foreground: 227 33% 26%; /* Deep Indigo */
+    --card: 39 12% 92%; /* Sand */
+    --card-foreground: 227 33% 26%;
+    --popover: 39 12% 92%;
+    --popover-foreground: 227 33% 26%;
+    --primary: 149 33% 69%; /* Mint */
+    --primary-foreground: 227 33% 26%;
+    --secondary: 15 100% 76%; /* Warm Coral */
+    --secondary-foreground: 227 33% 26%;
+    --muted: 252 20% 89%; /* Muted Lavender */
+    --muted-foreground: 227 33% 26%;
+    --accent: 149 33% 69%; /* Mint */
+    --accent-foreground: 227 33% 26%;
+    --destructive: 15 100% 76%; /* Warm Coral */
+    --destructive-foreground: 227 33% 26%;
+    --border: 39 12% 92%;
+    --input: 39 12% 92%;
+    --ring: 149 33% 69%;
   }
   
   /* Bold & Energetic */

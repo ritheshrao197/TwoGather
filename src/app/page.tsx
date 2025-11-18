@@ -46,11 +46,13 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
           <div className="relative h-full flex flex-col items-center justify-end text-center p-4 md:p-8 pb-16 md:pb-24">
             <h1 className="text-4xl md:text-6xl font-headline font-bold text-foreground tracking-tight drop-shadow-lg">
-              Your Private World, Together.
+              Between us
             </h1>
+            <div className="mt-2 text-lg md:text-xl text-foreground/80 font-caption drop-shadow-md">
+              A private place to share, plan, and grow..
+            </div>
             <p className="mt-4 max-w-2xl text-lg md:text-xl text-foreground/80 font-caption drop-shadow-md">
-              A shared space for two, built on privacy and connection. Create
-              personal pages, build a memory wall, and unlock a shared archive.
+              A private place to share, plan, and grow.
             </p>
             <Link
               href="/enter"
@@ -59,7 +61,7 @@ export default function Home() {
                 'mt-8 bg-primary text-primary-foreground hover:bg-primary/90'
               )}
             >
-              Get Started
+              Create a space
             </Link>
           </div>
         </section>
@@ -72,11 +74,10 @@ export default function Home() {
                   Key Features
                 </div>
                 <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">
-                  Crafted for Connection
+                  Personal pages, a shared archive, and small rituals that help you stay aligned.
                 </h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed font-caption">
-                  Discover a new way to share your world with one special
-                  person, with features designed for privacy and intimacy.
+                  Private by default.
                 </p>
               </div>
             </div>
@@ -162,7 +163,7 @@ export default function Home() {
           <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6">
             <div className="space-y-3">
               <h2 className="text-3xl font-headline font-bold tracking-tighter md:text-4xl/tight">
-                Private by Design. Secure by Default.
+                Private by default.
               </h2>
               <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed font-caption">
                 Your space is yours alone. We use end-to-end principles for

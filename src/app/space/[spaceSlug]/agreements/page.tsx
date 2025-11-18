@@ -102,8 +102,8 @@ export default function AgreementsBoardPage() {
         <main className="flex-1 container mx-auto px-4 py-8 pt-24">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-4xl font-headline font-bold">Agreements Board</h1>
-              <p className="text-muted-foreground font-caption mt-1">Shared commitments to stay aligned.</p>
+              <h1 className="text-4xl font-headline font-bold">Agreements</h1>
+              <p className="text-muted-foreground font-caption mt-1">Add agreement (short) • Check off • Edit • History</p>
             </div>
             <Button onClick={() => setIsAddDialogOpen(true)}>
               <Plus className="mr-2" /> Add Agreement

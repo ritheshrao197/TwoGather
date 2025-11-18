@@ -195,10 +195,10 @@ export default function PersonalSpacePage() {
           
           <section className="mb-10 text-center">
             <h1 className="text-3xl md:text-4xl font-headline font-bold text-foreground">
-              Welcome, {currentMember?.displayName}.
+              Welcome back.
             </h1>
             <p className="text-muted-foreground font-caption mt-2">
-              This is your shared space. Take a breath, settle in.
+              A private place to share, plan, and grow.
             </p>
           </section>
 
@@ -278,10 +278,10 @@ export default function PersonalSpacePage() {
                 <Card>
                     <CardHeader><CardTitle>Quick Actions</CardTitle></CardHeader>
                     <CardContent className="grid grid-cols-2 gap-4">
-                        <Button variant="outline" className="h-20 flex-col gap-1" onClick={() => setIsAddMemoryDialogOpen(true)}><Paperclip/><span>Add Memory</span></Button>
-                        <Button variant="outline" className="h-20 flex-col gap-1" onClick={() => setIsAddNoteDialogOpen(true)}><Pen/><span>Write Note</span></Button>
-                        <Button variant="outline" className="h-20 flex-col gap-1" disabled><ClipboardList/><span>Shared Task</span></Button>
-                        <Button variant="outline" className="h-20 flex-col gap-1" onClick={toggleChat}><MessageSquare/><span>Open Chat</span></Button>
+                        <Button variant="outline" className="h-20 flex-col gap-1" onClick={() => setIsAddMemoryDialogOpen(true)}><Paperclip/><span>Add a moment</span></Button>
+                        <Button variant="outline" className="h-20 flex-col gap-1" onClick={() => setIsAddNoteDialogOpen(true)}><Pen/><span>Daily check-in</span></Button>
+                        <Button variant="outline" className="h-20 flex-col gap-1" disabled><ClipboardList/><span>Send gratitude</span></Button>
+                        <Button variant="outline" className="h-20 flex-col gap-1" onClick={toggleChat}><MessageSquare/><span>Add plan</span></Button>
                     </CardContent>
                 </Card>
 

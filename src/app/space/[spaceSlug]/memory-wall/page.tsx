@@ -84,7 +84,7 @@ export default function MemoryWallPage() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-4xl font-headline font-bold">Memory Wall</h1>
-              <p className="text-muted-foreground font-caption mt-1">A shared timeline of your favorite moments.</p>
+              <p className="text-muted-foreground font-caption mt-1">Grid with date & caption, click opens modal</p>
             </div>
             <Button onClick={() => setIsAddMemoryDialogOpen(true)}>
               <Plus className="mr-2" /> Add Memory

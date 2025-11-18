@@ -131,7 +131,7 @@ export default function SpaceLobbyPage() {
             {spaceData?.displayName}
           </h1>
           <p className="mt-3 max-w-md mx-auto text-muted-foreground font-caption">
-            Who is entering the space?
+            Space selector / create button
           </p>
         </div>
 

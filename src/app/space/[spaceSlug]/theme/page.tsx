@@ -165,7 +165,7 @@ export default function ThemePage() {
             <div>
               <h1 className="text-4xl font-headline font-bold">Theme & Layout</h1>
               <p className="text-muted-foreground font-caption mt-1">
-                Customize the look and feel of your shared space.
+                Space customization quick controls (theme, cover)
               </p>
             </div>
           </div>

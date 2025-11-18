@@ -36,7 +36,7 @@ const compressImage = (file: File, maxSize: number = 256): Promise<string> => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = (event) => {
-      const img = new Image();
+      const img = document.createElement('img');
       img.src = event.target?.result as string;
       img.onload = () => {
         const canvas = document.createElement('canvas');
@@ -65,7 +65,7 @@ const compressImage = (file: File, maxSize: number = 256): Promise<string> => {
         const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
         resolve(dataUrl);
       };
-      img.onerror = (error) => reject(error);
+      img.onerror = (error: any) => reject(error);
     };
     reader.onerror = (error) => reject(error);
   });
@@ -177,8 +177,8 @@ export default function ProfilePage() {
           <div className="max-w-2xl mx-auto">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h1 className="text-4xl font-headline font-bold">Your Profile</h1>
-                <p className="text-muted-foreground font-caption mt-1">Customize how you appear in this space.</p>
+                <h1 className="text-4xl font-headline font-bold">Profile</h1>
+                <p className="text-muted-foreground font-caption mt-1">Avatar, display name, short bio, local timezone, theme preference</p>
               </div>
             </div>
 
