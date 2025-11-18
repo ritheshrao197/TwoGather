@@ -92,6 +92,11 @@ export function ThemeManager() {
         
         console.log('Final root classes:', Array.from(root.classList));
         
+        // Verify the theme was applied by checking if the class exists in the document
+        const themeExists = root.classList.contains(colorThemeClass);
+        const fontExists = root.classList.contains(fontThemeClass);
+        console.log('Theme class exists:', themeExists, 'Font class exists:', fontExists);
+        
         // Log CSS variables to verify
         setTimeout(() => {
           try {

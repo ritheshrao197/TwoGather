@@ -117,46 +117,46 @@
   /* New themes - Soft & Affectionate */
   .theme-blush-rose {
     --background: 0 100% 98%; /* #FFF5F7 */
-    --foreground: 330 30% 20%; /* #4A2E3B */
+    --foreground: 330 20% 15%; /* #4A2E3B */
     --card: 0 100% 99%;
-    --card-foreground: 330 30% 20%;
+    --card-foreground: 330 20% 15%;
     --popover: 0 100% 99%;
-    --popover-foreground: 330 30% 20%;
+    --popover-foreground: 330 20% 15%;
     --primary: 345 70% 65%; /* #E96A8D */
     --primary-foreground: 0 0% 100%;
     --secondary: 330 70% 87%; /* #F7C1D9 */
-    --secondary-foreground: 330 30% 20%;
+    --secondary-foreground: 330 20% 15%;
     --muted: 330 70% 87%;
-    --muted-foreground: 330 20% 40%;
+    --muted-foreground: 330 15% 30%;
     --accent: 0 100% 93%; /* #FFDDE8 */
-    --accent-foreground: 330 30% 20%;
+    --accent-foreground: 330 20% 15%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 98%;
-    --border: 330 30% 85%;
-    --input: 330 30% 85%;
+    --border: 330 20% 85%;
+    --input: 330 20% 85%;
     --ring: 345 70% 65%;
   }
   
   /* Comfort & Warmth */
   .theme-warm-hug {
     --background: 30 100% 97%; /* #FFF8F0 */
-    --foreground: 30 50% 15%; /* #4B2F1F */
+    --foreground: 30 30% 12%; /* #4B2F1F */
     --card: 30 100% 98%;
-    --card-foreground: 30 50% 15%;
+    --card-foreground: 30 30% 12%;
     --popover: 30 100% 98%;
-    --popover-foreground: 30 50% 15%;
+    --popover-foreground: 30 30% 12%;
     --primary: 25 60% 65%; /* #E7A46F */
     --primary-foreground: 0 0% 100%;
     --secondary: 25 65% 82%; /* #F5CBA2 */
-    --secondary-foreground: 30 50% 15%;
+    --secondary-foreground: 30 30% 12%;
     --muted: 25 65% 82%;
-    --muted-foreground: 30 20% 40%;
+    --muted-foreground: 30 15% 30%;
     --accent: 30 100% 85%; /* #FFD9BA */
-    --accent-foreground: 30 50% 15%;
+    --accent-foreground: 30 30% 12%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 98%;
-    --border: 30 30% 80%;
-    --input: 30 30% 80%;
+    --border: 30 20% 80%;
+    --input: 30 20% 80%;
     --ring: 25 60% 65%;
   }
   
@@ -253,7 +253,7 @@
   
   /* Magical & Dreamy */
   .theme-aurora-love {
-    --background: linear-gradient(135deg, 320 100% 74%, 220 100% 74%); /* #FF7BCB to #7AA3FF */
+    --background: 320 100% 74%; /* #FF7BCB */
     --foreground: 0 0% 100%; /* #FFFFFF */
     --card: 320 100% 74%;
     --card-foreground: 0 0% 100%;
