@@ -3,7 +3,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useFirebase } from '@/firebase';
 import { ref, onValue, runTransaction, serverTimestamp } from 'firebase/database';
 import { Header } from '@/components/shared/header';
@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, ArrowLeft, GalleryVerticalEnd, Trophy, Handshake, RefreshCw, Send, Timer } from 'lucide-react';
+import { Loader2, ArrowLeft, GalleryVerticalEnd, Trophy, RefreshCw, Send, Timer } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
@@ -65,7 +65,7 @@ export default function WordChainPage() {
         if (partner) {
             setPartnerId(partner.id);
         } else {
-            router.push(`/space/${spaceSlug}/lobby`); // No partner found
+            router.push(`/space/${spaceSlug}/lobby`);
         }
     }, [spaceSlug, router]);
 
@@ -96,17 +96,19 @@ export default function WordChainPage() {
             const remaining = Math.max(0, gameState.turnDuration - elapsed);
             setTimeLeft(remaining);
 
-            if (remaining === 0) {
-                // Let the next player's action or a server function handle the timeout logic
-                // This client-side check is just for UI
-                if(gameState.currentPlayerId === currentMemberId) {
-                     toast({ variant: "destructive", title: "Time's up!", description: "You ran out of time." });
-                }
+            if (remaining === 0 && gameState.currentPlayerId === currentMemberId) {
+                runTransaction(gameRef, (session: GameState | null) => {
+                    if (session && session.state === 'playing' && session.currentPlayerId === currentMemberId) {
+                        session.state = 'finished';
+                        session.winner = partnerId;
+                    }
+                    return session;
+                });
             }
         }, 500);
 
         return () => clearInterval(interval);
-    }, [gameState, currentMemberId, toast]);
+    }, [gameState, currentMemberId, partnerId, gameRef]);
 
     const getPlayerName = useCallback((playerId: string) => {
         const allMembersRaw = localStorage.getItem(`allMembers-for-${spaceSlug}`);
@@ -151,7 +153,7 @@ export default function WordChainPage() {
                 session.usedWords = session.usedWords || {};
                 session.usedWords[normalizedWord] = true;
                 session.currentPlayerId = partnerId;
-                session.timeStartedAt = now; // Set client time for immediate UI update
+                session.timeStartedAt = now; 
                 
                 return session;
             });

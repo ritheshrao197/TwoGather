@@ -107,6 +107,10 @@ export default function GamesHubPage() {
             currentPlayer: player1Id,
             status: 'playing',
             winner: null,
+            players: {
+                [player1Id]: { symbol: 'X' },
+                [player2Id]: { symbol: 'O' }
+            },
         } : {
             type: 'word-chain',
             state: 'playing',
@@ -116,15 +120,15 @@ export default function GamesHubPage() {
             timeStartedAt: Date.now(),
             turnDuration: 10,
             winner: null,
+             players: {
+                [player1Id]: { id: player1Id },
+                [player2Id]: { id: player2Id }
+            },
         };
 
         await set(newSessionRef, {
             ...initialGameState,
             spaceId: spaceSlug,
-            players: {
-                [player1Id]: { symbol: 'X' }, // Tic-tac-toe specific, but harmless
-                [player2Id]: { symbol: 'O' }
-            },
             createdAt: Date.now(),
             expiresAt: Date.now() + 1000 * 60 * 60, // 1 hour expiry
         });
