@@ -13,10 +13,6 @@
       "sync": {
         ".read": true,
         ".write": true
-      },
-      "wordchain": {
-        ".read": true,
-        ".write": true
       }
     }
   }

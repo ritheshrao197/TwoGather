@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { ArrowLeft, Gamepad2, Users, Rows3, CheckSquare, Loader2, BookOpen, Sparkles, MessagesSquare, GalleryVerticalEnd } from 'lucide-react';
+import { ArrowLeft, Gamepad2, Users, Rows3, CheckSquare, Loader2, BookOpen, Sparkles, MessagesSquare } from 'lucide-react';
 import { useFirebase } from '@/firebase';
 import { ref, push, set } from 'firebase/database';
 import { useState } from 'react';
@@ -53,14 +53,6 @@ const games = [
     description: 'Communicate using only emojis. Can you guess the meaning?',
     players: '2',
     time: '2-4 min'
-  },
-  {
-    id: 'word-chain',
-    icon: GalleryVerticalEnd,
-    title: 'Word Chain',
-    description: 'Build a chain of words, one letter at a time. Don\'t break it!',
-    players: '2',
-    time: '3-5 min'
   }
 ];
 
@@ -73,7 +65,7 @@ export default function GamesHubPage() {
   const [isLoading, setIsLoading] = useState<string | null>(null);
 
   const handlePlayNow = async (gameId: string) => {
-   if (gameId === 'tic-tac-toe' || gameId === 'word-chain') {
+   if (gameId === 'tic-tac-toe') {
     setIsLoading(gameId);
 
     try {
@@ -94,14 +86,14 @@ export default function GamesHubPage() {
             return;
         }
         
-        const sessionsRefPath = gameId === 'tic-tac-toe' ? `realtime/sessions` : `realtime/wordchain`;
+        const sessionsRefPath = 'realtime/sessions';
         const sessionsRef = ref(rtdb, sessionsRefPath);
         const newSessionRef = push(sessionsRef);
         
         const player1Id = memberId;
         const player2Id = partner.id;
 
-        const initialGameState = gameId === 'tic-tac-toe' ? {
+        const initialGameState = {
             type: 'tic-tac-toe',
             board: Array(9).fill(null),
             currentPlayer: player1Id,
@@ -110,19 +102,6 @@ export default function GamesHubPage() {
             players: {
                 [player1Id]: { symbol: 'X' },
                 [player2Id]: { symbol: 'O' }
-            },
-        } : {
-            type: 'word-chain',
-            state: 'playing',
-            currentPlayerId: player1Id,
-            chain: [],
-            usedWords: {},
-            timeStartedAt: Date.now(),
-            turnDuration: 10,
-            winner: null,
-             players: {
-                [player1Id]: { id: player1Id },
-                [player2Id]: { id: player2Id }
             },
         };
 
