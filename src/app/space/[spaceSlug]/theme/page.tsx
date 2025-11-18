@@ -17,6 +17,36 @@ const colorThemes = [
   { id: 'muted-lavender', name: 'Muted Lavender', colors: ['hsl(250 40% 96%)', 'hsl(250 35% 75%)', 'hsl(270 50% 80%)'] },
   { id: 'natural-green', name: 'Natural Green', colors: ['hsl(120 15% 97%)', 'hsl(130 25% 55%)', 'hsl(100 30% 75%)'] },
   { id: 'minimal-grey', name: 'Minimal Grey', colors: ['hsl(0 0% 98%)', 'hsl(0 0% 40%)', 'hsl(0 0% 60%)'] },
+  
+  // New themes - Soft & Affectionate
+  { id: 'blush-rose', name: 'Blush & Rose', colors: ['hsl(0 100% 98%)', 'hsl(345 70% 65%)', 'hsl(330 70% 87%)'] },
+  
+  // Comfort & Warmth
+  { id: 'warm-hug', name: 'Warm Hug', colors: ['hsl(30 100% 97%)', 'hsl(25 60% 65%)', 'hsl(25 65% 82%)'] },
+  
+  // Intimate & Calm
+  { id: 'midnight-romance', name: 'Midnight Romance', colors: ['hsl(270 25% 14%)', 'hsl(260 70% 65%)', 'hsl(270 70% 87%)'] },
+  
+  // Classic & Nostalgic
+  { id: 'love-letter-sepia', name: 'Love Letter Sepia', colors: ['hsl(30 40% 94%)', 'hsl(25 50% 37%)', 'hsl(30 50% 80%)'] },
+  
+  // Cute & Playful
+  { id: 'cotton-candy-love', name: 'Cotton Candy Love', colors: ['hsl(300 100% 98%)', 'hsl(330 100% 70%)', 'hsl(210 100% 77%)'] },
+  { id: 'heart-pop', name: 'Heart Pop', colors: ['hsl(0 100% 94%)', 'hsl(348 100% 65%)', 'hsl(0 100% 75%)'] },
+  
+  // Magical & Dreamy
+  { id: 'aurora-love', name: 'Aurora Love', colors: ['hsl(320 100% 74%)', 'hsl(220 100% 74%)', 'hsl(0 0% 100%)'] },
+  
+  // Moody & Stylish
+  { id: 'obsidian-noir', name: 'Obsidian Noir', colors: ['hsl(0 0% 6%)', 'hsl(0 0% 16%)', 'hsl(0 0% 23%)'] },
+  { id: 'cosmic-twilight', name: 'Cosmic Twilight', colors: ['hsl(240 55% 10%)', 'hsl(250 45% 32%)', 'hsl(250 45% 52%)'] },
+  { id: 'stormy-night', name: 'Stormy Night', colors: ['hsl(210 20% 12%)', 'hsl(210 20% 28%)', 'hsl(210 20% 35%)'] },
+  
+  // Bold & Energetic
+  { id: 'electric-sunset', name: 'Electric Sunset', colors: ['hsl(15 100% 61%)', 'hsl(0 100% 62%)', 'hsl(40 100% 76%)'] },
+  { id: 'vivid-aurora', name: 'Vivid Aurora', colors: ['hsl(220 80% 6%)', 'hsl(180 100% 50%)', 'hsl(280 100% 50%)'] },
+  { id: 'tropical-burst', name: 'Tropical Burst', colors: ['hsl(55 100% 94%)', 'hsl(5 100% 66%)', 'hsl(160 100% 39%)'] },
+  { id: 'color-pop', name: 'Color Pop', colors: ['hsl(300 100% 96%)', 'hsl(260 100% 35%)', 'hsl(0 100% 63%)'] },
 ];
 
 const fontThemes = [

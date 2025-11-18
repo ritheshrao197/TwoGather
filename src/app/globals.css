@@ -113,6 +113,322 @@
     --input: 0 0% 90%;
     --ring: 0 0% 40%;
   }
+  
+  /* New themes - Soft & Affectionate */
+  .theme-blush-rose {
+    --background: 0 100% 98%; /* #FFF5F7 */
+    --foreground: 330 30% 20%; /* #4A2E3B */
+    --card: 0 100% 99%;
+    --card-foreground: 330 30% 20%;
+    --popover: 0 100% 99%;
+    --popover-foreground: 330 30% 20%;
+    --primary: 345 70% 65%; /* #E96A8D */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 330 70% 87%; /* #F7C1D9 */
+    --secondary-foreground: 330 30% 20%;
+    --muted: 330 70% 87%;
+    --muted-foreground: 330 20% 40%;
+    --accent: 0 100% 93%; /* #FFDDE8 */
+    --accent-foreground: 330 30% 20%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 330 30% 85%;
+    --input: 330 30% 85%;
+    --ring: 345 70% 65%;
+  }
+  
+  /* Comfort & Warmth */
+  .theme-warm-hug {
+    --background: 30 100% 97%; /* #FFF8F0 */
+    --foreground: 30 50% 15%; /* #4B2F1F */
+    --card: 30 100% 98%;
+    --card-foreground: 30 50% 15%;
+    --popover: 30 100% 98%;
+    --popover-foreground: 30 50% 15%;
+    --primary: 25 60% 65%; /* #E7A46F */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 25 65% 82%; /* #F5CBA2 */
+    --secondary-foreground: 30 50% 15%;
+    --muted: 25 65% 82%;
+    --muted-foreground: 30 20% 40%;
+    --accent: 30 100% 85%; /* #FFD9BA */
+    --accent-foreground: 30 50% 15%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 30% 80%;
+    --input: 30 30% 80%;
+    --ring: 25 60% 65%;
+  }
+  
+  /* Intimate & Calm */
+  .theme-midnight-romance {
+    --background: 270 25% 14%; /* #2B1B2E */
+    --foreground: 270 50% 97%; /* #F7E8FF */
+    --card: 270 25% 18%;
+    --card-foreground: 270 50% 97%;
+    --popover: 270 25% 18%;
+    --popover-foreground: 270 50% 97%;
+    --primary: 260 70% 65%; /* #A855F7 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 270 70% 87%; /* #E0BBFF */
+    --secondary-foreground: 270 50% 97%;
+    --muted: 270 70% 87%;
+    --muted-foreground: 270 30% 70%;
+    --accent: 280 80% 45%; /* #B72EE8 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 270 20% 30%;
+    --input: 270 20% 30%;
+    --ring: 260 70% 65%;
+  }
+  
+  /* Classic & Nostalgic */
+  .theme-love-letter-sepia {
+    --background: 30 40% 94%; /* #F7EFE5 */
+    --foreground: 30 60% 10%; /* #2E1C11 */
+    --card: 30 40% 96%;
+    --card-foreground: 30 60% 10%;
+    --popover: 30 40% 96%;
+    --popover-foreground: 30 60% 10%;
+    --primary: 25 50% 37%; /* #C07A41 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 50% 80%; /* #E3C7A5 */
+    --secondary-foreground: 30 60% 10%;
+    --muted: 30 50% 80%;
+    --muted-foreground: 30 30% 30%;
+    --accent: 30 40% 88%; /* #F2D7BE */
+    --accent-foreground: 30 60% 10%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 30% 75%;
+    --input: 30 30% 75%;
+    --ring: 25 50% 37%;
+  }
+  
+  /* Cute & Playful */
+  .theme-cotton-candy-love {
+    --background: 300 100% 98%; /* #FFF0FB */
+    --foreground: 300 20% 20%; /* #513544 */
+    --card: 300 100% 99%;
+    --card-foreground: 300 20% 20%;
+    --popover: 300 100% 99%;
+    --popover-foreground: 300 20% 20%;
+    --primary: 330 100% 70%; /* #FF87C3 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 100% 77%; /* #8BCBFF */
+    --secondary-foreground: 300 20% 20%;
+    --muted: 210 100% 77%;
+    --muted-foreground: 300 15% 40%;
+    --accent: 300 100% 94%; /* #FFD6F1 */
+    --accent-foreground: 300 20% 20%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 300 30% 85%;
+    --input: 300 30% 85%;
+    --ring: 330 100% 70%;
+  }
+  
+  .theme-heart-pop {
+    --background: 0 100% 94%; /* #FFE0E6 */
+    --foreground: 340 55% 15%; /* #4A1822 */
+    --card: 0 100% 96%;
+    --card-foreground: 340 55% 15%;
+    --popover: 0 100% 96%;
+    --popover-foreground: 340 55% 15%;
+    --primary: 348 100% 65%; /* #FF4F70 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 100% 75%; /* #FF8095 */
+    --secondary-foreground: 340 55% 15%;
+    --muted: 0 100% 75%;
+    --muted-foreground: 340 20% 40%;
+    --accent: 0 100% 88%; /* #FFC4CE */
+    --accent-foreground: 340 55% 15%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 30% 80%;
+    --input: 0 30% 80%;
+    --ring: 348 100% 65%;
+  }
+  
+  /* Magical & Dreamy */
+  .theme-aurora-love {
+    --background: linear-gradient(135deg, 320 100% 74%, 220 100% 74%); /* #FF7BCB to #7AA3FF */
+    --foreground: 0 0% 100%; /* #FFFFFF */
+    --card: 320 100% 74%;
+    --card-foreground: 0 0% 100%;
+    --popover: 320 100% 74%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 320 100% 74%; /* #FF7BCB */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 100% 74%; /* #7AA3FF */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 100% 74%;
+    --muted-foreground: 0 0% 90%;
+    --accent: 0 100% 96%; /* #FFE5FF */
+    --accent-foreground: 0 0% 20%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 80%;
+    --input: 0 0% 80%;
+    --ring: 320 100% 74%;
+  }
+  
+  /* Moody & Stylish */
+  .theme-obsidian-noir {
+    --background: 0 0% 6%; /* #0F0F10 */
+    --foreground: 0 0% 94%; /* #F0F0F0 */
+    --card: 0 0% 16%;
+    --card-foreground: 0 0% 94%;
+    --popover: 0 0% 16%;
+    --popover-foreground: 0 0% 94%;
+    --primary: 0 0% 16%; /* #28282A */
+    --primary-foreground: 0 0% 94%;
+    --secondary: 0 0% 23%; /* #3A3A3D */
+    --secondary-foreground: 0 0% 94%;
+    --muted: 0 0% 23%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 260 70% 70%; /* #9E71FF */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 260 70% 70%;
+  }
+  
+  .theme-cosmic-twilight {
+    --background: 240 55% 10%; /* #0A0E2A */
+    --foreground: 260 50% 95%; /* #EDE3FF */
+    --card: 240 55% 15%;
+    --card-foreground: 260 50% 95%;
+    --popover: 240 55% 15%;
+    --popover-foreground: 260 50% 95%;
+    --primary: 250 45% 32%; /* #422D74 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 250 45% 52%; /* #6D4BBF */
+    --secondary-foreground: 260 50% 95%;
+    --muted: 250 45% 52%;
+    --muted-foreground: 260 30% 80%;
+    --accent: 260 50% 78%; /* #B18CFF */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 30% 25%;
+    --input: 240 30% 25%;
+    --ring: 250 45% 32%;
+  }
+  
+  .theme-stormy-night {
+    --background: 210 20% 12%; /* #1A1E25 */
+    --foreground: 210 30% 92%; /* #E7ECF2 */
+    --card: 210 20% 20%;
+    --card-foreground: 210 30% 92%;
+    --popover: 210 20% 20%;
+    --popover-foreground: 210 30% 92%;
+    --primary: 210 20% 28%; /* #3D4756 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 20% 35%; /* #596273 */
+    --secondary-foreground: 210 30% 92%;
+    --muted: 210 20% 35%;
+    --muted-foreground: 210 15% 75%;
+    --accent: 220 100% 72%; /* #7393FF */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 210 15% 30%;
+    --input: 210 15% 30%;
+    --ring: 210 20% 28%;
+  }
+  
+  /* Bold & Energetic */
+  .theme-electric-sunset {
+    --background: 15 100% 61%; /* #FF6E3A */
+    --foreground: 0 70% 12%; /* #2E0F0F */
+    --card: 15 100% 65%;
+    --card-foreground: 0 70% 12%;
+    --popover: 15 100% 65%;
+    --popover-foreground: 0 70% 12%;
+    --primary: 0 100% 62%; /* #FF3D54 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 100% 76%; /* #FFC24B */
+    --secondary-foreground: 0 70% 12%;
+    --muted: 40 100% 76%;
+    --muted-foreground: 0 30% 30%;
+    --accent: 35 100% 74%; /* #FF9E3B */
+    --accent-foreground: 0 70% 12%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 15 100% 50%;
+    --input: 15 100% 50%;
+    --ring: 0 100% 62%;
+  }
+  
+  .theme-vivid-aurora {
+    --background: 220 80% 6%; /* #06142E */
+    --foreground: 200 80% 95%; /* #DDF3FF */
+    --card: 220 80% 12%;
+    --card-foreground: 200 80% 95%;
+    --popover: 220 80% 12%;
+    --popover-foreground: 200 80% 95%;
+    --primary: 180 100% 50%; /* #00E1FF */
+    --primary-foreground: 0 0% 0%;
+    --secondary: 280 100% 50%; /* #B700FF */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 280 100% 50%;
+    --muted-foreground: 200 50% 80%;
+    --accent: 50 100% 50%; /* #FFD700 */
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 50% 25%;
+    --input: 220 50% 25%;
+    --ring: 180 100% 50%;
+  }
+  
+  .theme-tropical-burst {
+    --background: 55 100% 94%; /* #FFFCE1 */
+    --foreground: 15 30% 18%; /* #3B2C2A */
+    --card: 55 100% 96%;
+    --card-foreground: 15 30% 18%;
+    --popover: 55 100% 96%;
+    --popover-foreground: 15 30% 18%;
+    --primary: 5 100% 66%; /* #FF725E */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 160 100% 39%; /* #00C8A5 */
+    --secondary-foreground: 15 30% 18%;
+    --muted: 160 100% 39%;
+    --muted-foreground: 15 20% 40%;
+    --accent: 50 100% 88%; /* #FFE680 */
+    --accent-foreground: 15 30% 18%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 55 50% 75%;
+    --input: 55 50% 75%;
+    --ring: 5 100% 66%;
+  }
+  
+  .theme-color-pop {
+    --background: 300 100% 96%; /* #FEE8FF */
+    --foreground: 260 25% 20%; /* #2F2342 */
+    --card: 300 100% 98%;
+    --card-foreground: 260 25% 20%;
+    --popover: 300 100% 98%;
+    --popover-foreground: 260 25% 20%;
+    --primary: 260 100% 35%; /* #7433FF */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 100% 63%; /* #FF4365 */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 100% 63%;
+    --muted-foreground: 260 20% 40%;
+    --accent: 50 100% 70%; /* #FFD447 */
+    --accent-foreground: 260 25% 20%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 300 50% 80%;
+    --input: 300 50% 80%;
+    --ring: 260 100% 35%;
+  }
 
   .font-gentle-rounded {
     --font-heading: 'Poppins', sans-serif;
