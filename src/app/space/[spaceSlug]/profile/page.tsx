@@ -10,7 +10,7 @@ import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -183,73 +183,75 @@ export default function ProfilePage() {
             </div>
 
             <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-6">
-                  <div className="relative">
-                    <Avatar className="w-24 h-24 border-4 border-muted">
-                      <AvatarImage src={avatarUrl} />
-                      <AvatarFallback>
-                        <User className="w-10 h-10 text-muted-foreground" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <Button
-                      size="icon"
-                      variant="outline"
-                      className="absolute -bottom-2 -right-2 rounded-full h-10 w-10 bg-background"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={isUploading}
-                    >
-                      {isUploading ? <Loader2 className="animate-spin" /> : <Upload className="w-5 h-5"/>}
+                <CardHeader>
+                    <CardTitle>Your Identity</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="flex items-center gap-6">
+                      <div className="relative">
+                        <Avatar className="w-24 h-24 border-4 border-muted">
+                          <AvatarImage src={avatarUrl} />
+                          <AvatarFallback>
+                            <User className="w-10 h-10 text-muted-foreground" />
+                          </AvatarFallback>
+                        </Avatar>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="absolute -bottom-2 -right-2 rounded-full h-10 w-10 bg-background"
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={isUploading}
+                        >
+                          {isUploading ? <Loader2 className="animate-spin" /> : <Upload className="w-5 h-5"/>}
+                        </Button>
+                      </div>
+                      <div className="flex-1">
+                        <Label htmlFor="displayName">Display Name</Label>
+                        <Input
+                          id="displayName"
+                          value={displayName}
+                          onChange={e => setDisplayName(e.target.value)}
+                          className="text-lg font-headline"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                       <div>
+                        <Label htmlFor="bio">Short Bio</Label>
+                        <Textarea
+                          id="bio"
+                          placeholder="A little about yourself..."
+                          value={bio}
+                          onChange={e => setBio(e.target.value)}
+                          rows={2}
+                        />
+                      </div>
+                       <div>
+                        <Label htmlFor="mood">Status</Label>
+                        <Input
+                          id="mood"
+                          placeholder="e.g., Listening to music"
+                          value={mood}
+                          onChange={e => setMood(e.target.value)}
+                        />
+                      </div>
+                       <div>
+                        <Label htmlFor="pronouns">Pronouns</Label>
+                        <Input
+                          id="pronouns"
+                          placeholder="e.g., they/them"
+                          value={pronouns}
+                          onChange={e => setPronouns(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                </CardContent>
+                <CardContent>
+                    <Button onClick={handleSaveChanges} disabled={isSaving} className="w-full">
+                        {isSaving ? <Loader2 className="animate-spin"/> : <><Save className="mr-2"/> Save Changes</>}
                     </Button>
-                  </div>
-                  <div className="flex-1">
-                    <Label htmlFor="displayName">Display Name</Label>
-                    <Input
-                      id="displayName"
-                      value={displayName}
-                      onChange={e => setDisplayName(e.target.value)}
-                      className="text-lg font-headline"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-4 mt-6">
-                   <div>
-                    <Label htmlFor="bio">Short Bio</Label>
-                    <Textarea
-                      id="bio"
-                      placeholder="A little about yourself..."
-                      value={bio}
-                      onChange={e => setBio(e.target.value)}
-                      rows={2}
-                    />
-                  </div>
-                   <div>
-                    <Label htmlFor="mood">Mood / Status</Label>
-                    <Input
-                      id="mood"
-                      placeholder="e.g., Listening to music"
-                      value={mood}
-                      onChange={e => setMood(e.target.value)}
-                    />
-                  </div>
-                   <div>
-                    <Label htmlFor="pronouns">Pronouns</Label>
-                    <Input
-                      id="pronouns"
-                      placeholder="e.g., they/them"
-                      value={pronouns}
-                      onChange={e => setPronouns(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-              </CardContent>
-              <CardContent>
-                <Button onClick={handleSaveChanges} disabled={isSaving} className="w-full">
-                  {isSaving ? <Loader2 className="animate-spin"/> : <><Save className="mr-2"/> Save Changes</>}
-                </Button>
-              </CardContent>
+                </CardContent>
             </Card>
 
             <div className="mt-12 text-center">
