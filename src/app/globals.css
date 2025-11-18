@@ -3,74 +3,130 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+  :root, .theme-midnight-blue {
     --background: 225 35% 20%; /* Soft Midnight Blue */
     --foreground: 210 40% 98%;
-
     --card: 225 35% 23%;
     --card-foreground: 210 40% 98%;
-
     --popover: 225 35% 23%;
     --popover-foreground: 210 40% 98%;
-
     --primary: 244 33% 83%; /* Muted Lavender */
     --primary-foreground: 225 35% 15%;
-
     --secondary: 225 35% 25%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 225 35% 25%;
     --muted-foreground: 215 20% 65%;
-
     --accent: 147 50% 78%; /* Mint Green */
     --accent-foreground: 147 50% 15%;
-
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 225 35% 30%;
     --input: 225 35% 30%;
     --ring: 244 33% 83%;
-
     --radius: 0.5rem;
+  }
+  
+  .theme-calm-sand {
+    --background: 45 50% 95%; /* Light Sand */
+    --foreground: 45 20% 25%;
+    --card: 45 50% 98%;
+    --card-foreground: 45 20% 25%;
+    --popover: 45 50% 98%;
+    --popover-foreground: 45 20% 25%;
+    --primary: 40 30% 50%; /* Soft Brown */
+    --primary-foreground: 45 50% 98%;
+    --secondary: 45 40% 90%;
+    --secondary-foreground: 40 30% 30%;
+    --muted: 45 40% 90%;
+    --muted-foreground: 45 20% 45%;
+    --accent: 35 60% 70%; /* Muted Orange */
+    --accent-foreground: 35 60% 15%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 45 50% 98%;
+    --border: 45 30% 85%;
+    --input: 45 30% 85%;
+    --ring: 40 30% 50%;
+  }
 
-    /* Custom theme properties */
-    --color-primary: hsl(var(--primary));
-    --color-surface: hsl(var(--background));
-    --color-accent: hsl(var(--accent));
-    --color-text: hsl(var(--foreground));
+  .theme-muted-lavender {
+    --background: 250 40% 96%;
+    --foreground: 250 15% 30%;
+    --card: 250 40% 99%;
+    --card-foreground: 250 15% 30%;
+    --popover: 250 40% 99%;
+    --popover-foreground: 250 15% 30%;
+    --primary: 250 35% 75%; /* Lavender */
+    --primary-foreground: 250 40% 10%;
+    --secondary: 250 30% 92%;
+    --secondary-foreground: 250 15% 30%;
+    --muted: 250 30% 92%;
+    --muted-foreground: 250 10% 55%;
+    --accent: 270 50% 80%; /* Soft Lilac */
+    --accent-foreground: 270 50% 20%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 250 30% 88%;
+    --input: 250 30% 88%;
+    --ring: 250 35% 75%;
+  }
+
+  .theme-natural-green {
+    --background: 120 15% 97%;
+    --foreground: 120 20% 20%;
+    --card: 120 15% 99%;
+    --card-foreground: 120 20% 20%;
+    --popover: 120 15% 99%;
+    --popover-foreground: 120 20% 20%;
+    --primary: 130 25% 55%; /* Sage Green */
+    --primary-foreground: 130 25% 10%;
+    --secondary: 120 10% 93%;
+    --secondary-foreground: 120 20% 20%;
+    --muted: 120 10% 93%;
+    --muted-foreground: 120 10% 50%;
+    --accent: 100 30% 75%; /* Soft Leaf Green */
+    --accent-foreground: 100 30% 15%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 120 10% 88%;
+    --input: 120 10% 88%;
+    --ring: 130 25% 55%;
+  }
+
+  .theme-minimal-grey {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 15%;
+    --primary: 0 0% 40%; /* Medium Grey */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 95%;
+    --secondary-foreground: 0 0% 15%;
+    --muted: 0 0% 95%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 60%; /* Light Grey */
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 40%;
+  }
+
+  .font-gentle-rounded {
     --font-heading: 'Poppins', sans-serif;
     --font-body: 'Inter', sans-serif;
   }
+  
+  .font-clean-modern {
+    --font-heading: 'DM Sans', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
 
-  .dark {
-    --background: 225 35% 20%; /* Soft Midnight Blue */
-    --foreground: 210 40% 98%;
-
-    --card: 225 35% 23%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 225 35% 23%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 244 33% 83%; /* Muted Lavender */
-    --primary-foreground: 225 35% 15%;
-
-    --secondary: 225 35% 25%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 225 35% 25%;
-    --muted-foreground: 215 20% 65%;
-
-    --accent: 147 50% 78%; /* Mint Green */
-    --accent-foreground: 147 50% 15%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 225 35% 30%;
-    --input: 225 35% 30%;
-    --ring: 244 33% 83%;
+  .font-calm-serif {
+    --font-heading: 'Cormorant Garamond', serif;
+    --font-body: 'Lora', serif;
   }
 }
 
