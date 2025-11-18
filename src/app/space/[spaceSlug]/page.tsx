@@ -137,14 +137,36 @@ export default function PersonalSpacePage() {
     if (memberPresence?.online) return "Online now";
     if (memberPresence?.lastSeen) {
       try {
-        return `Last seen ${formatDistanceToNow(fromUnixTime(memberPresence.lastSeen / 1000), { addSuffix: true })}`;
+        // Fix the TypeScript error by ensuring lastSeen is a number
+        const lastSeenNumber = typeof memberPresence.lastSeen === 'number' 
+          ? memberPresence.lastSeen 
+          : Number(memberPresence.lastSeen);
+        
+        if (!isNaN(lastSeenNumber)) {
+          return `Last seen ${formatDistanceToNow(fromUnixTime(lastSeenNumber / 1000), { addSuffix: true })}`;
+        }
       } catch (e) {
-          return "Offline";
+        console.error('Error formatting presence time:', e);
+        return "Offline";
       }
     }
     return "Offline";
   };
   
+  // Add debugging for theme classes
+  useEffect(() => {
+    console.log('=== SPACE PAGE MOUNTED ===');
+    const root = document.documentElement;
+    console.log('Current root classes on space page:', Array.from(root.classList));
+    
+    // Log CSS variables
+    const computedStyle = getComputedStyle(root);
+    console.log('Background color on space page:', computedStyle.getPropertyValue('--background'));
+    console.log('Primary color on space page:', computedStyle.getPropertyValue('--primary'));
+    console.log('Font heading on space page:', computedStyle.getPropertyValue('--font-heading'));
+    console.log('Font body on space page:', computedStyle.getPropertyValue('--font-body'));
+  }, []);
+
   if (!currentMemberId || !membersData) {
     return (
       <div className="flex flex-col min-h-dvh bg-background">
@@ -168,6 +190,19 @@ export default function PersonalSpacePage() {
       <div className="flex flex-col min-h-dvh bg-background text-foreground transition-colors duration-1000">
         <Header />
         <main className="flex-1 container mx-auto px-4 py-8 pt-24">
+          
+          {/* Add a test button for theme debugging */}
+          <div className="mb-4 p-2 bg-muted rounded">
+            <button 
+              onClick={() => {
+                console.log('Manual theme apply triggered');
+                window.dispatchEvent(new CustomEvent('theme-change'));
+              }}
+              className="px-3 py-1 bg-primary text-primary-foreground rounded text-sm"
+            >
+              Test Theme Apply
+            </button>
+          </div>
           
           <section className="mb-10 text-center">
             <h1 className="text-3xl md:text-4xl font-headline font-bold text-foreground">

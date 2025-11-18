@@ -47,20 +47,9 @@ export default function ThemePage() {
     }
   }, [spaceSlug]);
 
-  useEffect(() => {
-    const root = document.documentElement;
-    // Remove old theme classes
-    root.classList.forEach(className => {
-      if (className.startsWith('theme-') || className.startsWith('font-')) {
-        root.classList.remove(className);
-      }
-    });
-
-    // Add new theme classes
-    root.classList.add(`theme-${selectedColorTheme}`);
-    root.classList.add(`font-${selectedFontTheme}`);
-  }, [selectedColorTheme, selectedFontTheme]);
-
+  // Removed the useEffect that was applying theme to the entire document
+  // This was causing conflicts with the ThemeManager
+  // The theme preview is now handled entirely through inline styles
 
   const getThemeVars = () => {
     const theme = colorThemes.find(t => t.id === selectedColorTheme);
@@ -83,14 +72,46 @@ export default function ThemePage() {
   }
 
   const handleSaveTheme = () => {
+    console.log('=== THEME SAVE START ===');
+    console.log('Space slug:', spaceSlug);
+    console.log('Selected color theme:', selectedColorTheme);
+    console.log('Selected font theme:', selectedFontTheme);
+    
     setIsSaving(true);
+    
+    // Save themes to localStorage
     localStorage.setItem(`space-theme-color-${spaceSlug}`, selectedColorTheme);
     localStorage.setItem(`space-theme-font-${spaceSlug}`, selectedFontTheme);
+    
+    // Verify save
+    const verifiedColor = localStorage.getItem(`space-theme-color-${spaceSlug}`);
+    const verifiedFont = localStorage.getItem(`space-theme-font-${spaceSlug}`);
+    console.log('Saved to localStorage - Color:', verifiedColor, 'Font:', verifiedFont);
+    
+    // Notify other components of theme change
+    console.log('Dispatching custom theme-change event');
+    window.dispatchEvent(new CustomEvent('theme-change'));
+    console.log('Custom theme-change event dispatched');
+    
+    // Also dispatch storage events for cross-tab updates
+    console.log('Dispatching storage events');
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: `space-theme-color-${spaceSlug}`,
+      newValue: selectedColorTheme
+    }));
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: `space-theme-font-${spaceSlug}`,
+      newValue: selectedFontTheme
+    }));
+    console.log('Storage events dispatched');
+    
     toast({
         title: 'Theme Saved!',
         description: 'Your new look has been saved for this space.',
     });
+    
     setTimeout(() => setIsSaving(false), 1000);
+    console.log('=== THEME SAVE END ===');
   };
   
   const handleReset = () => {
