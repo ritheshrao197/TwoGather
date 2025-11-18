@@ -130,7 +130,12 @@ export default function GamesHubPage() {
         });
 
         const sessionId = newSessionRef.key;
-        router.push(`/space/${spaceSlug}/games/tic-tac-toe/${sessionId}`);
+        if (sessionId) {
+            router.push(`/space/${spaceSlug}/games/tic-tac-toe/${sessionId}`);
+        } else {
+            throw new Error('Failed to create game session');
+        }
+        setIsLoading(null); // Reset loading state after navigation
     } catch (error) {
         console.error("Failed to start game session:", error);
         toast({ variant: 'destructive', title: 'Error', description: 'Could not start a new game session.' });
@@ -139,11 +144,14 @@ export default function GamesHubPage() {
    } else if (gameId === 'would-you-rather') {
     // Navigate to the Would You Rather game
     router.push(`/space/${spaceSlug}/games/would-you-rather`);
+    setIsLoading(null); // Reset loading state after navigation
    } else if (gameId === 'story-in-10-words') {
     // Navigate to the Story in 10 Words game
     router.push(`/space/${spaceSlug}/games/story-in-10-words`);
+    setIsLoading(null); // Reset loading state after navigation
    } else {
       toast({ variant: 'destructive', title: 'Coming Soon!', description: 'This game is not yet available.' });
+      setIsLoading(null); // Reset loading state
       return;
    }
   };
