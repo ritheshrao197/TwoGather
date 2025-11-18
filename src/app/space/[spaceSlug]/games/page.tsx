@@ -109,7 +109,7 @@ export default function GamesHubPage() {
         const player2Id = partner.id;
 
         // Assign love-themed icons to players
-        const loveIcons = ['❤️', '💫', '🌙', '🔥', '🍀', '🌸', '⭐'];
+        const loveIcons = ['❤️', '💫', '🌙', '🔥', '🍀', '⭐'];
         const shuffledIcons = [...loveIcons].sort(() => Math.random() - 0.5);
         const playerAIcon = shuffledIcons[0];
         const playerBIcon = shuffledIcons[1];

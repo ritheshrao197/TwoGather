@@ -9,7 +9,7 @@ import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, ArrowLeft, Trophy, Handshake, RefreshCw, Heart, Sparkles, Moon, Flame, Leaf, Blossom, Star } from 'lucide-react';
+import { Loader2, ArrowLeft, Trophy, Handshake, RefreshCw, Heart, Sparkles, Moon, Flame, Leaf, Star } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
@@ -20,7 +20,6 @@ const LoveIcons = {
   '🌙': Moon,
   '🔥': Flame,
   '🍀': Leaf,
-  '🌸': Blossom,
   '⭐': Star
 };
 
@@ -90,42 +89,88 @@ export default function TicTacToePage() {
     
     const handleMove = async (index: number) => {
         if (!gameState || !currentMemberId || gameState.status === 'ended' || gameState.currentPlayer !== currentMemberId || gameState.board[index]) {
+            // Show a toast message to inform the user why the move is not allowed
+            if (gameState?.currentPlayer !== currentMemberId) {
+                toast({ 
+                    variant: 'destructive', 
+                    title: 'Not Your Turn', 
+                    description: 'Please wait for your partner to make their move.' 
+                });
+            } else if (gameState?.board[index]) {
+                toast({ 
+                    variant: 'destructive', 
+                    title: 'Invalid Move', 
+                    description: 'This cell is already occupied.' 
+                });
+            }
             return;
         }
         
-        const snapshot = await get(gameRef);
-        const currentRemoteState = snapshot.val();
-        
-        // Prevent race conditions
-        if (currentRemoteState.currentPlayer !== currentMemberId || currentRemoteState.board[index]) {
-            return;
+        try {
+            const snapshot = await get(gameRef);
+            const currentRemoteState = snapshot.val();
+            
+            // Prevent race conditions
+            if (!currentRemoteState || currentRemoteState.status === 'ended') {
+                toast({ 
+                    variant: 'destructive', 
+                    title: 'Game Ended', 
+                    description: 'This game has already ended.' 
+                });
+                return;
+            }
+            
+            if (currentRemoteState.currentPlayer !== currentMemberId) {
+                toast({ 
+                    variant: 'destructive', 
+                    title: 'Not Your Turn', 
+                    description: 'Please wait for your partner to make their move.' 
+                });
+                return;
+            }
+            
+            if (currentRemoteState.board[index]) {
+                toast({ 
+                    variant: 'destructive', 
+                    title: 'Invalid Move', 
+                    description: 'This cell is already occupied.' 
+                });
+                return;
+            }
+
+            const newBoard = [...currentRemoteState.board];
+            newBoard[index] = currentRemoteState.players[currentMemberId].symbol;
+
+            const winnerSymbol = calculateWinner(newBoard);
+            let newStatus = 'playing';
+            let newWinner = null;
+            let nextPlayer = Object.keys(currentRemoteState.players).find(id => id !== currentMemberId) || currentMemberId;
+
+            if (winnerSymbol) {
+                newStatus = 'ended';
+                newWinner = Object.keys(currentRemoteState.players).find(id => currentRemoteState.players[id].symbol === winnerSymbol) || null;
+            } else if (!newBoard.includes(null)) {
+                newStatus = 'ended';
+                newWinner = 'draw';
+            }
+
+            const newState = {
+                ...currentRemoteState,
+                board: newBoard,
+                currentPlayer: nextPlayer,
+                status: newStatus,
+                winner: newWinner,
+            };
+
+            await set(gameRef, newState);
+        } catch (error) {
+            console.error("Error making move:", error);
+            toast({ 
+                variant: 'destructive', 
+                title: 'Move Failed', 
+                description: 'Could not complete your move. Please try again.' 
+            });
         }
-
-        const newBoard = [...currentRemoteState.board];
-        newBoard[index] = currentRemoteState.players[currentMemberId].symbol;
-
-        const winnerSymbol = calculateWinner(newBoard);
-        let newStatus = 'playing';
-        let newWinner = null;
-        let nextPlayer = Object.keys(currentRemoteState.players).find(id => id !== currentMemberId) || currentMemberId;
-
-        if (winnerSymbol) {
-            newStatus = 'ended';
-            newWinner = Object.keys(currentRemoteState.players).find(id => currentRemoteState.players[id].symbol === winnerSymbol);
-        } else if (!newBoard.includes(null)) {
-            newStatus = 'ended';
-            newWinner = 'draw';
-        }
-
-        const newState = {
-            ...currentRemoteState,
-            board: newBoard,
-            currentPlayer: nextPlayer,
-            status: newStatus,
-            winner: newWinner,
-        };
-
-        await set(gameRef, newState);
     };
 
     const handleRestart = async () => {
