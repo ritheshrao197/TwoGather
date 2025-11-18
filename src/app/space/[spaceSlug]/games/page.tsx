@@ -25,7 +25,7 @@ const games = [
   {
     id: 'would-you-rather',
     icon: CheckSquare,
-    title: 'Would You Rather?',
+    title: 'Dilemmas',
     description: 'Funny dilemma cards that reveal your compatibility.',
     players: '2',
     time: '3-10 min'
@@ -39,36 +39,20 @@ const games = [
     time: '2-5 min'
   },
   {
-    id: 'quick-quiz',
-    icon: BrainCircuit,
-    title: 'Quick Quiz',
-    description: 'Short multiple-choice quizzes on fun topics.',
+    id: 'future-snapshots',
+    icon: Sparkles,
+    title: 'Future Snapshots',
+    description: 'Secretly write your vision for a future moment.',
+    players: '2',
+    time: '5-10 min'
+  },
+   {
+    id: 'silent-signals',
+    icon: MessagesSquare,
+    title: 'Silent Signals',
+    description: 'Say it with emojis. What does it mean?',
     players: '2',
     time: '3-5 min'
-  },
-  {
-    id: 'word-scramble',
-    icon: Wand2,
-    title: 'Word Scramble',
-    description: 'Unscramble the same word list; fastest wins.',
-    players: '2',
-    time: '2-6 min'
-  },
-  {
-    id: 'memory-match',
-    icon: Puzzle,
-    title: 'Memory Match',
-    description: 'Classic flip tiles, take turns revealing pairs.',
-    players: '2',
-    time: '3-7 min'
-  },
-  {
-    id: 'draw-guess',
-    icon: PencilRuler,
-    title: 'Draw & Guess',
-    description: 'One partner draws a word, the other guesses.',
-    players: '2',
-    time: '3-6 min'
   },
 ];
 
@@ -149,6 +133,12 @@ export default function GamesHubPage() {
     // Navigate to the Story in 10 Words game
     router.push(`/space/${spaceSlug}/games/story-in-10-words`);
     setIsLoading(null); // Reset loading state after navigation
+  } else if (gameId === 'future-snapshots') {
+    router.push(`/space/${spaceSlug}/games/future-snapshots`);
+    setIsLoading(null);
+  } else if (gameId === 'silent-signals') {
+    router.push(`/space/${spaceSlug}/games/silent-signals`);
+    setIsLoading(null);
    } else {
       toast({ variant: 'destructive', title: 'Coming Soon!', description: 'This game is not yet available.' });
       setIsLoading(null); // Reset loading state
