@@ -1,8 +1,8 @@
+@import './theme-variables.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import './theme-variables.css';
 
 @layer base {
   :root {
@@ -460,13 +460,13 @@
   }
   
   .font-clean-modern {
-    --font-heading: 'DM Sans', sans-serif;
+    --font-heading: 'Poppins', sans-serif;
     --font-body: 'Inter', sans-serif;
   }
 
   .font-calm-serif {
-    --font-heading: 'Cormorant Garamond', serif;
-    --font-body: 'Lora', serif;
+    --font-heading: 'Poppins', sans-serif;
+    --font-body: 'Inter', sans-serif;
   }
   
   * {

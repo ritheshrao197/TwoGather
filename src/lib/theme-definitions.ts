@@ -22,348 +22,348 @@ export const themeDefinitions = {
     '--ring': '149 33% 69%',
   },
   'calm-sand': {
-    '--background': '45 50% 95%',
-    '--foreground': '45 20% 25%',
-    '--card': '45 50% 98%',
-    '--card-foreground': '45 20% 25%',
-    '--popover': '45 50% 98%',
-    '--popover-foreground': '45 20% 25%',
-    '--primary': '40 30% 50%',
-    '--primary-foreground': '45 50% 98%',
-    '--secondary': '45 40% 90%',
-    '--secondary-foreground': '40 30% 30%',
-    '--muted': '45 40% 90%',
-    '--muted-foreground': '45 20% 45%',
-    '--accent': '35 60% 70%',
-    '--accent-foreground': '35 60% 15%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '45 50% 98%',
-    '--border': '45 30% 85%',
-    '--input': '45 30% 85%',
-    '--ring': '40 30% 50%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   'muted-lavender': {
-    '--background': '250 40% 96%',
-    '--foreground': '250 15% 30%',
-    '--card': '250 40% 99%',
-    '--card-foreground': '250 15% 30%',
-    '--popover': '250 40% 99%',
-    '--popover-foreground': '250 15% 30%',
-    '--primary': '250 35% 75%',
-    '--primary-foreground': '250 40% 10%',
-    '--secondary': '250 30% 92%',
-    '--secondary-foreground': '250 15% 30%',
-    '--muted': '250 30% 92%',
-    '--muted-foreground': '250 10% 55%',
-    '--accent': '270 50% 80%',
-    '--accent-foreground': '270 50% 20%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '210 40% 98%',
-    '--border': '250 30% 88%',
-    '--input': '250 30% 88%',
-    '--ring': '250 35% 75%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   'natural-green': {
-    '--background': '120 15% 97%',
-    '--foreground': '120 20% 20%',
-    '--card': '120 15% 99%',
-    '--card-foreground': '120 20% 20%',
-    '--popover': '120 15% 99%',
-    '--popover-foreground': '120 20% 20%',
-    '--primary': '130 25% 55%',
-    '--primary-foreground': '130 25% 10%',
-    '--secondary': '120 10% 93%',
-    '--secondary-foreground': '120 20% 20%',
-    '--muted': '120 10% 93%',
-    '--muted-foreground': '120 10% 50%',
-    '--accent': '100 30% 75%',
-    '--accent-foreground': '100 30% 15%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '210 40% 98%',
-    '--border': '120 10% 88%',
-    '--input': '120 10% 88%',
-    '--ring': '130 25% 55%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   'minimal-grey': {
-    '--background': '0 0% 98%',
-    '--foreground': '0 0% 15%',
-    '--card': '0 0% 100%',
-    '--card-foreground': '0 0% 15%',
-    '--popover': '0 0% 100%',
-    '--popover-foreground': '0 0% 15%',
-    '--primary': '0 0% 40%',
-    '--primary-foreground': '0 0% 100%',
-    '--secondary': '0 0% 95%',
-    '--secondary-foreground': '0 0% 15%',
-    '--muted': '0 0% 95%',
-    '--muted-foreground': '0 0% 45%',
-    '--accent': '0 0% 60%',
-    '--accent-foreground': '0 0% 10%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '0 0% 98%',
-    '--border': '0 0% 90%',
-    '--input': '0 0% 90%',
-    '--ring': '0 0% 40%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   // New themes - Soft & Affectionate
   'blush-rose': {
-    '--background': '0 100% 98%',
-    '--foreground': '330 20% 15%',
-    '--card': '0 100% 99%',
-    '--card-foreground': '330 20% 15%',
-    '--popover': '0 100% 99%',
-    '--popover-foreground': '330 20% 15%',
-    '--primary': '345 70% 65%',
-    '--primary-foreground': '0 0% 100%',
-    '--secondary': '330 70% 87%',
-    '--secondary-foreground': '330 20% 15%',
-    '--muted': '330 70% 87%',
-    '--muted-foreground': '330 15% 30%',
-    '--accent': '0 100% 93%',
-    '--accent-foreground': '330 20% 15%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '0 0% 98%',
-    '--border': '330 20% 85%',
-    '--input': '330 20% 85%',
-    '--ring': '345 70% 65%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   // Comfort & Warmth
   'warm-hug': {
-    '--background': '30 100% 97%',
-    '--foreground': '30 30% 12%',
-    '--card': '30 100% 98%',
-    '--card-foreground': '30 30% 12%',
-    '--popover': '30 100% 98%',
-    '--popover-foreground': '30 30% 12%',
-    '--primary': '25 60% 65%',
-    '--primary-foreground': '0 0% 100%',
-    '--secondary': '25 65% 82%',
-    '--secondary-foreground': '30 30% 12%',
-    '--muted': '25 65% 82%',
-    '--muted-foreground': '30 15% 30%',
-    '--accent': '30 100% 85%',
-    '--accent-foreground': '30 30% 12%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '0 0% 98%',
-    '--border': '30 20% 80%',
-    '--input': '30 20% 80%',
-    '--ring': '25 60% 65%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   // Intimate & Calm
   'midnight-romance': {
-    '--background': '270 25% 14%',
-    '--foreground': '270 50% 97%',
-    '--card': '270 25% 18%',
-    '--card-foreground': '270 50% 97%',
-    '--popover': '270 25% 18%',
-    '--popover-foreground': '270 50% 97%',
-    '--primary': '260 70% 65%',
-    '--primary-foreground': '0 0% 100%',
-    '--secondary': '270 70% 87%',
-    '--secondary-foreground': '270 50% 97%',
-    '--muted': '270 70% 87%',
-    '--muted-foreground': '270 30% 70%',
-    '--accent': '280 80% 45%',
-    '--accent-foreground': '0 0% 100%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '0 0% 98%',
-    '--border': '270 20% 30%',
-    '--input': '270 20% 30%',
-    '--ring': '260 70% 65%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   // Classic & Nostalgic
   'love-letter-sepia': {
-    '--background': '30 40% 94%',
-    '--foreground': '30 60% 10%',
-    '--card': '30 40% 96%',
-    '--card-foreground': '30 60% 10%',
-    '--popover': '30 40% 96%',
-    '--popover-foreground': '30 60% 10%',
-    '--primary': '25 50% 37%',
-    '--primary-foreground': '0 0% 100%',
-    '--secondary': '30 50% 80%',
-    '--secondary-foreground': '30 60% 10%',
-    '--muted': '30 50% 80%',
-    '--muted-foreground': '30 30% 30%',
-    '--accent': '30 40% 88%',
-    '--accent-foreground': '30 60% 10%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '0 0% 98%',
-    '--border': '30 30% 75%',
-    '--input': '30 30% 75%',
-    '--ring': '25 50% 37%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   // Cute & Playful
   'cotton-candy-love': {
-    '--background': '300 100% 98%',
-    '--foreground': '300 20% 20%',
-    '--card': '300 100% 99%',
-    '--card-foreground': '300 20% 20%',
-    '--popover': '300 100% 99%',
-    '--popover-foreground': '300 20% 20%',
-    '--primary': '330 100% 70%',
-    '--primary-foreground': '0 0% 100%',
-    '--secondary': '210 100% 77%',
-    '--secondary-foreground': '300 20% 20%',
-    '--muted': '210 100% 77%',
-    '--muted-foreground': '300 15% 40%',
-    '--accent': '300 100% 94%',
-    '--accent-foreground': '300 20% 20%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '0 0% 98%',
-    '--border': '300 30% 85%',
-    '--input': '300 30% 85%',
-    '--ring': '330 100% 70%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   'heart-pop': {
-    '--background': '0 100% 94%',
-    '--foreground': '340 55% 15%',
-    '--card': '0 100% 96%',
-    '--card-foreground': '340 55% 15%',
-    '--popover': '0 100% 96%',
-    '--popover-foreground': '340 55% 15%',
-    '--primary': '348 100% 65%',
-    '--primary-foreground': '0 0% 100%',
-    '--secondary': '0 100% 75%',
-    '--secondary-foreground': '340 55% 15%',
-    '--muted': '0 100% 75%',
-    '--muted-foreground': '340 20% 40%',
-    '--accent': '0 100% 88%',
-    '--accent-foreground': '340 55% 15%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '0 0% 98%',
-    '--border': '0 30% 80%',
-    '--input': '0 30% 80%',
-    '--ring': '348 100% 65%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   // Magical & Dreamy
   'aurora-love': {
-    '--background': '320 100% 74%',
-    '--foreground': '0 0% 100%',
-    '--card': '320 100% 74%',
-    '--card-foreground': '0 0% 100%',
-    '--popover': '320 100% 74%',
-    '--popover-foreground': '0 0% 100%',
-    '--primary': '320 100% 74%',
-    '--primary-foreground': '0 0% 100%',
-    '--secondary': '220 100% 74%',
-    '--secondary-foreground': '0 0% 100%',
-    '--muted': '220 100% 74%',
-    '--muted-foreground': '0 0% 90%',
-    '--accent': '0 100% 96%',
-    '--accent-foreground': '0 0% 20%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '0 0% 98%',
-    '--border': '0 0% 80%',
-    '--input': '0 0% 80%',
-    '--ring': '320 100% 74%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   // Moody & Stylish
   'obsidian-noir': {
-    '--background': '0 0% 6%',
-    '--foreground': '0 0% 94%',
-    '--card': '0 0% 16%',
-    '--card-foreground': '0 0% 94%',
-    '--popover': '0 0% 16%',
-    '--popover-foreground': '0 0% 94%',
-    '--primary': '0 0% 16%',
-    '--primary-foreground': '0 0% 94%',
-    '--secondary': '0 0% 23%',
-    '--secondary-foreground': '0 0% 94%',
-    '--muted': '0 0% 23%',
-    '--muted-foreground': '0 0% 70%',
-    '--accent': '260 70% 70%',
-    '--accent-foreground': '0 0% 100%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '0 0% 98%',
-    '--border': '0 0% 20%',
-    '--input': '0 0% 20%',
-    '--ring': '260 70% 70%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   'cosmic-twilight': {
-    '--background': '240 55% 10%',
-    '--foreground': '260 50% 95%',
-    '--card': '240 55% 15%',
-    '--card-foreground': '260 50% 95%',
-    '--popover': '240 55% 15%',
-    '--popover-foreground': '260 50% 95%',
-    '--primary': '250 45% 32%',
-    '--primary-foreground': '0 0% 100%',
-    '--secondary': '250 45% 52%',
-    '--secondary-foreground': '260 50% 95%',
-    '--muted': '250 45% 52%',
-    '--muted-foreground': '260 30% 80%',
-    '--accent': '260 50% 78%',
-    '--accent-foreground': '0 0% 100%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '0 0% 98%',
-    '--border': '240 30% 25%',
-    '--input': '240 30% 25%',
-    '--ring': '250 45% 32%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   'stormy-night': {
-    '--background': '210 20% 12%',
-    '--foreground': '210 30% 92%',
-    '--card': '210 20% 20%',
-    '--card-foreground': '210 30% 92%',
-    '--popover': '210 20% 20%',
-    '--popover-foreground': '210 30% 92%',
-    '--primary': '210 20% 28%',
-    '--primary-foreground': '0 0% 100%',
-    '--secondary': '210 20% 35%',
-    '--secondary-foreground': '210 30% 92%',
-    '--muted': '210 20% 35%',
-    '--muted-foreground': '210 15% 75%',
-    '--accent': '220 100% 72%',
-    '--accent-foreground': '0 0% 100%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '0 0% 98%',
-    '--border': '210 15% 30%',
-    '--input': '210 15% 30%',
-    '--ring': '210 20% 28%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   // Bold & Energetic
   'electric-sunset': {
-    '--background': '15 100% 61%',
-    '--foreground': '0 70% 12%',
-    '--card': '15 100% 65%',
-    '--card-foreground': '0 70% 12%',
-    '--popover': '15 100% 65%',
-    '--popover-foreground': '0 70% 12%',
-    '--primary': '0 100% 62%',
-    '--primary-foreground': '0 0% 100%',
-    '--secondary': '40 100% 76%',
-    '--secondary-foreground': '0 70% 12%',
-    '--muted': '40 100% 76%',
-    '--muted-foreground': '0 30% 30%',
-    '--accent': '35 100% 74%',
-    '--accent-foreground': '0 70% 12%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '0 0% 98%',
-    '--border': '15 100% 50%',
-    '--input': '15 100% 50%',
-    '--ring': '0 100% 62%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   'vivid-aurora': {
-    '--background': '220 80% 6%',
-    '--foreground': '200 80% 95%',
-    '--card': '220 80% 12%',
-    '--card-foreground': '200 80% 95%',
-    '--popover': '220 80% 12%',
-    '--popover-foreground': '200 80% 95%',
-    '--primary': '180 100% 50%',
-    '--primary-foreground': '0 0% 0%',
-    '--secondary': '280 100% 50%',
-    '--secondary-foreground': '0 0% 100%',
-    '--muted': '280 100% 50%',
-    '--muted-foreground': '200 50% 80%',
-    '--accent': '50 100% 50%',
-    '--accent-foreground': '0 0% 0%',
-    '--destructive': '0 63% 31%',
-    '--destructive-foreground': '0 0% 98%',
-    '--border': '220 50% 25%',
-    '--input': '220 50% 25%',
-    '--ring': '180 100% 50%',
+    '--background': '36 12% 98%', // Soft Ivory
+    '--foreground': '227 33% 26%', // Deep Indigo
+    '--card': '39 12% 92%', // Sand
+    '--card-foreground': '227 33% 26%',
+    '--popover': '39 12% 92%',
+    '--popover-foreground': '227 33% 26%',
+    '--primary': '149 33% 69%', // Mint
+    '--primary-foreground': '227 33% 26%',
+    '--secondary': '15 100% 76%', // Warm Coral
+    '--secondary-foreground': '227 33% 26%',
+    '--muted': '252 20% 89%', // Muted Lavender
+    '--muted-foreground': '227 33% 26%',
+    '--accent': '149 33% 69%', // Mint
+    '--accent-foreground': '227 33% 26%',
+    '--destructive': '15 100% 76%', // Warm Coral
+    '--destructive-foreground': '227 33% 26%',
+    '--border': '39 12% 92%',
+    '--input': '39 12% 92%',
+    '--ring': '149 33% 69%',
   },
   'tropical-burst': {
     '--background': '55 100% 94%',

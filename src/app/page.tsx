@@ -49,7 +49,7 @@ export default function Home() {
               Between us
             </h1>
             <div className="mt-2 text-lg md:text-xl text-foreground/80 font-caption drop-shadow-md">
-              A private place to share, plan, and grow..
+              Subject.
             </div>
             <p className="mt-4 max-w-2xl text-lg md:text-xl text-foreground/80 font-caption drop-shadow-md">
               A private place to share, plan, and grow.
