@@ -444,9 +444,7 @@
     --font-heading: 'Cormorant Garamond', serif;
     --font-body: 'Lora', serif;
   }
-}
-
-@layer base {
+  
   * {
     @apply border-border;
   }
