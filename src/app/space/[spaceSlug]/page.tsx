@@ -302,7 +302,7 @@ export default function PersonalSpacePage() {
                            </span>
                            <ChevronRight className="w-4 h-4 text-muted-foreground"/>
                         </Link>
-                        <Link href="#" className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors opacity-50 cursor-not-allowed">
+                        <Link href={`/space/${spaceSlug}/theme`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
                             <span className="font-caption text-sm flex items-center gap-2"><Palette className="w-4 h-4 text-muted-foreground"/>Theme & Layout</span>
                             <ChevronRight className="w-4 h-4 text-muted-foreground"/>
                         </Link>
@@ -311,7 +311,7 @@ export default function PersonalSpacePage() {
                  <Card>
                     <CardHeader><CardTitle>Settings</CardTitle></CardHeader>
                     <CardContent className="space-y-2">
-                         <Link href="#" className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors opacity-50 cursor-not-allowed">
+                         <Link href={`/space/${spaceSlug}/settings`} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
                             <span className="font-caption text-sm flex items-center gap-2"><Settings className="w-4 h-4 text-muted-foreground"/>Space Settings</span>
                             <ChevronRight className="w-4 h-4 text-muted-foreground"/>
                         </Link>
@@ -333,3 +333,5 @@ export default function PersonalSpacePage() {
     </>
   );
 }
+
+  
