@@ -83,7 +83,7 @@ export default function WordChainPage() {
         });
 
         return () => unsubscribe();
-    }, [sessionId, gameRef, router, toast]);
+    }, [sessionId, gameRef, router, spaceSlug, toast]);
 
     useEffect(() => {
         if (gameState?.state !== 'playing' || !gameState.timeStartedAt) {
