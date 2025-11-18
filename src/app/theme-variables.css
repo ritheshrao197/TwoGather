@@ -1,0 +1,13 @@
+/* Theme & layout tokens (CSS variables) */
+
+:root {
+  --bg: #FBFAF8; /* Soft Ivory */
+  --surface: #EDE2D1; /* Sand */
+  --text: #1E2A44; /* Deep Indigo */
+  --muted: #6B7280;
+  --accent: #8FD4B2; /* Mint */
+  --danger: #FF8364; /* Warm Coral */
+  --lavender: #C9C3E8; /* Muted Lavender */
+  --radius: 12px;
+  --shadow-soft: 0 6px 18px rgba(30,42,68,0.06);
+}
