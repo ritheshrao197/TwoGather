@@ -191,39 +191,7 @@ export default function PersonalSpacePage() {
         <Header />
         <main className="flex-1 container mx-auto px-4 py-8 pt-24">
           
-          {/* Add a test button for theme debugging */}
-          <div className="mb-4 p-2 bg-muted rounded flex gap-2 flex-wrap">
-            <button 
-              onClick={() => {
-                console.log('Manual theme apply triggered');
-                window.dispatchEvent(new CustomEvent('theme-change'));
-              }}
-              className="px-3 py-1 bg-primary text-primary-foreground rounded text-sm"
-            >
-              Test Theme Apply
-            </button>
-            <button 
-              onClick={() => {
-                console.log('Current root classes:', Array.from(document.documentElement.classList));
-              }}
-              className="px-3 py-1 bg-secondary text-secondary-foreground rounded text-sm"
-            >
-              Log Current Classes
-            </button>
-            <button 
-              onClick={() => {
-                const computedStyle = getComputedStyle(document.documentElement);
-                console.log('Current CSS variables:');
-                console.log('Background:', computedStyle.getPropertyValue('--background'));
-                console.log('Primary:', computedStyle.getPropertyValue('--primary'));
-                console.log('Font heading:', computedStyle.getPropertyValue('--font-heading'));
-                console.log('Font body:', computedStyle.getPropertyValue('--font-body'));
-              }}
-              className="px-3 py-1 bg-accent text-accent-foreground rounded text-sm"
-            >
-              Log CSS Variables
-            </button>
-          </div>
+
           
           <section className="mb-10 text-center">
             <h1 className="text-3xl md:text-4xl font-headline font-bold text-foreground">

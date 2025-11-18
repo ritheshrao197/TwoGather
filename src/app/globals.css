@@ -364,7 +364,6 @@
   }
   
   /* Bold & Energetic */
-  :root.theme-electric-sunset,
   .theme-electric-sunset {
     --background: 15 100% 61%; /* #FF6E3A */
     --foreground: 0 70% 12%; /* #2E0F0F */
@@ -387,7 +386,6 @@
     --ring: 0 100% 62%;
   }
   
-  :root.theme-vivid-aurora,
   .theme-vivid-aurora {
     --background: 220 80% 6%; /* #06142E */
     --foreground: 200 80% 95%; /* #DDF3FF */
@@ -410,7 +408,6 @@
     --ring: 180 100% 50%;
   }
   
-  :root.theme-tropical-burst,
   .theme-tropical-burst {
     --background: 55 100% 94%; /* #FFFCE1 */
     --foreground: 15 30% 18%; /* #3B2C2A */
@@ -433,7 +430,6 @@
     --ring: 5 100% 66%;
   }
   
-  :root.theme-color-pop,
   .theme-color-pop {
     --background: 300 100% 96%; /* #FEE8FF */
     --foreground: 260 25% 20%; /* #2F2342 */

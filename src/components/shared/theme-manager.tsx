@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { themeDefinitions, fontDefinitions } from '@/lib/theme-definitions';
 
 export function ThemeManager() {
   const pathname = usePathname();
@@ -59,43 +60,25 @@ export function ThemeManager() {
         const savedFontTheme = localStorage.getItem(`space-theme-font-${spaceSlug}`);
         console.log('Retrieved from localStorage - Color:', savedColorTheme, 'Font:', savedFontTheme);
         
-        // Apply themes to document root
+        // Apply themes to document root by directly setting CSS variables
         const root = document.documentElement;
         console.log('Root element:', root);
-        console.log('Current root classes before cleanup:', Array.from(root.classList));
         
-        // Remove ALL theme classes (be very aggressive)
-        const classesToRemove = [];
-        for (let i = 0; i < root.classList.length; i++) {
-          const className = root.classList[i];
-          if (className.startsWith('theme-') || className.startsWith('font-')) {
-            classesToRemove.push(className);
-          }
-        }
-        console.log('Classes to remove:', classesToRemove);
+        // Get theme definitions
+        const colorThemeVars = themeDefinitions[savedColorTheme as keyof typeof themeDefinitions] || themeDefinitions['midnight-blue'];
+        const fontThemeVars = fontDefinitions[savedFontTheme as keyof typeof fontDefinitions] || fontDefinitions['gentle-rounded'];
         
-        // Remove classes one by one
-        classesToRemove.forEach(cls => {
-          console.log('Removing class:', cls);
-          root.classList.remove(cls);
+        // Apply color theme variables
+        Object.entries(colorThemeVars).forEach(([key, value]) => {
+          root.style.setProperty(key, value);
         });
         
-        console.log('Root classes after removal:', Array.from(root.classList));
+        // Apply font theme variables
+        Object.entries(fontThemeVars).forEach(([key, value]) => {
+          root.style.setProperty(key, value);
+        });
         
-        // Add new theme classes with proper prefixes
-        const colorThemeClass = savedColorTheme ? `theme-${savedColorTheme}` : 'theme-midnight-blue';
-        const fontThemeClass = savedFontTheme ? `font-${savedFontTheme}` : 'font-gentle-rounded';
-        
-        console.log('Adding classes:', colorThemeClass, fontThemeClass);
-        root.classList.add(colorThemeClass);
-        root.classList.add(fontThemeClass);
-        
-        console.log('Final root classes:', Array.from(root.classList));
-        
-        // Verify the theme was applied by checking if the class exists in the document
-        const themeExists = root.classList.contains(colorThemeClass);
-        const fontExists = root.classList.contains(fontThemeClass);
-        console.log('Theme class exists:', themeExists, 'Font class exists:', fontExists);
+        console.log('Applied theme variables:', { colorThemeVars, fontThemeVars });
         
         // Log CSS variables to verify
         setTimeout(() => {
